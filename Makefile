@@ -4,11 +4,17 @@ INC = -Iinc/classes -Iinc
 BUILD = build
 OUT = server
 
-HEADERSFILES = test classes/class
+HEADERSFILES_ = $(wildcard inc/*.hpp) $(wildcard inc/**/*.hpp)
+
+HEADERSFILES = $(subst inc/, , $(HEADERSFILES_:.hpp=)) 
 				
 HEADERS := $(addprefix inc/, $(HEADERSFILES:=.hpp))
 
-FILES = test
+FILES_ = $(wildcard *.cpp) $(wildcard src/*.cpp) $(wildcard src/**/*.cpp)
+
+FILES__ := $(subst src/, , $(FILES_))
+
+FILES = $(FILES__:%.cpp=%)
 
 OBJS := $(addprefix $(BUILD)/, $(FILES:=.o))
 
