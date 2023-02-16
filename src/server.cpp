@@ -79,3 +79,25 @@ void	server::listen(){
 	}
 }
 
+void	server::accept(int &s){
+	s = ::accept(sock, (struct sockaddr*)&addr, &len);
+	if (s < 0){
+		std::cerr << "something went wrong!!" << std::endl;
+		exit(1);
+	}
+	std::cout << "new client" << std::endl;
+	clients[s].type = FDBUSY;
+}
+
+void	server::read(int s){
+	int	rd = recv(s, buffer, BUFFER_SIZE, 0);
+	if (rd <= 0){
+		clients[s].reset();
+		::close(s);
+		std::cout << "a client went a way" << std::endl;
+	}
+	else{
+		buffer[rd] = 0;
+		std::cout << "**" << buffer << "**" << std::endl;
+	}
+}
