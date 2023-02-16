@@ -1,4 +1,5 @@
 #include "server.hpp"
+#include "exceptions.hpp"
 
 server::server(){
 	sock = 0;
@@ -27,21 +28,15 @@ std::string	&server::getpassword(){
 
 void	server::create(){
 	sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (sock < 0){
-		std::cerr << "something went wrong !!" << std::endl;
-		exit(1);
-	}
+	if (sock < 0)
+		throw myexception("something went wrong !!");
 	addr.sin_addr.s_addr = INADDR_ANY;
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
-	if (bind(sock, (struct sockaddr*)&addr, len) < 0){
-		std::cerr << "port in use !!" << std::endl;
-		exit(1);
-	}
-	if (::listen(sock, MAX_FDS) < 0){
-		std::cerr << "something went wrong !!" << std::endl;
-		exit(1);
-	}
+	if (bind(sock, (struct sockaddr*)&addr, len) < 0)
+		throw myexception("port already in use !!");
+	if (::listen(sock, MAX_FDS) < 0)
+		throw myexception("something went wrong !!");
 }
 
 void	server::close(){
@@ -63,10 +58,8 @@ void	server::listen(){
 
 		init_fds();
 		n = select(MAX_FDS, &s_read, NULL, NULL, NULL);
-		if (n < 0){
-			std::cerr << "something went wrong!!" << std::endl;
-			exit(1);
-		}
+		if (n < 0)
+			throw myexception("something went wrong !!");
 		for (int i = 0; i < MAX_FDS && n > 0; i++){
 			s = i;
 			if (FD_ISSET(i, &s_read)){
@@ -81,10 +74,8 @@ void	server::listen(){
 
 void	server::accept(int &s){
 	s = ::accept(sock, (struct sockaddr*)&addr, &len);
-	if (s < 0){
-		std::cerr << "something went wrong!!" << std::endl;
-		exit(1);
-	}
+	if (s < 0)
+		throw myexception("something went wrong !!");
 	std::cout << "new client" << std::endl;
 	clients[s].type = FDBUSY;
 }
