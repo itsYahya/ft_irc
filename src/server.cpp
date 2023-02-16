@@ -38,13 +38,44 @@ void	server::create(){
 		std::cerr << "port in use !!" << std::endl;
 		exit(1);
 	}
-	if (listen(sock, MAX_FDS) < 0){
+	if (::listen(sock, MAX_FDS) < 0){
 		std::cerr << "something went wrong !!" << std::endl;
 		exit(1);
 	}
-	std::cout << "server was created successfully!!" << std::endl;
 }
 
 void	server::close(){
 	::close(sock);
 }
+
+void	server::init_fds(){
+	FD_ZERO(&s_read);
+	FD_SET(sock, &s_read);
+	for (int i = 0; i < MAX_FDS; i++){
+		if (!clients[i].isfree())
+			FD_SET(i, &s_read);
+	}
+}
+
+void	server::listen(){
+	while (1){
+		int		s;
+
+		init_fds();
+		n = select(MAX_FDS, &s_read, NULL, NULL, NULL);
+		if (n < 0){
+			std::cerr << "something went wrong!!" << std::endl;
+			exit(1);
+		}
+		for (int i = 0; i < MAX_FDS && n > 0; i++){
+			s = i;
+			if (FD_ISSET(i, &s_read)){
+				if (sock == i)
+					accept(s);
+				read(s);
+				n--;
+			}
+		}
+	}
+}
+
