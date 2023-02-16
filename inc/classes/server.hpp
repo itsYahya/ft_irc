@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <vector>
+#include "client.hpp"
 
 #define BUFFER_SIZE 1024
 #define MAX_FDS 1024
