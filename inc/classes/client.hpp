@@ -3,6 +3,11 @@
 
 #include <iostream>
 
+typedef enum e_type{
+	FDFREE = 0,
+	FDBUSY = 1
+}	t_type;
+
 class client{
 	private:
 		int			fdClient;
@@ -10,9 +15,14 @@ class client{
 		std::string	realName;
 		std::string	loginName;
 		std::string loginPass;
+		
 	public:
+		t_type		type;
 		client();
 		~client();
+		
+		void 	reset();
+		bool	isfree();
 
 		void	setfdClient(int fdCL);
 		void	setnickName(std::string nickNM);

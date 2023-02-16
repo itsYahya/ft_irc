@@ -2,10 +2,17 @@
 
 
 client::client(){
-	std::cout << "client connected" << std::endl;
+	this->type = FDFREE;
 }
 
 client::~client(){
+}
+
+void	client::reset(){
+	this->type = FDFREE;
+}
+bool	client::isfree(){
+	return (this->type == FDFREE);
 }
 
 void	client::setfdClient(int fdCL){
@@ -23,6 +30,7 @@ void	client::setloginName(std::string  loginNM){
 void	client::setloginPass(std::string  loginPS){
 	this->loginPass = loginPS;
 }
+
 int				client::getfdClient() const{
 	return (this->fdClient);
 }

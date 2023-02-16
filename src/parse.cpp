@@ -3,18 +3,6 @@
 #include <iostream>
 #include <ctype.h>
 
-// static int	ft_isdegit(char ch){
-// 	return ((ch <= '9' && ch >= '0'));
-// }
-
-// static int	ft_atoi(char *port){
-// 	int	num = 0;
-
-// 	for (int index = 0; port[index]; index++){
-// 		num = (num * 10) + (port[index] - '0');
-// 	}
-// 	return (num);
-// }
 
 static int	parse_port(char *av, int &port){
 	for (int index = 0; av[index]; index++){
