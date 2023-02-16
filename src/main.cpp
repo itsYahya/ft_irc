@@ -11,5 +11,6 @@ int main(int ac, char **av){
 		}
 	}else
 		std::cerr << "wrong number of arguments" << std::endl;
+	
 	return (1);
 }
