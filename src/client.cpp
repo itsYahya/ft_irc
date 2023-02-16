@@ -6,7 +6,6 @@ client::client(){
 }
 
 client::~client(){
-	std::cout << "client diconnected" << std::endl;
 }
 
 void	client::setfdClient(int fdCL){
