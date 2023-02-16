@@ -9,6 +9,9 @@ int main(int ac, char **av){
 			std::cerr << "error !" << std::endl;
 			return (1);
 		}
+		server.create();
+		server.listen();
+		server.close();
 	}else
 		std::cerr << "wrong number of arguments" << std::endl;
 	return (1);
