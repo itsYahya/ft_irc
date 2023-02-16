@@ -14,10 +14,9 @@ static int	parse_port(char *av, int &port){
 }
 
 int	parse_arguments(int ac, char **av, server &server){
-	if (parse_port(av[1], server.port))
+	if (parse_port(av[1], server.getport()))
 		return (1);
 	if (ac == 3)
-		server.password = std::string(av[2]);
-	std::cout << server.password << std::endl;
+		server.setpassword(std::string(av[2]));
 	return (0);
 }
