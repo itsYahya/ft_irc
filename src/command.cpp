@@ -26,7 +26,7 @@ void	command::init_cmds(){
 int		command::search_cmd(std::string &name){
 	std::map<std::string, int>::iterator iter = cmds.find(name);
 	if (iter == cmds.end())
-		return (ANY);
+		return (WRONG);
 	return (iter->second);
 }
 

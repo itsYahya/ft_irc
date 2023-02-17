@@ -12,7 +12,7 @@ typedef enum e_ctype{
 	NICK = 2,
 	USER = 3,
 
-	ANY = 4,
+	WRONG = 4,
 }	t_ctype;
 
 class command{
