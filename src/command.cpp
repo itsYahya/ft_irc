@@ -21,6 +21,15 @@ void	command::init_cmds(){
 	cmds.insert(std::pair<std::string, int>("PASS", PASS));
 	cmds.insert(std::pair<std::string, int>("NICK", NICK));
 	cmds.insert(std::pair<std::string, int>("USER", USER));
+	cmds.insert(std::pair<std::string, int>("PRIVMSG", PRIVMSG));
+	cmds.insert(std::pair<std::string, int>("PART", PART));
+	cmds.insert(std::pair<std::string, int>("JOIN", JOIN));
+	cmds.insert(std::pair<std::string, int>("EXIT", EXIT));
+	cmds.insert(std::pair<std::string, int>("LIST", LIST));
+	cmds.insert(std::pair<std::string, int>("MODE", MODE));
+	cmds.insert(std::pair<std::string, int>("KICK", KICK));
+	cmds.insert(std::pair<std::string, int>("DCC", DCC));
+	cmds.insert(std::pair<std::string, int>("PING", PING));
 }
 
 int		command::search_cmd(std::string &name){
