@@ -1,5 +1,6 @@
 #include "server.hpp"
 #include "exceptions.hpp"
+#include "command.hpp"
 
 server::server(){
 	sock = 0;
@@ -8,6 +9,7 @@ server::server(){
 	len = sizeof(addr);
 	(void) buffer;
 	clients.resize(MAX_FDS);
+	command::init_cmds();
 }
 
 server::~server(){
@@ -89,6 +91,7 @@ void	server::read(int s){
 	}
 	else{
 		buffer[rd] = 0;
-		std::cout << "**" << buffer << "**" << std::endl;
+		command cmd(buffer);
+		std::cout << cmd << std::endl;
 	}
 }

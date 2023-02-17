@@ -3,7 +3,8 @@
 
 #include "server.hpp"
 
-int	parse_arguments(int ac, char **av, server &server);
+int							parse_arguments(int ac, char **av, server &server);
+std::vector<std::string>	split(std::string str, char sep);
 
 #endif
 

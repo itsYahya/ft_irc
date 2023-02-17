@@ -14,28 +14,28 @@
 
 class server{
 	private:
-		int					sock;
-		int					port;
-		std::string			password;
-		fd_set				s_read;
-		struct sockaddr_in	addr;
-		socklen_t			len;
-		char				buffer[BUFFER_SIZE];
-		std::vector<client> clients;
-		int					n;
+		int							sock;
+		int							port;
+		std::string					password;
+		fd_set						s_read;
+		struct sockaddr_in			addr;
+		socklen_t					len;
+		char						buffer[BUFFER_SIZE];
+		std::vector<client> 		clients;
+		int							n;
 
 	public:
 		server();
 		~server();
-		void		create();
-		void		listen();
-		void		init_fds();
-		void		accept(int &s);
-		void		read(int s);
-		int			&getport();
-		void		setpassword(std::string pass);
-		std::string	&getpassword();
-		void		close();
+		void						create();
+		void						listen();
+		void						init_fds();
+		void						accept(int &s);
+		void						read(int s);
+		int							&getport();
+		void						setpassword(std::string pass);
+		std::string					&getpassword();
+		void						close();
 
 };
 
