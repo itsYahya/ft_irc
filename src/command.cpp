@@ -29,3 +29,8 @@ int		command::search_cmd(std::string &name){
 		return (ANY);
 	return (iter->second);
 }
+
+std::ostream	&operator<<(std::ostream &out, const command &cmd){
+	out << cmd.name << " " << cmd.type;
+	return (out);
+}

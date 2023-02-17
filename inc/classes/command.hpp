@@ -28,7 +28,7 @@ class command{
 		~command();
 		static void	init_cmds();
 		static int	search_cmd(std::string &name);
-		
+		friend std::ostream	&operator<<(std::ostream &o, const command &cmd);
 };
 
 #endif
