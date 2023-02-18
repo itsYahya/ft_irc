@@ -1,18 +1,17 @@
 #include "command.hpp"
-#include <iostream>
-#include <sstream>
 #include "server.hpp"
+#include "helper.hpp"
 
 std::map<std::string, int> command::cmds;
 
 command::command(const char *buffer){
-	this->buffer = buffer;
-	std::stringstream stream(buffer);
-	std::getline(stream, name, ' ');
-	std::istreambuf_iterator<char> eos;
-	std::string ss(std::istreambuf_iterator<char>(stream), eos);
-	body = ss;
+	std::vector<std::string>	res;
+
+	res = helper::split_(buffer, ' ');
+	name = res[0];
+	body = res[1];
 	type = search_cmd(name);
+	this->buffer = buffer;
 }
 
 command::~command(){}
@@ -40,6 +39,6 @@ int		command::search_cmd(std::string &name){
 }
 
 std::ostream	&operator<<(std::ostream &out, const command &cmd){
-	out << cmd.name << " " << cmd.type;
+	out << cmd.name << " " << cmd.type << " " << cmd.body;
 	return (out);
 }
