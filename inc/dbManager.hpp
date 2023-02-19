@@ -12,7 +12,7 @@ class dbManager
 	private:
 		static dbManager* instance;
 		static std::map<std::string, client> clients;
-		static std::map<std::string, std::vector<client> > channels;
+		static std::map<std::string, channel> channels;
 		
 		dbManager();
 	public:
@@ -20,13 +20,12 @@ class dbManager
 		static	dbManager*	getInstance();
 		
 		static	bool		insertClient(client cl);
-		static	bool		searchClient(std::string nick);
+		static	client		searchClient(std::string nick);
 		static	bool		deleteClient(std::string nick);
 
 		static	bool		insertChannel(channel ch);
-		static	bool		searchChannel(std::string channel);
-		static	bool		findClientInChannel(std::string channel, std::string nick);
-		static	void		joinClientChannel(std::string channel, std::string nick);
+		static	channel		searchChannel(std::string nameChannel);
+		static	bool		joinClientChannel(std::string nameChannel, std::string nick);
 };
 
 #endif
