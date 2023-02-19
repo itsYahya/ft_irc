@@ -36,6 +36,7 @@ class command{
 		~command();
 		static void	init_cmds();
 		static int	search_cmd(std::string &name);
+		static void	switch_cmd( const command &cmd);
 		friend std::ostream	&operator<<(std::ostream &o, const command &cmd);
 };
 

@@ -38,6 +38,27 @@ int		command::search_cmd(std::string &name){
 	return (iter->second);
 }
 
+void	command::switch_cmd(const command &cmd)
+{
+	switch(cmd.type)
+	{
+		case PASS:
+			std::cout << cmd.name << " " << cmd.type << " " << cmd.body;
+		case NICK:
+			std::cout << cmd.name << " " << cmd.type << " " << cmd.body;
+		case USER:
+			std::cout << cmd.name << " " << cmd.type << " " << cmd.body;
+		case PRIVMSG:
+			std::cout << cmd.name << " " << cmd.type << " " << cmd.body;
+		case PART:
+			std::cout << cmd.name << " " << cmd.type << " " << cmd.body;
+		case JOIN:
+			std::cout << cmd.name << " " << cmd.type << " " << cmd.body;
+		default:
+			std::cout << "command wrong";
+	}
+}
+
 std::ostream	&operator<<(std::ostream &out, const command &cmd){
 	out << cmd.name << " " << cmd.type << " " << cmd.body;
 	return (out);
