@@ -2,7 +2,8 @@
 
 std::map<std::string, client> dbManager::clients;
 std::map<std::string, channel> dbManager::channels;
-dbManager* dbManager::instance;
+dbManager* dbManager::instance = NULL;
+
 
 dbManager::dbManager(){}
 dbManager::~dbManager() {}
@@ -27,7 +28,7 @@ bool	dbManager::insertClient(client cl)
 	return (false);
 }
 
-client	dbManager::searchClient(std::string nick)
+client&	dbManager::searchClient(std::string nick)
 {
 	return (clients.find(nick)->second);
 }
@@ -57,7 +58,7 @@ bool	dbManager::insertChannel(channel ch)
 	return (false);
 }
 
-channel		dbManager::searchChannel(std::string nameChannel)
+channel&	dbManager::searchChannel(std::string nameChannel)
 {
 	return (channels.find(nameChannel)->second);
 }

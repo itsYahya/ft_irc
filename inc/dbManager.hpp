@@ -20,11 +20,11 @@ class dbManager
 		static	dbManager*	getInstance();
 		
 		static	bool		insertClient(client cl);
-		static	client		searchClient(std::string nick);
+		static	client&		searchClient(std::string nick);
 		static	bool		deleteClient(std::string nick);
 
 		static	bool		insertChannel(channel ch);
-		static	channel		searchChannel(std::string nameChannel);
+		static	channel&	searchChannel(std::string nameChannel);
 		static	bool		joinClientChannel(std::string nameChannel, std::string nick);
 };
 

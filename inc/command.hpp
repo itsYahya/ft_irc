@@ -1,9 +1,11 @@
 #ifndef COMMAND_HPP
 #define COMMAND_HPP
 
-#include <string>
-#include <map>
-#include <iostream>
+# include <string>
+# include <map>
+# include <iostream>
+# include "dbManager.hpp"
+# include "client.hpp"
 
 class server;
 
@@ -36,7 +38,7 @@ class command{
 		~command();
 		static void	init_cmds();
 		static int	search_cmd(std::string &name);
-		static void	switch_cmd( const command &cmd);
+		void	switch_cmd( const command &cmd, client& cl);
 		friend std::ostream	&operator<<(std::ostream &o, const command &cmd);
 };
 

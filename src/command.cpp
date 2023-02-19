@@ -38,24 +38,36 @@ int		command::search_cmd(std::string &name){
 	return (iter->second);
 }
 
-void	command::switch_cmd(const command &cmd)
-{
+void	command::switch_cmd(const command &cmd, client& cl)
+{	
+	// std::vector<std::string> v;
+	// if (!body.empty())
+	// {
+	// 	v = helper::split(body,' ');
+	// }
 	switch(cmd.type)
 	{
 		case PASS:
-			std::cout << cmd.name << " " << cmd.type << " " << cmd.body;
+			std::cout << cmd;
+			break;
 		case NICK:
-			std::cout << cmd.name << " " << cmd.type << " " << cmd.body;
+			// cl.setnickName(body);
+			// dbManager::getInstance()->insertClient(cl);
+			break;
 		case USER:
-			std::cout << cmd.name << " " << cmd.type << " " << cmd.body;
+			// cl.setrealName(v[2]);
+			// cl.setloginName(v[0]);
+			break;
 		case PRIVMSG:
-			std::cout << cmd.name << " " << cmd.type << " " << cmd.body;
+			// dbManager::getInstance()->searchClient(v[0]);
+			// std::cout << cl.getnickName() ;
+			// std::cout << cl.getrealName() ;
+			// std::cout << cl.getloginName() ;
+			break;
 		case PART:
-			std::cout << cmd.name << " " << cmd.type << " " << cmd.body;
 		case JOIN:
-			std::cout << cmd.name << " " << cmd.type << " " << cmd.body;
-		default:
-			std::cout << "command wrong";
+		default :
+			std::cout << "command wrong\n";
 	}
 }
 

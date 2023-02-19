@@ -92,6 +92,6 @@ void	server::read(int s){
 	else{
 		buffer[rd] = 0;
 		command cmd(buffer);
-		std::cout << cmd << std::endl;
+		cmd.switch_cmd(cmd, clients[s]);
 	}
 }
