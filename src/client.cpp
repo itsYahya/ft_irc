@@ -3,6 +3,7 @@
 
 client::client(){
 	this->type = FDFREE;
+	this->fdClient = -1;
 }
 
 client::~client(){
@@ -10,6 +11,7 @@ client::~client(){
 
 void	client::reset(){
 	this->type = FDFREE;
+	this->fdClient = -1;
 }
 bool	client::isfree(){
 	return (this->type == FDFREE);
