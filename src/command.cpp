@@ -6,7 +6,6 @@ std::map<std::string, int> command::cmds;
 
 command::command(const char *buffer){
 	std::vector<std::string>	res;
-
 	res = helper::split_(buffer, ' ');
 	name = res[0];
 	body = res[1];
@@ -38,31 +37,46 @@ int		command::search_cmd(std::string &name){
 	return (iter->second);
 }
 
-void	command::switch_cmd(const command &cmd, client& cl)
+void	command::switch_cmd(const command &cmd, int fd, dbManager& db)
 {	
-	// std::vector<std::string> v;
-	// if (!body.empty())
-	// {
-	// 	v = helper::split(body,' ');
-	// }
+	std::vector<std::string> v;
+
+	client& sd = db.searchClient(fd);
 	switch(cmd.type)
 	{
 		case PASS:
 			std::cout << cmd;
 			break;
 		case NICK:
-			// cl.setnickName(body);
-			// dbManager::getInstance()->insertClient(cl);
+			if (!body.empty())
+				v = helper::split(body,' ');
+			sd.setnickName(v[0]);
+			std::cout << sd.getnickName()<< "\n";
 			break;
 		case USER:
-			// cl.setrealName(v[2]);
-			// cl.setloginName(v[0]);
+			if (!body.empty())
+			{
+				v = helper::split(body,' ');
+				// sd.setrealName(v[0]);
+				std::cout << body << "\n";
+				std::cout << v.size() << "\n";
+				std::cout << v.at(3) << "\n";
+			}
+			// v.clear();
+			// if (!body.empty())
+			// {
+			// 	v = helper::split_(body.c_str(),' ');
+			// 	sd.setloginName(v[0]);
+			// 	std::cout << v[0] << "\n";
+			// }
 			break;
 		case PRIVMSG:
-			// dbManager::getInstance()->searchClient(v[0]);
-			// std::cout << cl.getnickName() ;
-			// std::cout << cl.getrealName() ;
-			// std::cout << cl.getloginName() ;
+			if (!body.empty())
+				v = helper::split(body,' ');
+			std::cout << "=> " << v[0] << "\n";
+			std::cout << sd.getnickName();
+			std::cout << sd.getloginName();
+			std::cout << sd.getrealName();
 			break;
 		case PART:
 		case JOIN:

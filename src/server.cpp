@@ -2,13 +2,15 @@
 #include "exceptions.hpp"
 #include "command.hpp"
 
-server::server(){
+server::server()
+{
 	sock = 0;
 	port = 0;
 	FD_ZERO(&s_read);
 	len = sizeof(addr);
 	(void) buffer;
 	clients.resize(MAX_FDS);
+	db = &dbManager::getInstance();
 	command::init_cmds();
 }
 
@@ -57,7 +59,6 @@ void	server::init_fds(){
 void	server::listen(){
 	while (1){
 		int		s;
-
 		init_fds();
 		n = select(MAX_FDS, &s_read, NULL, NULL, NULL);
 		if (n < 0)
@@ -80,6 +81,8 @@ void	server::accept(int &s){
 		throw myexception("something went wrong !!");
 	std::cout << "new client" << std::endl;
 	clients[s].type = FDBUSY;
+	clients[s].setfdClient(s);
+	db->insertClient(clients[s]);
 }
 
 void	server::read(int s){
@@ -92,6 +95,6 @@ void	server::read(int s){
 	else{
 		buffer[rd] = 0;
 		command cmd(buffer);
-		cmd.switch_cmd(cmd, clients[s]);
+		cmd.switch_cmd(cmd, s, *db);
 	}
 }

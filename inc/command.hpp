@@ -5,7 +5,6 @@
 # include <map>
 # include <iostream>
 # include "dbManager.hpp"
-# include "client.hpp"
 
 class server;
 
@@ -32,13 +31,12 @@ class command{
 		std::string							body;
 		const char							*buffer;
 		static std::map<std::string, int>	cmds;
-
 	public:
 		command(const char *buffer);
 		~command();
 		static void	init_cmds();
 		static int	search_cmd(std::string &name);
-		void	switch_cmd( const command &cmd, client& cl);
+		void	switch_cmd( const command &cmd, int fd, dbManager& cl);
 		friend std::ostream	&operator<<(std::ostream &o, const command &cmd);
 };
 

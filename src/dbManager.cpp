@@ -2,18 +2,18 @@
 
 std::map<std::string, client> dbManager::clients;
 std::map<std::string, channel> dbManager::channels;
-dbManager* dbManager::instance = NULL;
+dbManager* dbManager::instance = 0;
 
 
 dbManager::dbManager(){}
 dbManager::~dbManager() {}
 
 
-dbManager*	dbManager::getInstance()
+dbManager&	dbManager::getInstance()
 {
 	if (instance == 0)
 		instance = new dbManager();
-	return (instance);
+	return (*instance);
 }
 
 bool	dbManager::insertClient(client cl)
@@ -31,6 +31,19 @@ bool	dbManager::insertClient(client cl)
 client&	dbManager::searchClient(std::string nick)
 {
 	return (clients.find(nick)->second);
+}
+
+client&	dbManager::searchClient(int fd)
+{
+	std::map<std::string, client>::iterator it;
+	it = clients.begin();
+	while (it != clients.end())
+	{
+		if (it->second.getfdClient()==fd)
+			return (it->second);
+		it++;
+	}
+	return (it->second);
 }
 
 bool	dbManager::deleteClient(std::string nick)

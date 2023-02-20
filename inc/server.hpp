@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <vector>
-#include "client.hpp"
+#include "dbManager.hpp"
 
 #define BUFFER_SIZE 1024
 #define MAX_FDS 1024
@@ -22,6 +22,7 @@ class server{
 		socklen_t					len;
 		char						buffer[BUFFER_SIZE];
 		std::vector<client> 		clients;
+		dbManager					*db;
 		int							n;
 
 	public:
