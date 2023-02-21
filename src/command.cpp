@@ -46,6 +46,7 @@ void	command::switch_cmd(const command &cmd, int fd, dbManager& db)
 			std::cout << cmd;
 			break;
 		case NICK:
+			insertNickname(db, body, fd);
 			break;
 		case USER:
 			break;
@@ -61,4 +62,15 @@ void	command::switch_cmd(const command &cmd, int fd, dbManager& db)
 std::ostream	&operator<<(std::ostream &out, const command &cmd){
 	out << cmd.name << " " << cmd.type << " " << cmd.body;
 	return (out);
+}
+
+void	command::insertNickname(dbManager& db, std::string name, int s)
+{
+	if (!name.empty())
+	{
+		std::string oldname = db.searchClient(s);
+		if(!oldname.empty())
+			db.deleteClient(oldname);
+		db.insertClient(name, s);
+	}
 }

@@ -20,7 +20,7 @@ bool	dbManager::insertClient(std::string name, int fd)
 {
 	std::map<std::string, int>::iterator iter; 
 	iter = clients.find(name);
-	if (iter != clients.end())
+	if (iter == clients.end())
 	{
 		clients.insert(std::pair<std::string, int>(name, fd));
 		return (true);
@@ -31,6 +31,20 @@ bool	dbManager::insertClient(std::string name, int fd)
 int&	dbManager::searchClient(std::string nick)
 {
 	return (clients.find(nick)->second);
+}
+
+const std::string&	dbManager::searchClient(int	fd)
+{
+	std::map<std::string, int>::iterator iter;
+	iter = clients.begin();
+	while (iter != clients.end())
+	{
+		if (iter->second == fd)
+			return (iter->first);
+		iter++;
+	}
+	std::cout << "hhiiiii\n";
+	return (iter->first);
 }
 
 bool	dbManager::deleteClient(std::string nick)

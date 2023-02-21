@@ -5,6 +5,7 @@
 # include <map>
 # include <iostream>
 # include "dbManager.hpp"
+# include "exceptions.hpp"
 
 class server;
 
@@ -31,6 +32,8 @@ class command{
 		std::string							body;
 		const char							*buffer;
 		static std::map<std::string, int>	cmds;
+
+		void	insertNickname(dbManager& db, std::string name, int s);
 	public:
 		command(const char *buffer);
 		~command();

@@ -18,14 +18,15 @@ class dbManager
 		~dbManager();
 		static	dbManager&	getInstance();
 		
-		static	bool		insertClient(std::string name, int fd);
-		static	int&		searchClient(std::string nick);
-		static	bool		deleteClient(std::string nick);
+		static	bool				insertClient(std::string name, int fd);
+		static	int&				searchClient(std::string nick);
+		static	const std::string&	searchClient(int fd);
+		static	bool				deleteClient(std::string nick);
 
-		static	bool		insertChannel(channel ch);
-		static	channel&	searchChannel(std::string nameChannel);
-		static	bool		joinClientChannel(std::string nameChannel, std::string nick);
-		static	bool		deleteChannel(std::string nick);
+		static	bool				insertChannel(channel ch);
+		static	channel&			searchChannel(std::string nameChannel);
+		static	bool				joinClientChannel(std::string nameChannel, std::string nick);
+		static	bool				deleteChannel(std::string nick);
 };
 
 #endif
