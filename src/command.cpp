@@ -6,7 +6,6 @@ std::map<std::string, int> command::cmds;
 
 command::command(const char *buffer){
 	std::vector<std::string>	res;
-
 	res = helper::split_(buffer, ' ');
 	name = res[0];
 	body = res[1];
@@ -36,6 +35,27 @@ int		command::search_cmd(std::string &name){
 	if (iter == cmds.end())
 		return (WRONG);
 	return (iter->second);
+}
+
+void	command::switch_cmd(const command &cmd, int fd, dbManager& db)
+{	(void) fd;
+	(void) db;
+	switch(cmd.type)
+	{
+		case PASS:
+			std::cout << cmd;
+			break;
+		case NICK:
+			break;
+		case USER:
+			break;
+		case PRIVMSG:
+			break;
+		case PART:
+		case JOIN:
+		default :
+			std::cout << "command wrong\n";
+	}
 }
 
 std::ostream	&operator<<(std::ostream &out, const command &cmd){
