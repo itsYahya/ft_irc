@@ -42,17 +42,17 @@ void	command::switch_cmd(const command &cmd, int fd, dbManager& db)
 	(void) db;
 	switch(cmd.type)
 	{
-		case PASS:
+		case CMD_PASS:
 			std::cout << cmd;
 			break;
-		case NICK:
+		case CMD_NICK:
 			break;
-		case USER:
+		case CMD_USER:
 			break;
-		case PRIVMSG:
+		case CMD_PRIVMSG:
 			break;
-		case PART:
-		case JOIN:
+		case CMD_PART:
+		case CMD_JOIN:
 		default :
 			std::cout << "command wrong\n";
 	}
