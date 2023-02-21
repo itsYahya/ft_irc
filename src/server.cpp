@@ -1,6 +1,5 @@
 #include "server.hpp"
 #include "exceptions.hpp"
-#include "command.hpp"
 
 server::server()
 {
@@ -58,33 +57,44 @@ void	server::init_fds(){
 
 void	server::listen(){
 	while (1){
-		int		s;
 		init_fds();
 		n = select(MAX_FDS, &s_read, NULL, NULL, NULL);
 		if (n < 0)
 			throw myexception("something went wrong !!");
 		for (int i = 0; i < MAX_FDS && n > 0; i++){
-			s = i;
 			if (FD_ISSET(i, &s_read)){
 				if (sock == i)
-					accept(s);
-				read(s);
+					accept();
+				else{
+					std::cout << clients[i].getloginPass() << std::endl;
+					read(i, 0);
+				}
 				n--;
 			}
 		}
 	}
 }
 
-void	server::accept(int &s){
-	s = ::accept(sock, (struct sockaddr*)&addr, &len);
+void	server::accept(){
+	int s = ::accept(sock, (struct sockaddr*)&addr, &len);
 	if (s < 0)
 		throw myexception("something went wrong !!");
 	std::cout << "new client" << std::endl;
 	clients[s].type = FDBUSY;
 	clients[s].setfdClient(s);
+	read(s, 1);
 }
 
-void	server::read(int s){
+void	replace_nl(char *buffer){
+	int	i = 0;
+	for (; buffer[i]; i++){
+		if (buffer[i] == '\n' || buffer[i] == 13)
+			break;
+	}
+	buffer[i] = 0;
+}
+
+void	server::read(int s, int first){
 	int	rd = recv(s, buffer, BUFFER_SIZE, 0);
 	if (rd <= 0){
 		clients[s].reset();
@@ -92,8 +102,29 @@ void	server::read(int s){
 		std::cout << "a client went a way" << std::endl;
 	}
 	else{
-		buffer[rd] = 0;
+		replace_nl(buffer);
 		command cmd(buffer);
 		cmd.switch_cmd(cmd, s, *db);
+		if (first)
+			clients[s].setfdClient(s);
+		if (cmd.gettype() == CMD_PASS || cmd.gettype() == CMD_NICK || cmd.gettype() == CMD_USER)
+			auth(clients[s], cmd, first);
 	}
+}
+
+void	server::auth(client &c, command cmd, int first){
+	int	type = cmd.gettype();
+
+	if (type == CMD_PASS){
+		if (password.compare(cmd.getbody()) == 0)
+			c.setloginPass(cmd.getbody());
+		else{
+			c.reset();
+			::close(c.getfdClient());
+		}
+	}
+	else if (type == CMD_NICK && !first)
+		c.setnickName(cmd.getbody());
+	else if (type == CMD_USER && !first)
+		c.setloginName(cmd.getbody());
 }
