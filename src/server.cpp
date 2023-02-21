@@ -94,6 +94,6 @@ void	server::read(int s){
 	else{
 		buffer[rd] = 0;
 		command cmd(buffer);
-		cmd.switch_cmd(cmd, s, *db);
+		cmd.switch_cmd(cmd, clients[s], *db);
 	}
 }

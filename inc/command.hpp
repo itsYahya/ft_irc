@@ -33,13 +33,13 @@ class command{
 		const char							*buffer;
 		static std::map<std::string, int>	cmds;
 
-		void	insertNickname(dbManager& db, std::string name, int s);
+		void	insertNickname(dbManager& db, std::string name, client& cl);
 	public:
 		command(const char *buffer);
 		~command();
 		static void	init_cmds();
 		static int	search_cmd(std::string &name);
-		void	switch_cmd( const command &cmd, int fd, dbManager& cl);
+		void	switch_cmd( const command &cmd, client& cl, dbManager& db);
 		friend std::ostream	&operator<<(std::ostream &o, const command &cmd);
 };
 
