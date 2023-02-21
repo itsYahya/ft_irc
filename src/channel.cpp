@@ -1,6 +1,6 @@
 #include "channel.hpp"
 
-std::map<std::string,client> channel::clients;
+std::map<std::string, int> channel::clients;
 
 channel::channel(std::string name) : nameChannel(name){}
 channel::~channel(){}
@@ -10,13 +10,13 @@ std::string channel::getNameChannel() const
 	return (nameChannel);
 }
 
-bool	channel::insertClientToChannel(client cl)
+bool	channel::insertClientToChannel(std::string name,int fd)
 {
-	std::map<std::string, client>::iterator iter;
-	iter = clients.find(cl.getnickName());
+	std::map<std::string, int>::iterator iter;
+	iter = clients.find(name);
 	if (iter != clients.end())
 	{
-		clients.insert(std::pair<std::string, client>(cl.getnickName(), cl));
+		clients.insert(std::pair<std::string, int>(name, fd));
 		return (true);
 	}
 	return (false);
@@ -24,7 +24,7 @@ bool	channel::insertClientToChannel(client cl)
 
 bool	channel::searchClient(std::string nick)
 {
-	std::map<std::string, client>::iterator iter;
+	std::map<std::string, int>::iterator iter;
 	iter = clients.find(nick);
 	if (iter != clients.end())
 		return (true);
@@ -33,7 +33,7 @@ bool	channel::searchClient(std::string nick)
 
 bool		channel::deleteClient(std::string nick)
 {
-	std::map<std::string, client>::iterator iter;
+	std::map<std::string, int>::iterator iter;
 
 	iter = clients.find(nick);
 	if (iter != clients.end())

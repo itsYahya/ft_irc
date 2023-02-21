@@ -38,45 +38,18 @@ int		command::search_cmd(std::string &name){
 }
 
 void	command::switch_cmd(const command &cmd, int fd, dbManager& db)
-{	
-	std::vector<std::string> v;
-
-	client& sd = db.searchClient(fd);
+{	(void) fd;
+	(void) db;
 	switch(cmd.type)
 	{
 		case PASS:
 			std::cout << cmd;
 			break;
 		case NICK:
-			if (!body.empty())
-				v = helper::split(body,' ');
-			sd.setnickName(v[0]);
-			std::cout << sd.getnickName()<< "\n";
 			break;
 		case USER:
-			if (!body.empty())
-			{
-				v = helper::split(body,' ');
-				// sd.setrealName(v[0]);
-				std::cout << body << "\n";
-				std::cout << v.size() << "\n";
-				std::cout << v.at(3) << "\n";
-			}
-			// v.clear();
-			// if (!body.empty())
-			// {
-			// 	v = helper::split_(body.c_str(),' ');
-			// 	sd.setloginName(v[0]);
-			// 	std::cout << v[0] << "\n";
-			// }
 			break;
 		case PRIVMSG:
-			if (!body.empty())
-				v = helper::split(body,' ');
-			std::cout << "=> " << v[0] << "\n";
-			std::cout << sd.getnickName();
-			std::cout << sd.getloginName();
-			std::cout << sd.getrealName();
 			break;
 		case PART:
 		case JOIN:

@@ -82,7 +82,6 @@ void	server::accept(int &s){
 	std::cout << "new client" << std::endl;
 	clients[s].type = FDBUSY;
 	clients[s].setfdClient(s);
-	db->insertClient(clients[s]);
 }
 
 void	server::read(int s){
