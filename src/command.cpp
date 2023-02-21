@@ -73,5 +73,7 @@ void	command::insertNickname(dbManager& db, std::string name, client& cl)
 			db.deleteClient(oldname);
 		db.insertClient(name, cl.getfdClient());
 		cl.setnickName(name);
+		std::cout << "oldname =>"<< oldname << "\n";
+		std::cout << "newname =>"<< cl.getnickName() << "\n";
 	}
 }

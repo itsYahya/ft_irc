@@ -43,7 +43,6 @@ const std::string&	dbManager::searchClient(int	fd)
 			return (iter->first);
 		iter++;
 	}
-	std::cout << "hhiiiii\n";
 	return (iter->first);
 }
 
