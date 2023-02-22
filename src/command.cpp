@@ -16,24 +16,24 @@ command::command(const char *buffer){
 command::~command(){}
 
 void	command::init_cmds(){
-	cmds.insert(std::pair<std::string, int>("PASS", PASS));
-	cmds.insert(std::pair<std::string, int>("NICK", NICK));
-	cmds.insert(std::pair<std::string, int>("USER", USER));
-	cmds.insert(std::pair<std::string, int>("PRIVMSG", PRIVMSG));
-	cmds.insert(std::pair<std::string, int>("PART", PART));
-	cmds.insert(std::pair<std::string, int>("JOIN", JOIN));
-	cmds.insert(std::pair<std::string, int>("EXIT", EXIT));
-	cmds.insert(std::pair<std::string, int>("LIST", LIST));
-	cmds.insert(std::pair<std::string, int>("MODE", MODE));
-	cmds.insert(std::pair<std::string, int>("KICK", KICK));
-	cmds.insert(std::pair<std::string, int>("DCC", DCC));
-	cmds.insert(std::pair<std::string, int>("PING", PING));
+	cmds.insert(std::pair<std::string, int>("PASS", CMD_PASS));
+	cmds.insert(std::pair<std::string, int>("NICK", CMD_NICK));
+	cmds.insert(std::pair<std::string, int>("USER", CMD_USER));
+	cmds.insert(std::pair<std::string, int>("PRIVMSG", CMD_PRIVMSG));
+	cmds.insert(std::pair<std::string, int>("PART", CMD_PART));
+	cmds.insert(std::pair<std::string, int>("JOIN", CMD_JOIN));
+	cmds.insert(std::pair<std::string, int>("EXIT", CMD_EXIT));
+	cmds.insert(std::pair<std::string, int>("LIST", CMD_LIST));
+	cmds.insert(std::pair<std::string, int>("MODE", CMD_MODE));
+	cmds.insert(std::pair<std::string, int>("KICK", CMD_KICK));
+	cmds.insert(std::pair<std::string, int>("DCC", CMD_DCC));
+	cmds.insert(std::pair<std::string, int>("PING", CMD_PING));
 }
 
 int		command::search_cmd(std::string &name){
 	std::map<std::string, int>::iterator iter = cmds.find(name);
 	if (iter == cmds.end())
-		return (WRONG);
+		return (CMD_WRONG);
 	return (iter->second);
 }
 
@@ -42,17 +42,10 @@ void	command::switch_cmd(const command &cmd, int fd, dbManager& db)
 	(void) db;
 	switch(cmd.type)
 	{
-		case PASS:
-			std::cout << cmd;
+		case CMD_PRIVMSG:
 			break;
-		case NICK:
-			break;
-		case USER:
-			break;
-		case PRIVMSG:
-			break;
-		case PART:
-		case JOIN:
+		case CMD_PART:
+		case CMD_JOIN:
 		default :
 			std::cout << "command wrong\n";
 	}
@@ -61,4 +54,20 @@ void	command::switch_cmd(const command &cmd, int fd, dbManager& db)
 std::ostream	&operator<<(std::ostream &out, const command &cmd){
 	out << cmd.name << " " << cmd.type << " " << cmd.body;
 	return (out);
+}
+
+int	command::gettype() const{
+	return (type);
+}
+
+std::string	command::getname() const{
+	return (name);
+}
+
+std::string	command::getbody() const{
+	return (body);
+}
+
+const char	*command::getbuffer() const{
+	return (buffer);
 }

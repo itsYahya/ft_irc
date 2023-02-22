@@ -41,3 +41,12 @@ std::vector<std::string>	helper::split_(const char *buffer, char sep){
 	res.push_back(ss);
 	return (res);
 }
+
+std::string	helper::itos(int &i){
+	std::stringstream	stream;
+	std::string			string;
+
+	stream << i;
+	stream >> string;
+	return (string);
+}

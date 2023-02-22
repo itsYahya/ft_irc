@@ -9,19 +9,19 @@
 class server;
 
 typedef enum e_ctype{
-	PASS 	= 1,
-	NICK 	= 2,
-	USER 	= 3,
-	PRIVMSG = 4,
-	PART	= 5,
-	JOIN	= 6,
-	EXIT	= 7,
-	LIST	= 8,
-	MODE	= 9,
-	KICK	= 10,
-	DCC		= 11,
-	PING	= 12,
-	WRONG 	= 0,
+	CMD_PASS 	= 1,
+	CMD_NICK 	= 2,
+	CMD_USER 	= 3,
+	CMD_PRIVMSG = 4,
+	CMD_PART	= 5,
+	CMD_JOIN	= 6,
+	CMD_EXIT	= 7,
+	CMD_LIST	= 8,
+	CMD_MODE	= 9,
+	CMD_KICK	= 10,
+	CMD_DCC		= 11,
+	CMD_PING	= 12,
+	CMD_WRONG 	= 0,
 }	t_ctype;
 
 class command{
@@ -38,6 +38,10 @@ class command{
 		static int	search_cmd(std::string &name);
 		void	switch_cmd( const command &cmd, int fd, dbManager& cl);
 		friend std::ostream	&operator<<(std::ostream &o, const command &cmd);
+		int					gettype() const ;
+		std::string			getname() const ;
+		std::string			getbody() const ;
+		const char			*getbuffer() const ;
 };
 
 #endif

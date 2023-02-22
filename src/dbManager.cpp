@@ -20,7 +20,7 @@ bool	dbManager::insertClient(std::string name, int fd)
 {
 	std::map<std::string, int>::iterator iter; 
 	iter = clients.find(name);
-	if (iter != clients.end())
+	if (iter == clients.end())
 	{
 		clients.insert(std::pair<std::string, int>(name, fd));
 		return (true);
@@ -28,9 +28,12 @@ bool	dbManager::insertClient(std::string name, int fd)
 	return (false);
 }
 
-int&	dbManager::searchClient(std::string nick)
+int	dbManager::searchClient(std::string nick)
 {
-	return (clients.find(nick)->second);
+	std::map<std::string, int>::iterator iter = clients.find(nick);
+	if (iter == clients.end())
+		return (-1);
+	return (iter->second);
 }
 
 bool	dbManager::deleteClient(std::string nick)
@@ -48,7 +51,7 @@ bool	dbManager::deleteClient(std::string nick)
 
 bool	dbManager::insertChannel(channel ch)
 {
-	std::map<std::string, channel>::iterator iter; 
+	iterator_channel iter; 
 	iter = channels.find(ch.getNameChannel());
 	if (iter != channels.end())
 	{
@@ -74,7 +77,7 @@ bool		dbManager::joinClientChannel(std::string nameChannel, std::string nick)
 
 bool	dbManager::deleteChannel(std::string nameChannel)
 {
-	std::map<std::string, channel>::iterator iter;
+	iterator_channel iter;
 
 	iter = channels.find(nameChannel);
 	if (iter != channels.end())
@@ -83,4 +86,16 @@ bool	dbManager::deleteChannel(std::string nameChannel)
 		return (true);
 	}
 	return (false);
+}
+
+bool	dbManager::updateNickClient(std::string curr, std::string new_){
+	iterator_clinet	iter = clients.find(curr);
+	int				fd = -1;
+
+	if (iter == clients.end())
+		return (false);
+	fd = iter->second;
+	clients.erase(iter->first);
+	clients.insert(std::pair<std::string, int>(new_, fd));
+	return (true);
 }

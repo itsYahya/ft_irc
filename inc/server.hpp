@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <vector>
 #include "dbManager.hpp"
+#include "client.hpp"
+#include "command.hpp"
 
 #define BUFFER_SIZE 1024
 #define MAX_FDS 1024
@@ -31,12 +33,14 @@ class server{
 		void						create();
 		void						listen();
 		void						init_fds();
-		void						accept(int &s);
-		void						read(int s);
+		void						accept();
+		void						read(int s, int first);
 		int							&getport();
 		void						setpassword(std::string pass);
 		std::string					&getpassword();
-		void						close();
+		void						close(int sock);
+		void						auth(client &c, command cmd, int first);
+		void						chekout_nick(client &c, std::string nick);
 
 };
 

@@ -13,6 +13,7 @@ class helper{
 		static std::vector<std::string>	split(std::string str, char sep);
 		static std::vector<std::string>	split_(const char *buffer, char sep);
 		static int						parse_arguments(int ac, char **av, server &server);
+		static std::string				itos(int &i);
 };
 
 #endif
