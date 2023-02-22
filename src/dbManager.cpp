@@ -28,9 +28,12 @@ bool	dbManager::insertClient(std::string name, int fd)
 	return (false);
 }
 
-int&	dbManager::searchClient(std::string nick)
+int	dbManager::searchClient(std::string nick)
 {
-	return (clients.find(nick)->second);
+	std::map<std::string, int>::iterator iter = clients.find(nick);
+	if (iter == clients.end())
+		return (-1);
+	return (iter->second);
 }
 
 bool	dbManager::deleteClient(std::string nick)
