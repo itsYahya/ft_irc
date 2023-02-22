@@ -1,5 +1,7 @@
 #include "server.hpp"
 #include "exceptions.hpp"
+#include <stdlib.h>
+#include "helper.hpp"
 
 server::server()
 {
@@ -14,7 +16,7 @@ server::server()
 }
 
 server::~server(){
-	
+	delete db;
 }
 
 int		&server::getport(){
@@ -65,10 +67,8 @@ void	server::listen(){
 			if (FD_ISSET(i, &s_read)){
 				if (sock == i)
 					accept();
-				else{
-					std::cout << clients[i].getloginPass() << std::endl;
+				else
 					read(i, 0);
-				}
 				n--;
 			}
 		}
@@ -82,6 +82,8 @@ void	server::accept(){
 	std::cout << "new client" << std::endl;
 	clients[s].type = FDBUSY;
 	clients[s].setfdClient(s);
+	clients[s].setnickName(std::string("nick") + helper::itos(s));
+	db->insertClient(clients[s].getnickName(), s);
 	read(s, 1);
 }
 
@@ -104,12 +106,24 @@ void	server::read(int s, int first){
 	else{
 		replace_nl(buffer);
 		command cmd(buffer);
-		cmd.switch_cmd(cmd, s, *db);
 		if (first)
 			clients[s].setfdClient(s);
 		if (cmd.gettype() == CMD_PASS || cmd.gettype() == CMD_NICK || cmd.gettype() == CMD_USER)
 			auth(clients[s], cmd, first);
+		else if (!first)
+			cmd.switch_cmd(cmd, s, *db);
 	}
+}
+
+void	server::chekout_nick(client &c, std::string nick){
+	int fd = db->searchClient(nick);
+
+	if (fd == -1){
+		db->updateNickClient(c.getnickName(), nick);
+		c.setnickName(nick);
+	}
+	else
+		::send(fd, "nick is already in use\n", 23, 0);
 }
 
 void	server::auth(client &c, command cmd, int first){
@@ -119,12 +133,13 @@ void	server::auth(client &c, command cmd, int first){
 		if (password.compare(cmd.getbody()) == 0)
 			c.setloginPass(cmd.getbody());
 		else{
-			c.reset();
+			send(c.getfdClient(), "wrong pass", 10, 0);
 			::close(c.getfdClient());
+			c.reset();
 		}
 	}
 	else if (type == CMD_NICK && !first)
-		c.setnickName(cmd.getbody());
+		chekout_nick(c, cmd.getbody());
 	else if (type == CMD_USER && !first)
 		c.setloginName(cmd.getbody());
 }

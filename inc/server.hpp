@@ -40,6 +40,7 @@ class server{
 		std::string					&getpassword();
 		void						close();
 		void						auth(client &c, command cmd, int first);
+		void						chekout_nick(client &c, std::string nick);
 
 };
 
