@@ -9,10 +9,13 @@
 class dbManager
 {
 	private:
-		static dbManager* instance;
-		static std::map<std::string, channel> channels;
-		static std::map<std::string, int> clients;
+		static dbManager* 										instance;
+		static std::map<std::string, channel> 					channels;
+		static std::map<std::string, int> 						clients;
+		typedef std::map<std::string, int>::iterator			iterator_clinet;
+		typedef std::map<std::string, channel>::iterator		iterator_channel;
 		dbManager();
+
 	public:
 
 		~dbManager();
@@ -26,6 +29,8 @@ class dbManager
 		static	channel&	searchChannel(std::string nameChannel);
 		static	bool		joinClientChannel(std::string nameChannel, std::string nick);
 		static	bool		deleteChannel(std::string nick);
+
+		static	bool		updateNickClient(std::string curr, std::string new_);
 };
 
 #endif
