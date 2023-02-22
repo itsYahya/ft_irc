@@ -42,13 +42,6 @@ void	command::switch_cmd(const command &cmd, int fd, dbManager& db)
 	(void) db;
 	switch(cmd.type)
 	{
-		case CMD_PASS:
-			std::cout << cmd;
-			break;
-		case CMD_NICK:
-			break;
-		case CMD_USER:
-			break;
 		case CMD_PRIVMSG:
 			break;
 		case CMD_PART:
