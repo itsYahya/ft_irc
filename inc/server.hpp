@@ -38,7 +38,7 @@ class server{
 		int							&getport();
 		void						setpassword(std::string pass);
 		std::string					&getpassword();
-		void						close();
+		void						close(int sock);
 		void						auth(client &c, command cmd, int first);
 		void						chekout_nick(client &c, std::string nick);
 

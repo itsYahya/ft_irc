@@ -11,7 +11,6 @@ int main(int ac, char **av){
 			}
 			server.create();
 			server.listen();
-			server.close();
 		}else
 			std::cerr << "wrong number of arguments" << std::endl;
 	} catch (const std::exception &excp){

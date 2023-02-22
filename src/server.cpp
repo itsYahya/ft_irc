@@ -44,8 +44,13 @@ void	server::create(){
 		throw myexception("something went wrong !!");
 }
 
-void	server::close(){
+void	server::close(int sock){
+	client	&c = clients[sock];
+
+	db->deleteClient(c.getnickName());
+	c.reset();
 	::close(sock);
+	std::cout << "client went away !!" << std::endl;
 }
 
 void	server::init_fds(){
@@ -98,11 +103,8 @@ void	replace_nl(char *buffer){
 
 void	server::read(int s, int first){
 	int	rd = recv(s, buffer, BUFFER_SIZE, 0);
-	if (rd <= 0){
-		clients[s].reset();
-		::close(s);
-		std::cout << "a client went a way" << std::endl;
-	}
+	if (rd <= 0)
+		close(s);
 	else{
 		replace_nl(buffer);
 		command cmd(buffer);
@@ -134,8 +136,7 @@ void	server::auth(client &c, command cmd, int first){
 			c.setloginPass(cmd.getbody());
 		else{
 			send(c.getfdClient(), "wrong pass", 10, 0);
-			::close(c.getfdClient());
-			c.reset();
+			close(c.getfdClient());
 		}
 	}
 	else if (type == CMD_NICK && !first)

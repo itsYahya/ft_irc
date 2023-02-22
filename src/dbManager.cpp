@@ -92,11 +92,9 @@ bool	dbManager::updateNickClient(std::string curr, std::string new_){
 	iterator_clinet	iter = clients.find(curr);
 	int				fd = -1;
 
-	std::cout << curr << std::endl;
 	if (iter == clients.end())
 		return (false);
 	fd = iter->second;
-	std::cout << iter->first << std::endl;
 	clients.erase(iter->first);
 	clients.insert(std::pair<std::string, int>(new_, fd));
 	return (true);
