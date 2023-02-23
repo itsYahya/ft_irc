@@ -11,6 +11,7 @@ typedef enum e_type{
 class client{
 	private:
 		int			fdClient;
+		bool		auth;
 		std::string	nickName;
 		std::string	realName;
 		std::string	loginName;
@@ -35,6 +36,9 @@ class client{
 		std::string	getrealName() const;
 		std::string	getloginName() const;
 		std::string	getloginPass() const;
+
+		void		authenticate();
+		bool		authenticated() const;
 };
 
 #endif

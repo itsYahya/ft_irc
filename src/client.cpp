@@ -4,6 +4,7 @@
 client::client(){
 	this->type = FDFREE;
 	this->fdClient = -1;
+	this->auth = false;
 }
 
 client::~client(){
@@ -12,6 +13,7 @@ client::~client(){
 void	client::reset(){
 	this->type = FDFREE;
 	this->fdClient = -1;
+	this->auth = false;
 }
 bool	client::isfree(){
 	return (this->type == FDFREE);
@@ -47,4 +49,12 @@ std::string		client::getloginName() const{
 }
 std::string		client::getloginPass() const{
 	return (this->loginPass);
+}
+
+void	client::authenticate(){
+	this->auth = true;
+}
+
+bool	client::authenticated() const{
+	return (auth);
 }
