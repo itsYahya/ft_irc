@@ -22,14 +22,14 @@ class client{
 		client();
 		~client();
 		
-		void 	reset();
-		bool	isfree();
+		void 		reset();
+		bool		isfree();
 
-		void	setfdClient(int fdCL);
-		void	setnickName(std::string nickNM);
-		void	setrealName(std::string  realNM);
-		void	setloginName(std::string  loginNM);
-		void	setloginPass(std::string  loginPS);
+		void		setfdClient(int fdCL);
+		void		setnickName(std::string nickNM);
+		void		setrealName(std::string  realNM);
+		void		setloginName(std::string  loginNM);
+		void		setloginPass(std::string  loginPS);
 
 		int			getfdClient() const;
 		std::string	getnickName() const;
@@ -39,6 +39,8 @@ class client{
 
 		void		authenticate();
 		bool		authenticated() const;
+
+		void		register_(int fd);
 };
 
 #endif

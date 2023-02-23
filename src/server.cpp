@@ -73,7 +73,7 @@ void	server::listen(){
 				if (sock == i)
 					accept();
 				else
-					read(i, 0);
+					read(i);
 				n--;
 			}
 		}
@@ -85,11 +85,9 @@ void	server::accept(){
 	if (s < 0)
 		throw myexception("something went wrong !!");
 	std::cout << "new client" << std::endl;
-	clients[s].type = FDBUSY;
-	clients[s].setfdClient(s);
-	clients[s].setnickName(std::string("nick") + helper::itos(s));
+	clients[s].register_(s);
 	db->insertClient(clients[s].getnickName(), s);
-	read(s, 1);
+	read(s);
 }
 
 void	replace_nl(char *buffer){
@@ -101,18 +99,16 @@ void	replace_nl(char *buffer){
 	buffer[i] = 0;
 }
 
-void	server::read(int s, int first){
+void	server::read(int s){
 	int	rd = recv(s, buffer, BUFFER_SIZE, 0);
 	if (rd <= 0)
 		close(s);
 	else{
 		replace_nl(buffer);
 		command cmd(buffer);
-		if (first)
-			clients[s].setfdClient(s);
 		if (cmd.gettype() == CMD_PASS || cmd.gettype() == CMD_NICK || cmd.gettype() == CMD_USER)
-			auth(clients[s], cmd, first);
-		else if (!first)
+			auth(clients[s], cmd);
+		else if (clients[s].authenticated())
 			cmd.switch_cmd(cmd, s, *db);
 	}
 }
@@ -128,19 +124,19 @@ void	server::chekout_nick(client &c, std::string nick){
 		::send(fd, "nick is already in use\n", 23, 0);
 }
 
-void	server::auth(client &c, command cmd, int first){
+void	server::auth(client &c, command cmd){
 	int	type = cmd.gettype();
 
 	if (type == CMD_PASS){
 		if (password.compare(cmd.getbody()) == 0)
-			c.setloginPass(cmd.getbody());
+			c.authenticate();
 		else{
 			send(c.getfdClient(), "wrong pass", 10, 0);
 			close(c.getfdClient());
 		}
 	}
-	else if (type == CMD_NICK && !first)
+	else if (type == CMD_NICK && c.authenticated())
 		chekout_nick(c, cmd.getbody());
-	else if (type == CMD_USER && !first)
+	else if (type == CMD_USER && c.authenticated())
 		c.setloginName(cmd.getbody());
 }

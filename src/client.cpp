@@ -1,4 +1,5 @@
 #include "client.hpp"
+#include "helper.hpp"
 
 
 client::client(){
@@ -57,4 +58,10 @@ void	client::authenticate(){
 
 bool	client::authenticated() const{
 	return (auth);
+}
+
+void	client::register_(int fd){
+	type = FDBUSY;
+	fdClient = fd;
+	nickName = std::string("nick") + helper::itos(fd);
 }
