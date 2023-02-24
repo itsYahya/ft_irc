@@ -109,7 +109,7 @@ void	server::read(int s){
 		if (cmd.gettype() == CMD_PASS || cmd.gettype() == CMD_NICK || cmd.gettype() == CMD_USER)
 			auth(clients[s], cmd);
 		else if (clients[s].authenticated())
-			cmd.switch_cmd(cmd, s, *db);
+			cmd.switch_cmd(cmd, s, db, clients[s]);
 	}
 }
 
@@ -120,8 +120,10 @@ void	server::chekout_nick(client &c, std::string nick){
 		db->updateNickClient(c.getnickName(), nick);
 		c.setnickName(nick);
 	}
-	else
-		::send(fd, "nick is already in use\n", 23, 0);
+	else{
+		std::string msg = ":127.0.0.1 433 * " + nick + " :Nickname is already in use.\n";
+		::send(c.getfdClient(),  msg.c_str(), msg.length(), 0);
+	}
 }
 
 void	server::auth(client &c, command cmd){
