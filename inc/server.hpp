@@ -34,12 +34,12 @@ class server{
 		void						listen();
 		void						init_fds();
 		void						accept();
-		void						read(int s, int first);
+		void						read(int s);
 		int							&getport();
 		void						setpassword(std::string pass);
 		std::string					&getpassword();
 		void						close(int sock);
-		void						auth(client &c, command cmd, int first);
+		void						auth(client &c, command cmd);
 		void						chekout_nick(client &c, std::string nick);
 
 };

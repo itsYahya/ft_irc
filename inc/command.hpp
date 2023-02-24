@@ -34,14 +34,17 @@ class command{
 	public:
 		command(const char *buffer);
 		~command();
-		static void	init_cmds();
-		static int	search_cmd(std::string &name);
-		void	switch_cmd( const command &cmd, int fd, dbManager& cl);
-		friend std::ostream	&operator<<(std::ostream &o, const command &cmd);
-		int					gettype() const ;
-		std::string			getname() const ;
-		std::string			getbody() const ;
-		const char			*getbuffer() const ;
+		static void							init_cmds();
+		static int							search_cmd(std::string &name);
+		void								switch_cmd( const command &cmd, int fd, dbManager *cl, client &c);
+		friend std::ostream					&operator<<(std::ostream &o, const command &cmd);
+		int									gettype() const ;
+		std::string							getname() const ;
+		std::string							getbody() const ;
+		const char							*getbuffer() const ;
+
+		void								sendMsg(dbManager *db, int fd, client &c);
+		void								prvMsg(std::string sender, int fd);
 };
 
 #endif

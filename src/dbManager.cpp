@@ -18,7 +18,7 @@ dbManager&	dbManager::getInstance()
 
 bool	dbManager::insertClient(std::string name, int fd)
 {
-	std::map<std::string, int>::iterator iter; 
+	iterator_clinet iter; 
 	iter = clients.find(name);
 	if (iter == clients.end())
 	{
@@ -30,7 +30,7 @@ bool	dbManager::insertClient(std::string name, int fd)
 
 int	dbManager::searchClient(std::string nick)
 {
-	std::map<std::string, int>::iterator iter = clients.find(nick);
+	iterator_clinet iter = clients.find(nick);
 	if (iter == clients.end())
 		return (-1);
 	return (iter->second);
@@ -38,7 +38,7 @@ int	dbManager::searchClient(std::string nick)
 
 bool	dbManager::deleteClient(std::string nick)
 {
-	std::map<std::string, int>::iterator iter;
+	iterator_clinet iter;
 
 	iter = clients.find(nick);
 	if (iter != clients.end())
