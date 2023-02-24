@@ -37,12 +37,39 @@ int		command::search_cmd(std::string &name){
 	return (iter->second);
 }
 
-void	command::switch_cmd(const command &cmd, int fd, dbManager& db)
+void	command::prvMsg(std::string sender, int fd){
+	std::string msg = ":" + sender + " " + name + " " + body + "\n";
+	send(fd, msg.c_str(), msg.length(), 0);
+}
+
+void	command::sendMsg(dbManager *db, int fd, client &c){
+	std::vector<std::string>	res;
+	int							client;
+
+	res = helper::split_(body.c_str(), ' ');
+	client = db->searchClient(res[0]);
+	if (client > 0)
+		prvMsg(c.getnickName(), client);
+	else {
+		channel	ch = db->searchChannel(res[0]);
+		if (ch.getNameChannel() == res[0]){
+
+		}
+		else {
+			std::string msg = ":127.0.0.1 401 " + c.getnickName() + " " + res[0] + " :No such nick/channel\n";
+			send(fd, msg.c_str(), msg.length(), 0);
+		}
+	}
+	
+}
+
+void	command::switch_cmd(const command &cmd, int fd, dbManager	*db, client &c)
 {	(void) fd;
 	(void) db;
 	switch(cmd.type)
 	{
 		case CMD_PRIVMSG:
+			sendMsg(db, fd, c);
 			break;
 		case CMD_PART:
 		case CMD_JOIN:
