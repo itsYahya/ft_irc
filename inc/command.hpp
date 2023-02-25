@@ -47,6 +47,8 @@ class command{
 
 		void								sendMsg(dbManager *db, int fd, client &c);
 		void								prvMsg(std::string sender, int fd);
+		
+		void								sendList(dbManager *db, int fd, client &c);
 };
 
 #endif

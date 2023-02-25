@@ -74,6 +74,8 @@ void	command::switch_cmd(const command &cmd, int fd, dbManager	*db, client &c)
 		case CMD_PART:
 		case CMD_JOIN:
 			joinCommand(c, body, *db);
+		case CMD_LIST:
+			sendList(db, fd, c);
 			break;
 		default :
 			std::cout << "command wrong\n";
@@ -113,9 +115,14 @@ void								command::joinCommand(client &cl, std::string body, dbManager& db)
 	else
 		db.joinClientChannel(body, cl.getnickName());
 }
+
 void								partCommand(client &cl, std::string body, dbManager& db)
 {
 	(void) cl;
 	(void) body;
 	(void) db;
+}
+
+void	command::sendList(dbManager *db, int fd, client &c){
+	std::cout << "list command was called" << std::endl;
 }
