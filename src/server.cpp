@@ -109,7 +109,7 @@ void	server::read(int s){
 		if (cmd.gettype() == CMD_PASS || cmd.gettype() == CMD_NICK || cmd.gettype() == CMD_USER)
 			auth(clients[s], cmd);
 		else if (clients[s].authenticated())
-			cmd.switch_cmd(cmd, s, db, clients[s]);
+			cmd.switch_cmd(s, db, clients[s]);
 	}
 }
 

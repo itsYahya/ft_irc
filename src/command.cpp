@@ -63,10 +63,9 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 	
 }
 
-void	command::switch_cmd(const command &cmd, int fd, dbManager	*db, client &c)
-{	(void) fd;
-	(void) db;
-	switch(cmd.type)
+void	command::switch_cmd(int fd, dbManager	*db, client &c)
+{
+	switch(type)
 	{
 		case CMD_PRIVMSG:
 			sendMsg(db, fd, c);
@@ -124,5 +123,8 @@ void								partCommand(client &cl, std::string body, dbManager& db)
 }
 
 void	command::sendList(dbManager *db, int fd, client &c){
+	(void)db;
+	(void)fd;
+	(void)c;
 	std::cout << "list command was called" << std::endl;
 }
