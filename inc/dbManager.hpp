@@ -12,11 +12,11 @@ class dbManager
 		static dbManager* 										instance;
 		static std::map<std::string, channel> 					channels;
 		static std::map<std::string, int> 						clients;
-		typedef std::map<std::string, int>::iterator			iterator_clinet;
-		typedef std::map<std::string, channel>::iterator		iterator_channel;
 		dbManager();
 
 	public:
+		typedef std::map<std::string, int>::iterator			iterator_clinet;
+		typedef std::map<std::string, channel>::iterator		iterator_channel;
 
 		~dbManager();
 		static	dbManager&	getInstance();
