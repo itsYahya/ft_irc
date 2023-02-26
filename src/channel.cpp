@@ -1,8 +1,15 @@
 #include "channel.hpp"
 
 std::map<std::string, int> channel::clients;
-
-channel::channel(std::string name) : nameChannel(name){}
+std::map<std::string, int>::iterator	channel::iter;
+channel::channel(std::string name, int fd_op) : nameChannel(name), fd_op(fd_op)
+{
+	isPasswd = false;
+}
+channel::channel(std::string name, int fd_op, std::string passwd) : nameChannel(name), passwd(passwd), fd_op(fd_op)
+{
+	isPasswd = true;
+}
 channel::~channel(){}
 
 std::string channel::getNameChannel() const
@@ -12,7 +19,6 @@ std::string channel::getNameChannel() const
 
 bool	channel::insertClientToChannel(std::string name,int fd)
 {
-	std::map<std::string, int>::iterator iter;
 	iter = clients.find(name);
 	if (iter != clients.end())
 	{
@@ -24,7 +30,6 @@ bool	channel::insertClientToChannel(std::string name,int fd)
 
 bool	channel::searchClient(std::string nick)
 {
-	std::map<std::string, int>::iterator iter;
 	iter = clients.find(nick);
 	if (iter != clients.end())
 		return (true);
@@ -33,8 +38,6 @@ bool	channel::searchClient(std::string nick)
 
 bool		channel::deleteClient(std::string nick)
 {
-	std::map<std::string, int>::iterator iter;
-
 	iter = clients.find(nick);
 	if (iter != clients.end())
 	{
@@ -42,4 +45,19 @@ bool		channel::deleteClient(std::string nick)
 		return (true);
 	}
 	return (false);
+}
+
+std::string			channel::getPasswd() const
+{
+	return (passwd);
+}
+
+bool				channel::getIsPasswd() const
+{
+	return (isPasswd);
+}
+
+int					channel::getfd_op()	const
+{
+	return (fd_op);
 }

@@ -73,6 +73,8 @@ void	command::switch_cmd(const command &cmd, int fd, dbManager	*db, client &c)
 			break;
 		case CMD_PART:
 		case CMD_JOIN:
+			joinCommand(c, body, *db);
+			break;
 		default :
 			std::cout << "command wrong\n";
 	}
@@ -97,4 +99,24 @@ std::string	command::getbody() const{
 
 const char	*command::getbuffer() const{
 	return (buffer);
+}
+
+void								command::joinCommand(client &cl, std::string body, dbManager& db)
+{
+	channel* ch = NULL;
+	std::vector<std::string> v = helper::split_(body.c_str(),' ');
+	if (!db.srchChannel(v[0]))
+	{
+		ch = new channel(v[0], cl.getfdClient());
+		db.insertChannel(*ch);
+		db.joinClientChannel(ch->getNameChannel(), cl.getnickName());
+	}
+	else
+		db.joinClientChannel(v[0], cl.getnickName());
+}
+void								partCommand(client &cl, std::string body, dbManager& db)
+{
+	(void) cl;
+	(void) body;
+	(void) db;
 }

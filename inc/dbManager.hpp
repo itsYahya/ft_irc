@@ -27,7 +27,9 @@ class dbManager
 
 		static	bool		insertChannel(channel ch);
 		static	channel&	searchChannel(std::string nameChannel);
+		static	bool		srchChannel(std::string nameChannel);
 		static	bool		joinClientChannel(std::string nameChannel, std::string nick);
+		static	bool		deleteClientChannel(std::string nameChannel, std::string nick);
 		static	bool		deleteChannel(std::string nick);
 
 		static	bool		updateNickClient(std::string curr, std::string new_);

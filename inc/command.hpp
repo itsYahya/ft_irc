@@ -31,6 +31,8 @@ class command{
 		std::string							body;
 		const char							*buffer;
 		static std::map<std::string, int>	cmds;
+		void								joinCommand(client &cl, std::string body, dbManager& db);
+		void								partCommand(client &cl, std::string body, dbManager& db);
 	public:
 		command(const char *buffer);
 		~command();
