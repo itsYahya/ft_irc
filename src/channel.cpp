@@ -20,7 +20,7 @@ std::string channel::getNameChannel() const
 bool	channel::insertClientToChannel(std::string name,int fd)
 {
 	iter = clients.find(name);
-	if (iter != clients.end())
+	if (iter == clients.end())
 	{
 		clients.insert(std::pair<std::string, int>(name, fd));
 		return (true);
