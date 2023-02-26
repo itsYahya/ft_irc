@@ -104,15 +104,19 @@ const char	*command::getbuffer() const{
 void								command::joinCommand(client &cl, std::string body, dbManager& db)
 {
 	channel* ch = NULL;
-	std::vector<std::string> v = helper::split_(body.c_str(),' ');
-	if (!db.srchChannel(v[0]))
+	// std::vector<std::string> v = helper::split_(body.c_str(),' ');
+
+	if (!db.srchChannel(body))
 	{
-		ch = new channel(v[0], cl.getfdClient());
+		ch = new channel(body, cl.getfdClient());
 		db.insertChannel(*ch);
 		db.joinClientChannel(ch->getNameChannel(), cl.getnickName());
 	}
 	else
-		db.joinClientChannel(v[0], cl.getnickName());
+		db.joinClientChannel(body, cl.getnickName());
+	std::cout << body << " \n";
+	std::cout << db.searchChannel(body).getNameChannel() << " \n";
+	std::cout << db.searchChannel(body).searchClient(cl.getnickName()) << " \n";
 }
 void								partCommand(client &cl, std::string body, dbManager& db)
 {

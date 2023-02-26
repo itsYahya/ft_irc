@@ -49,11 +49,11 @@ bool	dbManager::deleteClient(std::string nick)
 	return (false);
 }
 
-bool	dbManager::insertChannel(channel ch)
+bool	dbManager::insertChannel(channel& ch)
 {
 	iterator_channel iter; 
 	iter = channels.find(ch.getNameChannel());
-	if (iter != channels.end())
+	if (iter == channels.end())
 	{
 		channels.insert(std::pair<std::string, channel>(ch.getNameChannel(), ch));
 		return (true);
