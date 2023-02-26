@@ -20,6 +20,7 @@ class server{
 		int							port;
 		std::string					password;
 		fd_set						s_read;
+		fd_set						s_write;
 		struct sockaddr_in			addr;
 		socklen_t					len;
 		char						buffer[BUFFER_SIZE];

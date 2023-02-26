@@ -8,6 +8,7 @@ server::server()
 	sock = 0;
 	port = 0;
 	FD_ZERO(&s_read);
+	FD_ZERO(&s_write);
 	len = sizeof(addr);
 	(void) buffer;
 	clients.resize(MAX_FDS);
@@ -55,10 +56,14 @@ void	server::close(int sock){
 
 void	server::init_fds(){
 	FD_ZERO(&s_read);
+	FD_ZERO(&s_write);
 	FD_SET(sock, &s_read);
 	for (int i = 0; i < MAX_FDS; i++){
-		if (!clients[i].isfree())
+		if (!clients[i].isfree()){
 			FD_SET(i, &s_read);
+			if (clients[i].writeState())
+				FD_SET(i, &s_write);
+		}
 	}
 }
 
