@@ -16,6 +16,7 @@ class client{
 		std::string	realName;
 		std::string	loginName;
 		std::string loginPass;
+		bool		s_w;
 		
 	public:
 		t_type		type;
@@ -41,6 +42,10 @@ class client{
 		bool		authenticated() const;
 
 		void		register_(int fd);
+
+		bool		writeState() const;
+		void		setWriteState();
+		void		unsetWriteState();
 };
 
 #endif
