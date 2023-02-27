@@ -1,4 +1,5 @@
 #include "channel.hpp"
+#include "helper.hpp"
 
 std::map<std::string, int> channel::clients;
 std::map<std::string, int>::iterator	channel::iter;
@@ -60,4 +61,22 @@ bool				channel::getIsPasswd() const
 int					channel::getfd_op()	const
 {
 	return (fd_op);
+}
+
+std::string		channel::getInfo(std::string nick){
+	std::string	info = ":127.0.0.1 " + helper::itos(322);
+	info += " " + nick + " " + nameChannel + " :channel status\n";
+	return (info);
+}
+
+std::string		channel::getInfosHeader(std::string nick){
+	std::string header = ":127.0.0.1 " + helper::itos(321);
+	header += " " + nick + " Channel :Users Name\n";
+	return (header);
+}
+
+std::string		channel::getInfosFooter(std::string nick){
+	std::string footer = ":127.0.0.1 " + helper::itos(323);
+	footer += " " + nick + " End of /LIST\n";
+	return (footer);
 }

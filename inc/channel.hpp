@@ -27,6 +27,10 @@ class channel
 		std::string			getPasswd() const;
 		bool				getIsPasswd() const;
 		int					getfd_op()	const;
+
+		std::string			getInfo(std::string nick);
+		static std::string	getInfosHeader(std::string nick);
+		static std::string	getInfosFooter(std::string nick);
 };
 
 #endif
