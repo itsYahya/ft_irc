@@ -70,7 +70,7 @@ void	server::init_fds(){
 void	server::listen(){
 	while (1){
 		init_fds();
-		n = select(MAX_FDS, &s_read, NULL, NULL, NULL);
+		n = select(MAX_FDS, &s_read, &s_write, NULL, NULL);
 		if (n < 0)
 			throw myexception("something went wrong !!");
 		for (int i = 0; i < MAX_FDS && n > 0; i++){
@@ -81,6 +81,8 @@ void	server::listen(){
 					read(i);
 				n--;
 			}
+			if (FD_ISSET(i, &s_write))
+				write(i, clients[i]);
 		}
 	}
 }
@@ -146,4 +148,18 @@ void	server::auth(client &c, command cmd){
 		chekout_nick(c, cmd.getbody());
 	else if (type == CMD_USER && c.authenticated())
 		c.setloginName(cmd.getbody());
+}
+
+void	server::write(int fd, client &c){
+	int			&windex = c.getWindex();
+	size_t		chank = 0;
+	std::string	&list = c.getList();
+
+	chank = std::min(strlen(list.c_str() + windex), (size_t)1024);
+	windex += send(fd, list.c_str() + windex, chank, 0);
+	if (strlen(list.c_str() + windex) == 0){
+		c.unsetWriteState();
+		windex = 0;
+		list = "";
+	}
 }

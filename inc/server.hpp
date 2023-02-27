@@ -43,6 +43,8 @@ class server{
 		void						auth(client &c, command cmd);
 		void						chekout_nick(client &c, std::string nick);
 
+		static void					write(int fd, client &c);
+
 };
 
 #endif
