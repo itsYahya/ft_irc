@@ -154,8 +154,8 @@ void	server::write(int fd, client &c){
 	int			&windex = c.getWindex();
 	size_t		chank = 0;
 	std::string	&list = c.getList();
-
-	chank = std::min(strlen(list.c_str() + windex), (size_t)1024);
+	
+	chank = std::min(strlen(list.c_str() + windex), (size_t)1);
 	windex += send(fd, list.c_str() + windex, chank, 0);
 	if (strlen(list.c_str() + windex) == 0){
 		c.unsetWriteState();

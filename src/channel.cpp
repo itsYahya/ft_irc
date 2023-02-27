@@ -1,8 +1,6 @@
 #include "channel.hpp"
 #include "helper.hpp"
 
-std::map<std::string, int> channel::clients;
-std::map<std::string, int>::iterator	channel::iter;
 channel::channel(std::string name, int fd_op) : nameChannel(name), fd_op(fd_op)
 {
 	isPasswd = false;
@@ -20,8 +18,7 @@ std::string channel::getNameChannel() const
 
 bool	channel::insertClientToChannel(std::string name,int fd)
 {
-	iter = clients.find(name);
-	if (iter == clients.end())
+	if (!searchClient(name))
 	{
 		clients.insert(std::pair<std::string, int>(name, fd));
 		return (true);

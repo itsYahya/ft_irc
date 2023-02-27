@@ -107,18 +107,17 @@ const char	*command::getbuffer() const{
 
 void	command::joinCommand(client &cl, std::string body, dbManager& db)
 {
-	channel* ch = NULL;
 	if (!db.srchChannel(body))
 	{
-		ch = new channel(body, cl.getfdClient());
-		db.insertChannel(*ch);
-		db.joinClientChannel(ch->getNameChannel(), cl.getnickName());
+		channel ch(body, cl.getfdClient());
+		db.insertChannel(ch);
+		db.joinClientChannel(ch.getNameChannel(), cl.getnickName(), cl.getfdClient());
 	}
 	else
-		db.joinClientChannel(body, cl.getnickName());
+		db.joinClientChannel(body, cl.getnickName(), cl.getfdClient());
 }
 
-void	partCommand(client &cl, std::string body, dbManager& db)
+void	command::partCommand(client &cl, std::string body, dbManager& db)
 {
 	(void) cl;
 	(void) body;
