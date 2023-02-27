@@ -126,8 +126,16 @@ void	partCommand(client &cl, std::string body, dbManager& db)
 }
 
 void	command::sendList(dbManager *db, int fd, client &c){
-	(void)db;
-	(void)fd;
-	(void)c;
-	std::cout << "list command was called" << std::endl;
+	dbManager::iterator_channel		iter;
+	dbManager::channels_type		&map_ch = db->getChannels();
+	std::string						&list = c.getList();
+
+	iter = map_ch.begin();
+	list = channel::getInfosHeader(c.getnickName());
+	for (; iter != map_ch.end(); iter++)
+		list += iter->second.getInfo(c.getnickName());
+	list += channel::getInfosFooter(c.getnickName());
+	c.setWriteState();
+	c.getWindex() = 0;
+	server::write(fd, c);
 }
