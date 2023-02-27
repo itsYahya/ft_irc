@@ -73,11 +73,14 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c)
 		case CMD_PART:
 		case CMD_JOIN:
 			joinCommand(c, body, *db);
+			break;
 		case CMD_LIST:
 			sendList(db, fd, c);
 			break;
 		default :
-			std::cout << "command wrong\n";
+			std::string msg = ":127.0.0.1 421 ";
+			msg += c.getnickName() + " " + body + " :Unknown command\n";
+			send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 	}
 }
 
@@ -102,7 +105,7 @@ const char	*command::getbuffer() const{
 	return (buffer);
 }
 
-void								command::joinCommand(client &cl, std::string body, dbManager& db)
+void	command::joinCommand(client &cl, std::string body, dbManager& db)
 {
 	channel* ch = NULL;
 	if (!db.srchChannel(body))
@@ -115,7 +118,7 @@ void								command::joinCommand(client &cl, std::string body, dbManager& db)
 		db.joinClientChannel(body, cl.getnickName());
 }
 
-void								partCommand(client &cl, std::string body, dbManager& db)
+void	partCommand(client &cl, std::string body, dbManager& db)
 {
 	(void) cl;
 	(void) body;
