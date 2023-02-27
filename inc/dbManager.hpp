@@ -22,7 +22,7 @@ class dbManager
 
 		~dbManager();
 		static	dbManager&		getInstance();
-
+		
 		static	bool			insertClient(std::string name, int fd);
 		static	int				searchClient(std::string nick);
 		static	bool			deleteClient(std::string nick);
@@ -35,7 +35,8 @@ class dbManager
 		static	bool			deleteChannel(std::string nick);
 
 		static	bool			updateNickClient(std::string curr, std::string new_);
-		
+		static	channels_type	&getChannels();
+		static	clients_type	&getClients();
 };
 
 #endif

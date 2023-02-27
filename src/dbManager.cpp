@@ -120,3 +120,11 @@ bool	dbManager::deleteClientChannel(std::string nameChannel, std::string nick)
 	}
 	return (false);
 }
+
+dbManager::channels_type	&dbManager::getChannels(){
+	return (channels);
+}
+
+dbManager::clients_type		&dbManager::getClients(){
+	return (clients);
+}
