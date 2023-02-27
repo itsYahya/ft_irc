@@ -17,6 +17,8 @@ class client{
 		std::string	loginName;
 		std::string loginPass;
 		bool		s_w;
+		std::string	list;
+		int			windex;
 		
 	public:
 		t_type		type;
@@ -46,6 +48,9 @@ class client{
 		bool		writeState() const;
 		void		setWriteState();
 		void		unsetWriteState();
+		
+		std::string	&getList();
+		int			&getWindex();
 };
 
 #endif

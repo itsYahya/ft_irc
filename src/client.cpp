@@ -79,3 +79,11 @@ void	client::setWriteState(){
 void	client::unsetWriteState(){
 	s_w = false;
 }
+
+std::string	&client::getList(){
+	return (list);
+}
+
+int			&client::getWindex(){
+	return (windex);
+}
