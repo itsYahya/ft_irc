@@ -46,7 +46,7 @@ class command{
 		const char							*getbuffer() const ;
 
 		void								sendMsg(dbManager *db, int fd, client &c);
-		void								prvMsg(std::string sender, int fd);
+		void								prvMsg(client &c, int fd);
 		
 		void								sendList(dbManager *db, int fd, client &c);
 };

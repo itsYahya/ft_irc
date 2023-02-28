@@ -37,8 +37,8 @@ int		command::search_cmd(std::string &name){
 	return (iter->second);
 }
 
-void	command::prvMsg(std::string sender, int fd){
-	std::string msg = ":" + sender + " " + name + " " + body + "\n";
+void	command::prvMsg(client &c, int fd){
+	std::string msg = c.getClinetFullname() + name + " " + body + "\n";
 	send(fd, msg.c_str(), msg.length(), 0);
 }
 
@@ -49,7 +49,7 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 	res = helper::split_(body.c_str(), ' ');
 	client = db->searchClient(res[0]);
 	if (client > 0)
-		prvMsg(c.getnickName(), client);
+		prvMsg(c, client);
 	else {
 		channel	ch = db->searchChannel(res[0]);
 		if (ch.getNameChannel() == res[0]){
