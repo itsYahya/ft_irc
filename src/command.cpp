@@ -1,6 +1,7 @@
 #include "command.hpp"
 #include "server.hpp"
 #include "helper.hpp"
+#include "exceptions.hpp"
 
 std::map<std::string, int> command::cmds;
 
@@ -107,14 +108,18 @@ const char	*command::getbuffer() const{
 
 void	command::joinCommand(client &cl, std::string body, dbManager& db)
 {
-	if (!db.srchChannel(body))
-	{
-		channel ch(body, cl.getfdClient());
-		db.insertChannel(ch);
-		db.joinClientChannel(ch.getNameChannel(), cl.getnickName(), cl.getfdClient());
+	if(body.c_str()[0] == '#')
+	{	if (!db.srchChannel(body))
+		{
+			channel ch(body, cl.getfdClient());
+			db.insertChannel(ch);
+			db.joinClientChannel(ch.getNameChannel(), cl.getnickName(), cl.getfdClient());
+		}
+		else
+			db.joinClientChannel(body, cl.getnickName(), cl.getfdClient());
 	}
 	else
-		db.joinClientChannel(body, cl.getnickName(), cl.getfdClient());
+		std::cout << "you must use #<channel> form !! \n";
 }
 
 void	command::partCommand(client &cl, std::string body, dbManager& db)
