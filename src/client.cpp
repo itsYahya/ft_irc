@@ -87,3 +87,7 @@ std::string	&client::getList(){
 int			&client::getWindex(){
 	return (windex);
 }
+
+std::string	&client::getHost() {
+	return (host);
+}

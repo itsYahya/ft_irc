@@ -19,6 +19,8 @@ class client{
 		bool		s_w;
 		std::string	list;
 		int			windex;
+
+		std::string	host;
 		
 	public:
 		t_type		type;
@@ -51,6 +53,8 @@ class client{
 		
 		std::string	&getList();
 		int			&getWindex();
+
+		std::string	&getHost();
 };
 
 #endif
