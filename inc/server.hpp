@@ -45,6 +45,8 @@ class server{
 
 		static void					write(int fd, client &c);
 
+		std::string					getClientHost(const void *addr, socklen_t len);
+
 };
 
 #endif

@@ -2,6 +2,7 @@
 #include "exceptions.hpp"
 #include <stdlib.h>
 #include "helper.hpp"
+#include  <netdb.h>
 
 server::server()
 {
@@ -93,6 +94,7 @@ void	server::accept(){
 		throw myexception("something went wrong !!");
 	std::cout << "new client" << std::endl;
 	clients[s].register_(s);
+	clients[s].getHost() = getClientHost(&addr.sin_addr, addr.sin_len);
 	db->insertClient(clients[s].getnickName(), s);
 	read(s);
 }
@@ -162,4 +164,9 @@ void	server::write(int fd, client &c){
 		windex = 0;
 		list = "";
 	}
+}
+
+std::string	server::getClientHost(const void *addr, socklen_t len){
+	struct hostent *h = gethostbyaddr(addr, len, AF_INET);
+	return (std::string(h->h_name));
 }
