@@ -1,6 +1,7 @@
 #include "command.hpp"
 #include "server.hpp"
 #include "helper.hpp"
+#include "exceptions.hpp"
 
 std::map<std::string, int> command::cmds;
 
@@ -71,6 +72,8 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c)
 			sendMsg(db, fd, c);
 			break;
 		case CMD_PART:
+			partCommand(c, body, *db);
+			break;
 		case CMD_JOIN:
 			joinCommand(c, body, *db);
 			break;
@@ -107,22 +110,33 @@ const char	*command::getbuffer() const{
 
 void	command::joinCommand(client &cl, std::string body, dbManager& db)
 {
-	channel* ch = NULL;
-	if (!db.srchChannel(body))
-	{
-		ch = new channel(body, cl.getfdClient());
-		db.insertChannel(*ch);
-		db.joinClientChannel(ch->getNameChannel(), cl.getnickName());
+	if (body.c_str()[0] == '#')
+	{	if (!db.srchChannel(body))
+		{
+			channel ch(body, cl.getfdClient());
+			db.insertChannel(ch);
+			db.joinClientChannel(ch.getNameChannel(), cl.getnickName(), cl.getfdClient());
+		}
+		else
+			db.joinClientChannel(body, cl.getnickName(), cl.getfdClient());
 	}
 	else
-		db.joinClientChannel(body, cl.getnickName());
+		std::cout << "you must use #<channel> form !! \n";
 }
 
-void	partCommand(client &cl, std::string body, dbManager& db)
+void	command::partCommand(client &cl, std::string body, dbManager& db)
 {
-	(void) cl;
-	(void) body;
-	(void) db;
+	if (body.c_str()[0] == '#')
+	{
+		if (db.srchChannel(body))
+		{
+			db.deleteClientChannel(body, cl.getnickName());
+			if (!db.getClients().size())
+				db.deleteChannel(body);
+		}
+	}
+	else
+		std::cout << "you must use #<channel> form !! \n";
 }
 
 void	command::sendList(dbManager *db, int fd, client &c){
