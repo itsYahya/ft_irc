@@ -78,7 +78,7 @@ bool		dbManager::joinClientChannel(std::string nameChannel, std::string nick, in
 	channel ch = dbManager::searchChannel(nameChannel);
 	if (ch.insertClientToChannel(nick, fd))
 	{
-		std::cout << clients.find(nick)->second << " \n";
+		std::cout << nameChannel << " => " << nick << " \n";
 		return (true);
 	}
 	else
