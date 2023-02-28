@@ -55,6 +55,8 @@ class client{
 		int			&getWindex();
 
 		std::string	&getHost();
+
+		std::string	getClinetFullname();
 };
 
 #endif

@@ -91,3 +91,10 @@ int			&client::getWindex(){
 std::string	&client::getHost() {
 	return (host);
 }
+
+std::string	client::getClinetFullname(){
+	std::string name;
+
+	name = ":" + nickName + "!~" + loginName + "@" + host + " ";
+	return (name);
+}
