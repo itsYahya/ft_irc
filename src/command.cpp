@@ -1,6 +1,7 @@
 #include "command.hpp"
 #include "server.hpp"
 #include "helper.hpp"
+#include "exceptions.hpp"
 
 std::map<std::string, int> command::cmds;
 
@@ -63,20 +64,26 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 	
 }
 
-void	command::switch_cmd(const command &cmd, int fd, dbManager	*db, client &c)
-{	(void) fd;
-	(void) db;
-	switch(cmd.type)
+void	command::switch_cmd(int fd, dbManager	*db, client &c)
+{
+	switch(type)
 	{
 		case CMD_PRIVMSG:
 			sendMsg(db, fd, c);
 			break;
 		case CMD_PART:
+			partCommand(c, body, *db);
+			break;
 		case CMD_JOIN:
 			joinCommand(c, body, *db);
 			break;
+		case CMD_LIST:
+			sendList(db, fd, c);
+			break;
 		default :
-			std::cout << "command wrong\n";
+			std::string msg = ":127.0.0.1 421 ";
+			msg += c.getnickName() + " " + body + " :Unknown command\n";
+			send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 	}
 }
 
@@ -101,21 +108,48 @@ const char	*command::getbuffer() const{
 	return (buffer);
 }
 
-void								command::joinCommand(client &cl, std::string body, dbManager& db)
+void	command::joinCommand(client &cl, std::string body, dbManager& db)
 {
-	channel* ch = NULL;
-	if (!db.srchChannel(body))
-	{
-		ch = new channel(body, cl.getfdClient());
-		db.insertChannel(*ch);
-		db.joinClientChannel(ch->getNameChannel(), cl.getnickName());
+	if (body.c_str()[0] == '#')
+	{	if (!db.srchChannel(body))
+		{
+			channel ch(body, cl.getfdClient());
+			db.insertChannel(ch);
+			db.joinClientChannel(ch.getNameChannel(), cl.getnickName(), cl.getfdClient());
+		}
+		else
+			db.joinClientChannel(body, cl.getnickName(), cl.getfdClient());
 	}
 	else
-		db.joinClientChannel(body, cl.getnickName());
+		std::cout << "you must use #<channel> form !! \n";
 }
-void								partCommand(client &cl, std::string body, dbManager& db)
+
+void	command::partCommand(client &cl, std::string body, dbManager& db)
 {
-	(void) cl;
-	(void) body;
-	(void) db;
+	if (body.c_str()[0] == '#')
+	{
+		if (db.srchChannel(body))
+		{
+			db.deleteClientChannel(body, cl.getnickName());
+			if (!db.getClients().size())
+				db.deleteChannel(body);
+		}
+	}
+	else
+		std::cout << "you must use #<channel> form !! \n";
+}
+
+void	command::sendList(dbManager *db, int fd, client &c){
+	dbManager::iterator_channel		iter;
+	dbManager::channels_type		&map_ch = db->getChannels();
+	std::string						&list = c.getList();
+
+	iter = map_ch.begin();
+	list = channel::getInfosHeader(c.getnickName());
+	for (; iter != map_ch.end(); iter++)
+		list += iter->second.getInfo(c.getnickName());
+	list += channel::getInfosFooter(c.getnickName());
+	c.setWriteState();
+	c.getWindex() = 0;
+	server::write(fd, c);
 }

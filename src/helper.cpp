@@ -42,7 +42,7 @@ std::vector<std::string>	helper::split_(const char *buffer, char sep){
 	return (res);
 }
 
-std::string	helper::itos(int &i){
+std::string	helper::itos(int i){
 	std::stringstream	stream;
 	std::string			string;
 

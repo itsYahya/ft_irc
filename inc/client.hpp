@@ -16,6 +16,9 @@ class client{
 		std::string	realName;
 		std::string	loginName;
 		std::string loginPass;
+		bool		s_w;
+		std::string	list;
+		int			windex;
 		
 	public:
 		t_type		type;
@@ -41,6 +44,13 @@ class client{
 		bool		authenticated() const;
 
 		void		register_(int fd);
+
+		bool		writeState() const;
+		void		setWriteState();
+		void		unsetWriteState();
+		
+		std::string	&getList();
+		int			&getWindex();
 };
 
 #endif

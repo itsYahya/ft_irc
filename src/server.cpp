@@ -8,6 +8,7 @@ server::server()
 	sock = 0;
 	port = 0;
 	FD_ZERO(&s_read);
+	FD_ZERO(&s_write);
 	len = sizeof(addr);
 	(void) buffer;
 	clients.resize(MAX_FDS);
@@ -55,17 +56,21 @@ void	server::close(int sock){
 
 void	server::init_fds(){
 	FD_ZERO(&s_read);
+	FD_ZERO(&s_write);
 	FD_SET(sock, &s_read);
 	for (int i = 0; i < MAX_FDS; i++){
-		if (!clients[i].isfree())
+		if (!clients[i].isfree()){
 			FD_SET(i, &s_read);
+			if (clients[i].writeState())
+				FD_SET(i, &s_write);
+		}
 	}
 }
 
 void	server::listen(){
 	while (1){
 		init_fds();
-		n = select(MAX_FDS, &s_read, NULL, NULL, NULL);
+		n = select(MAX_FDS, &s_read, &s_write, NULL, NULL);
 		if (n < 0)
 			throw myexception("something went wrong !!");
 		for (int i = 0; i < MAX_FDS && n > 0; i++){
@@ -76,6 +81,8 @@ void	server::listen(){
 					read(i);
 				n--;
 			}
+			if (FD_ISSET(i, &s_write))
+				write(i, clients[i]);
 		}
 	}
 }
@@ -109,7 +116,7 @@ void	server::read(int s){
 		if (cmd.gettype() == CMD_PASS || cmd.gettype() == CMD_NICK || cmd.gettype() == CMD_USER)
 			auth(clients[s], cmd);
 		else if (clients[s].authenticated())
-			cmd.switch_cmd(cmd, s, db, clients[s]);
+			cmd.switch_cmd(s, db, clients[s]);
 	}
 }
 
@@ -141,4 +148,18 @@ void	server::auth(client &c, command cmd){
 		chekout_nick(c, cmd.getbody());
 	else if (type == CMD_USER && c.authenticated())
 		c.setloginName(cmd.getbody());
+}
+
+void	server::write(int fd, client &c){
+	int			&windex = c.getWindex();
+	size_t		chank = 0;
+	std::string	&list = c.getList();
+	
+	chank = std::min(strlen(list.c_str() + windex), (size_t)1);
+	windex += send(fd, list.c_str() + windex, chank, 0);
+	if (strlen(list.c_str() + windex) == 0){
+		c.unsetWriteState();
+		windex = 0;
+		list = "";
+	}
 }

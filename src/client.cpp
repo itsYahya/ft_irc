@@ -6,6 +6,7 @@ client::client(){
 	this->type = FDFREE;
 	this->fdClient = -1;
 	this->auth = false;
+	this->s_w = false;
 }
 
 client::~client(){
@@ -15,6 +16,7 @@ void	client::reset(){
 	this->type = FDFREE;
 	this->fdClient = -1;
 	this->auth = false;
+	this->s_w = false;
 }
 bool	client::isfree(){
 	return (this->type == FDFREE);
@@ -64,4 +66,24 @@ void	client::register_(int fd){
 	type = FDBUSY;
 	fdClient = fd;
 	nickName = std::string("nick") + helper::itos(fd);
+}
+
+bool	client::writeState() const{
+	return (s_w);
+}
+
+void	client::setWriteState(){
+	s_w = true;
+}
+
+void	client::unsetWriteState(){
+	s_w = false;
+}
+
+std::string	&client::getList(){
+	return (list);
+}
+
+int			&client::getWindex(){
+	return (windex);
 }

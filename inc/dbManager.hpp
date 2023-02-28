@@ -12,27 +12,31 @@ class dbManager
 		static dbManager* 										instance;
 		static std::map<std::string, channel> 					channels;
 		static std::map<std::string, int> 						clients;
-		typedef std::map<std::string, int>::iterator			iterator_clinet;
-		typedef std::map<std::string, channel>::iterator		iterator_channel;
 		dbManager();
 
 	public:
+		typedef std::map<std::string, int>::iterator			iterator_clinet;
+		typedef std::map<std::string, channel>::iterator		iterator_channel;
+		typedef std::map<std::string, channel>					channels_type;
+		typedef std::map<std::string, int>						clients_type;
 
 		~dbManager();
-		static	dbManager&	getInstance();
+		static	dbManager&		getInstance();
 		
-		static	bool		insertClient(std::string name, int fd);
-		static	int			searchClient(std::string nick);
-		static	bool		deleteClient(std::string nick);
+		static	bool			insertClient(std::string name, int fd);
+		static	int				searchClient(std::string nick);
+		static	bool			deleteClient(std::string nick);
 
-		static	bool		insertChannel(channel &ch);
-		static	channel&	searchChannel(std::string nameChannel);
-		static	bool		srchChannel(std::string nameChannel);
-		static	bool		joinClientChannel(std::string nameChannel, std::string nick);
-		static	bool		deleteClientChannel(std::string nameChannel, std::string nick);
-		static	bool		deleteChannel(std::string nick);
+		static	bool			insertChannel(channel &ch);
+		static	channel&		searchChannel(std::string nameChannel);
+		static	bool			srchChannel(std::string nameChannel);
+		static	bool			joinClientChannel(std::string nameChannel, std::string nick, int fd);
+		static	bool			deleteClientChannel(std::string nameChannel, std::string nick);
+		static	bool			deleteChannel(std::string nick);
 
-		static	bool		updateNickClient(std::string curr, std::string new_);
+		static	bool			updateNickClient(std::string curr, std::string new_);
+		static	channels_type	&getChannels();
+		static	clients_type	&getClients();
 };
 
 #endif
