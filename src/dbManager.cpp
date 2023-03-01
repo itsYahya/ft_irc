@@ -61,9 +61,9 @@ bool	dbManager::insertChannel(channel& ch)
 	return (false);
 }
 
-channel&	dbManager::searchChannel(std::string nameChannel)
+dbManager::iterator_channel	dbManager::searchChannel(std::string nameChannel)
 {
-	return (channels.find(nameChannel)->second);
+	return (channels.find(nameChannel));
 }
 
 bool	dbManager::srchChannel(std::string nameChannel)
@@ -75,7 +75,7 @@ bool	dbManager::srchChannel(std::string nameChannel)
 }
 bool		dbManager::joinClientChannel(std::string nameChannel, std::string nick, int fd)
 {
-	channel ch = dbManager::searchChannel(nameChannel);
+	channel ch = dbManager::searchChannel(nameChannel)->second;
 	if (ch.insertClientToChannel(nick, fd))
 	{
 		std::cout << nameChannel << " => " << nick << " \n";
@@ -127,4 +127,12 @@ dbManager::channels_type	&dbManager::getChannels(){
 
 dbManager::clients_type		&dbManager::getClients(){
 	return (clients);
+}
+
+bool	dbManager::isEndChannelIter(iterator_channel iter){
+	return (iter == channels.end());
+}
+
+bool	dbManager::isEndClientIter(iterator_clinet iter){
+	return (iter == clients.end());
 }
