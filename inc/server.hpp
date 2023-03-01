@@ -41,7 +41,8 @@ class server{
 		std::string					&getpassword();
 		void						close(int sock);
 		void						auth(client &c, command cmd);
-		void						chekout_nick(client &c, std::string nick);
+		void						checkout_nick(client &c, std::string nick);
+		void						checkout_user(client &c, std::string str);
 
 		static void					write(int fd, client &c);
 

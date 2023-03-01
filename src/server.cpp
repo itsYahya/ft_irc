@@ -122,7 +122,7 @@ void	server::read(int s){
 	}
 }
 
-void	server::chekout_nick(client &c, std::string nick){
+void	server::checkout_nick(client &c, std::string nick){
 	int fd = db->searchClient(nick);
 
 	if (fd == -1){
@@ -132,6 +132,21 @@ void	server::chekout_nick(client &c, std::string nick){
 	else{
 		std::string msg = ":127.0.0.1 433 * " + nick + " :Nickname is already in use.\n";
 		::send(c.getfdClient(),  msg.c_str(), msg.length(), 0);
+	}
+}
+
+void	server::checkout_user(client &c, std::string body){
+	std::vector<std::string> arr = helper::split(body, ' ');
+		std::cout << "hello there" << std::endl;
+	if (arr.size() != 4){
+		std::string nick = c.getnickName();
+		int			fd = c.getfdClient();
+		if (nick.compare("nick" + helper::itos(fd)) == 0) nick = "";
+		std::string msg = ":127.0.0.1 461 " + nick + " USER :Not enough parameters\n";
+		::send(fd, msg.c_str(), msg.length(), 0);
+	} else {
+		c.setloginName(arr[0]);
+		c.setrealName(arr[3]);
 	}
 }
 
@@ -146,10 +161,10 @@ void	server::auth(client &c, command cmd){
 			close(c.getfdClient());
 		}
 	}
-	else if (type == CMD_NICK && c.authenticated())
-		chekout_nick(c, cmd.getbody());
-	else if (type == CMD_USER && c.authenticated())
-		c.setloginName(cmd.getbody());
+	else if (type == CMD_NICK)
+		checkout_nick(c, cmd.getbody());
+	else if (type == CMD_USER)
+		checkout_user(c, cmd.getbody());
 }
 
 void	server::write(int fd, client &c){
