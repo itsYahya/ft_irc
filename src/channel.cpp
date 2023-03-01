@@ -74,3 +74,7 @@ std::string		channel::getInfosFooter(std::string nick){
 	footer += " " + nick + " End of /LIST\n";
 	return (footer);
 }
+
+std::map<std::string, int>	&channel::getClients(){
+	return (clients);
+}
