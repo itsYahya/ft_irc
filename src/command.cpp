@@ -52,9 +52,14 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 	if (client > 0)
 		prvMsg(c, client);
 	else {
-		channel	ch = db->searchChannel(res[0]);
-		if (ch.getNameChannel() == res[0]){
-
+		dbManager::iterator_channel iter = db->searchChannel(res[0]);
+		if (!dbManager::isEndChannelIter(iter)){
+			std::map<std::string, int> &clients = iter->second.getClients();
+			std::map<std::string, int>::iterator iter = clients.begin();
+			for (; iter != clients.end(); iter++){
+				if (iter->second != fd)
+					prvMsg(c, iter->second);
+			}
 		}
 		else {
 			std::string msg = ":127.0.0.1 401 " + c.getnickName() + " " + res[0] + " :No such nick/channel\n";
@@ -82,7 +87,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c)
 			break;
 		default :
 			std::string msg = ":127.0.0.1 421 ";
-			msg += c.getnickName() + " " + body + " :Unknown command\n";
+			msg += c.getnickName() + " " + name + " :Unknown command\n";
 			send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 	}
 }
