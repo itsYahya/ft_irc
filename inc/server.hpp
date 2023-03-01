@@ -47,6 +47,7 @@ class server{
 
 		std::string					getClientHost(const void *addr, socklen_t len);
 
+		client						&getClientByFd(int fd);
 };
 
 #endif

@@ -170,3 +170,7 @@ std::string	server::getClientHost(const void *addr, socklen_t len){
 	struct hostent *h = gethostbyaddr(addr, len, AF_INET);
 	return (std::string(h->h_name));
 }
+
+client	&server::getClientByFd(int fd){
+	return (clients[fd]);
+}
