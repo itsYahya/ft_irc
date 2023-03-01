@@ -1,7 +1,6 @@
 #include "channel.hpp"
 #include "helper.hpp"
 
-std::map<std::string, int>	channel::clients;
 channel::channel(std::string name, int fd_op) : nameChannel(name), fd_op(fd_op)
 {
 	isPasswd = false;

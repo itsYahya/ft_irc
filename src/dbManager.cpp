@@ -75,7 +75,7 @@ bool	dbManager::srchChannel(std::string nameChannel)
 }
 bool		dbManager::joinClientChannel(std::string nameChannel, std::string nick, int fd)
 {
-	channel ch = dbManager::searchChannel(nameChannel)->second;
+	channel &ch = dbManager::searchChannel(nameChannel)->second;
 	if (ch.insertClientToChannel(nick, fd))
 	{
 		std::cout << nameChannel << " => " << nick << " \n";

@@ -8,7 +8,7 @@
 class channel
 {
 	private:
-		static std::map<std::string, int>			clients;
+		std::map<std::string, int>					clients;
 		std::map<std::string, int>::iterator		iter;
 		std::string									nameChannel;
 		bool										isPasswd;
