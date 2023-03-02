@@ -149,3 +149,21 @@ void	dbManager::getInfoInvalid(int fd,std::string nick){
 	info += " " + nick + " 0  :Invalid channel name\n";
 	send(fd, info.c_str(), info.size(), 0);
 }
+
+void	dbManager::getInfoNewJoin(client &cl ,std::string namechannel)
+{
+	std::string info = cl.getClinetFullname() + " JOIN " + namechannel + "\n";
+	send(cl.getfdClient(), info.c_str(), info.size(), 0);
+	info.clear();
+	info = ":" + cl.getHost() + " MODE " + namechannel + " +nt\n";
+	send(cl.getfdClient(), info.c_str(), info.size(), 0);
+}
+
+void	dbManager::getInfoListClInChannel(client &cl, channel& ch)
+{
+	std::string info = ":" + cl.getHost() + " 353 " + cl.getnickName() + " = " + ch.getNameChannel() + " :@" + cl.getnickName() + "\n";
+	send(cl.getfdClient(), info.c_str(), info.size(), 0);
+	info.clear();
+	info = ":" + cl.getHost() + " 366 " + cl.getnickName() + " " + ch.getNameChannel() + " :End of /NAMES list.\n";
+	send(cl.getfdClient(), info.c_str(), info.size(), 0);
+}

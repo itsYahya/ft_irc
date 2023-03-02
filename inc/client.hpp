@@ -2,7 +2,7 @@
 #define CLIENT_HPP
 
 #include <iostream>
-
+#include <map>
 typedef enum e_type{
 	FDFREE = 0,
 	FDBUSY = 1

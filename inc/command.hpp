@@ -32,8 +32,8 @@ class command{
 		std::string							body;
 		const char							*buffer;
 		static std::map<std::string, int>	cmds;
-		void								joinCommand(client &cl, std::string body, dbManager& db);
-		void								partCommand(client &cl, std::string body, dbManager& db);
+		void	processJoinPass(client &cl, std::vector<std::string> body, dbManager& db);
+		void	processJoin(client &cl, std::vector<std::string> body, dbManager& db);
 	public:
 		command(const char *buffer);
 		~command();
@@ -45,6 +45,8 @@ class command{
 		std::string							getname() const ;
 		std::string							getbody() const ;
 		const char							*getbuffer() const ;
+		void								partCommand(client &cl, std::string body, dbManager& db);
+		void								joinCommand(client &cl, std::string body, dbManager& db);
 
 		void								sendMsg(dbManager *db, int fd, client &c);
 		void								prvMsg(client &c, int fd);

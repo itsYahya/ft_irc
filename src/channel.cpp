@@ -59,7 +59,7 @@ void				channel::setBannedClient(std::string host)
 
 bool				channel::getBannedClient(std::string host)
 {
-	for (int i = 0; i < ban_clients.size(); i++)
+	for (size_t i = 0; i < ban_clients.size(); i++)
 	{
 		if (ban_clients[i].compare(host) == 0)
 			return (true);

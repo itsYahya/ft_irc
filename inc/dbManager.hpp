@@ -42,7 +42,12 @@ class dbManager
 		static  bool				isEndClientIter(iterator_clinet iter);
 		void						getInfoBan(int fd, std::string nick, std::string nameChannel);
 		void						getInfoInvalid(int fd, std::string nick);
+		void						getInfoNewJoin(client &cl, std::string namechannel);
+		void						getInfoListClInChannel(client &cl, channel& ch);
 
 };
-
+// :dan!~d@0::1 JOIN #test
+// :irc.example.com MODE #test +nt
+// :irc.example.com 353 dan = #test :@dan
+// :irc.example.com 366 dan #test :End of /NAMES list.
 #endif
