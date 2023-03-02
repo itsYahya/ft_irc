@@ -3,10 +3,7 @@
 
 
 client::client(){
-	this->type = FDFREE;
-	this->fdClient = -1;
-	this->auth = false;
-	this->s_w = false;
+	reset();
 }
 
 client::~client(){
@@ -17,6 +14,10 @@ void	client::reset(){
 	this->fdClient = -1;
 	this->auth = false;
 	this->s_w = false;
+	this->realName = "";
+	this->nickName = "";
+	this->list = "";
+	this->windex = 0;
 }
 bool	client::isfree(){
 	return (this->type == FDFREE);
@@ -59,7 +60,7 @@ void	client::authenticate(){
 }
 
 bool	client::authenticated() const{
-	return (auth);
+	return (auth && !nickName.empty() && !realName.empty());
 }
 
 void	client::register_(int fd){
