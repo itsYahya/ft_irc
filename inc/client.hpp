@@ -22,6 +22,9 @@ class client{
 
 		std::string	host;
 		
+		time_t		ping;
+		bool		pong;
+		
 	public:
 		t_type		type;
 		client();
@@ -57,6 +60,11 @@ class client{
 		std::string	&getHost();
 
 		std::string	getClinetFullname();
+
+		time_t		getPing();
+		void		pinged(time_t);
+
+		bool		&getPong();
 };
 
 #endif

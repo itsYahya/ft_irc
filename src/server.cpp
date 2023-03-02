@@ -15,6 +15,7 @@ server::server()
 	clients.resize(MAX_FDS);
 	db = &dbManager::getInstance();
 	command::init_cmds();
+	memset(&time, 0, sizeof time);
 }
 
 server::~server(){
@@ -55,15 +56,34 @@ void	server::close(int sock){
 	std::cout << "client went away !!" << std::endl;
 }
 
+bool	server::checkPing(client &c, int fd){
+	if (c.isfree()) return (false);
+	if (c.getPing() >= PINGTIME && c.getPong()){
+		std::string msg = "PING :127.0.0.1\n";
+		::send(fd, msg.c_str(), msg.length(), 0);
+		c.getPong() = false;
+		c.pinged(std::time(NULL));
+	}
+	else if (c.getPing() >= PINGTIME){
+		std::string msg = "ERROR :Closing Link: " + c.getHost() + " (Ping timeout)\n";
+		::send(fd, msg.c_str(), msg.length(), 0);
+		close(fd);
+		return (false);
+	}
+	return (true);
+}
+
 void	server::init_fds(){
+	time.tv_sec = 40;
 	FD_ZERO(&s_read);
 	FD_ZERO(&s_write);
 	FD_SET(sock, &s_read);
 	for (int i = 0; i < MAX_FDS; i++){
-		if (!clients[i].isfree()){
+		if (checkPing(clients[i], i)){
 			FD_SET(i, &s_read);
 			if (clients[i].writeState())
 				FD_SET(i, &s_write);
+			time.tv_sec = std::min(time.tv_sec, PINGTIME - clients[i].getPing());
 		}
 	}
 }
@@ -71,7 +91,7 @@ void	server::init_fds(){
 void	server::listen(){
 	while (1){
 		init_fds();
-		n = select(MAX_FDS, &s_read, &s_write, NULL, NULL);
+		n = select(MAX_FDS, &s_read, &s_write, NULL, &time);
 		if (n < 0)
 			throw myexception("something went wrong !!");
 		for (int i = 0; i < MAX_FDS && n > 0; i++){
@@ -96,6 +116,7 @@ void	server::accept(){
 	clients[s].register_(s);
 	clients[s].getHost() = getClientHost(&addr.sin_addr, addr.sin_len);
 	db->insertClient(clients[s].getnickName(), s);
+	clients[s].pinged(std::time(NULL));
 	read(s);
 }
 
@@ -141,7 +162,6 @@ void	server::checkout_nick(client &c, std::string nick){
 
 void	server::checkout_user(client &c, std::string body){
 	std::vector<std::string> arr = helper::split(body, ' ');
-		std::cout << "hello there" << std::endl;
 	if (arr.size() != 4){
 		std::string nick = c.getnickName();
 		int			fd = c.getfdClient();

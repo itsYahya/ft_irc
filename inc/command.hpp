@@ -21,6 +21,7 @@ typedef enum e_ctype{
 	CMD_KICK	= 10,
 	CMD_DCC		= 11,
 	CMD_PING	= 12,
+	CMD_PONG	= 13,
 	CMD_WRONG 	= 0,
 }	t_ctype;
 

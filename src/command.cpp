@@ -29,6 +29,7 @@ void	command::init_cmds(){
 	cmds.insert(std::pair<std::string, int>("KICK", CMD_KICK));
 	cmds.insert(std::pair<std::string, int>("DCC", CMD_DCC));
 	cmds.insert(std::pair<std::string, int>("PING", CMD_PING));
+	cmds.insert(std::pair<std::string, int>("PONG", CMD_PONG));
 }
 
 int		command::search_cmd(std::string &name){
@@ -85,6 +86,9 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c)
 		case CMD_LIST:
 			sendList(db, fd, c);
 			break;
+		case CMD_PONG:
+			c.pinged(std::time(NULL));
+			c.getPong() = true;
 		default :
 			std::string msg = ":127.0.0.1 421 ";
 			msg += c.getnickName() + " " + name + " :Unknown command\n";

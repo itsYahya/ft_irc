@@ -10,9 +10,11 @@
 #include "dbManager.hpp"
 #include "client.hpp"
 #include "command.hpp"
+#include <ctime>
 
 #define BUFFER_SIZE 1024
 #define MAX_FDS 1024
+#define PINGTIME 120
 
 class server{
 	private:
@@ -27,6 +29,7 @@ class server{
 		std::vector<client> 		clients;
 		dbManager					*db;
 		int							n;
+		timeval						time;
 
 	public:
 		server();
@@ -49,6 +52,8 @@ class server{
 		std::string					getClientHost(const void *addr, socklen_t len);
 
 		client						&getClientByFd(int fd);
+
+		bool						checkPing(client &c, int fd);
 };
 
 #endif

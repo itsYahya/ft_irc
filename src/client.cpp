@@ -18,7 +18,9 @@ void	client::reset(){
 	this->nickName = "";
 	this->list = "";
 	this->windex = 0;
+	pong = true;
 }
+
 bool	client::isfree(){
 	return (this->type == FDFREE);
 }
@@ -98,4 +100,16 @@ std::string	client::getClinetFullname(){
 
 	name = ":" + nickName + "!~" + loginName + "@" + host + " ";
 	return (name);
+}
+
+void	client::pinged(time_t time){
+	ping = time;
+}
+
+time_t	client::getPing(){
+	return (std::difftime(std::time(NULL), ping));
+}
+
+bool	&client::getPong(){
+	return (pong);
 }
