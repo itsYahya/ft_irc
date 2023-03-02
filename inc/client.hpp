@@ -9,12 +9,15 @@ typedef enum e_type{
 }	t_type;
 
 typedef enum e_mode{
-	SM_CLIENT = 0,
+	SM_CLIENT = 2,
 	OP_CLIENT = 1,
+	NONE = 0
 }	t_mode;
 
 class client{
 	private:
+		std::map<std::string,t_mode>			list_mode;
+		std::map<std::string,t_mode>::iterator	iter_mode;
 		int			fdClient;
 		bool		auth;
 		std::string	nickName;
@@ -25,12 +28,10 @@ class client{
 		std::string	list;
 		int			windex;
 		std::string	host;
-		
 		time_t		ping;
 		bool		pong;
-		
+
 	public:
-		t_mode		mode;
 		t_type		type;
 		client();
 		~client();
@@ -60,7 +61,8 @@ class client{
 		void		unsetWriteState();
 		std::string	&getList();
 		int			&getWindex();
-
+		void		setmode(std::string channel, t_mode mode);
+		t_mode		getmode(std::string channel);
 		std::string	&getHost();
 
 		std::string	getClinetFullname();

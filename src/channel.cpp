@@ -73,6 +73,8 @@ std::string		channel::getInfo(std::string nick){
 	return (info);
 }
 
+
+
 std::string		channel::getInfosHeader(std::string nick){
 	std::string header = ":127.0.0.1 " + helper::itos(321);
 	header += " " + nick + " Channel :Users Name\n";

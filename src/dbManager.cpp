@@ -1,4 +1,5 @@
 #include "dbManager.hpp"
+#include "helper.hpp"
 
 std::map<std::string, int> dbManager::clients;
 std::map<std::string, channel> dbManager::channels;
@@ -135,4 +136,16 @@ bool	dbManager::isEndChannelIter(iterator_channel iter){
 
 bool	dbManager::isEndClientIter(iterator_clinet iter){
 	return (iter == clients.end());
+}
+
+void	dbManager::getInfoBan(int fd,std::string nick, std::string nameChannel){
+	std::string	info = ":127.0.0.1 " + helper::itos(474);
+	info += " " + nick + " " + nameChannel + " :Cannot join channel (+b)\n";
+	send(fd, info.c_str(), info.size(), 0);
+}
+
+void	dbManager::getInfoInvalid(int fd,std::string nick){
+	std::string	info = ":127.0.0.1 " + helper::itos(476);
+	info += " " + nick + " 0  :Invalid channel name\n";
+	send(fd, info.c_str(), info.size(), 0);
 }

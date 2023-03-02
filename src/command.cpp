@@ -122,15 +122,24 @@ void	command::joinCommand(client &cl, std::string body, dbManager& db)
 	if (body.c_str()[0] == '#')
 	{	if (!db.srchChannel(body))
 		{
-			channel ch(body, cl.getfdClient());
+			channel ch(body);
 			db.insertChannel(ch);
+			cl.setmode(body, OP_CLIENT);
 			db.joinClientChannel(ch.getNameChannel(), cl.getnickName(), cl.getfdClient());
 		}
 		else
-			db.joinClientChannel(body, cl.getnickName(), cl.getfdClient());
+		{
+			if (!db.searchChannel(body)->second.getBannedClient(cl.getHost()))
+			{
+				cl.setmode(body, SM_CLIENT);
+				db.joinClientChannel(body, cl.getnickName(), cl.getfdClient());
+			}
+			else
+				db.getInfoBan(cl.getfdClient(), cl.getnickName(), body);
+		}
 	}
 	else
-		std::cout << "you must use #<channel> form !! \n";
+		db.getInfoInvalid(cl.getfdClient(), cl.getnickName());
 }
 
 void	command::partCommand(client &cl, std::string body, dbManager& db)
@@ -145,7 +154,7 @@ void	command::partCommand(client &cl, std::string body, dbManager& db)
 		}
 	}
 	else
-		std::cout << "you must use #<channel> form !! \n";
+		db.getInfoInvalid(cl.getfdClient(), cl.getnickName());
 }
 
 void	command::sendList(dbManager *db, int fd, client &c){

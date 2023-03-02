@@ -40,6 +40,9 @@ class dbManager
 
 		static	bool				isEndChannelIter(iterator_channel iter);
 		static  bool				isEndClientIter(iterator_clinet iter);
+		void						getInfoBan(int fd, std::string nick, std::string nameChannel);
+		void						getInfoInvalid(int fd, std::string nick);
+
 };
 
 #endif
