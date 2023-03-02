@@ -19,6 +19,11 @@ class client{
 		bool		s_w;
 		std::string	list;
 		int			windex;
+
+		std::string	host;
+		
+		time_t		ping;
+		bool		pong;
 		
 	public:
 		t_type		type;
@@ -51,6 +56,15 @@ class client{
 		
 		std::string	&getList();
 		int			&getWindex();
+
+		std::string	&getHost();
+
+		std::string	getClinetFullname();
+
+		time_t		getPing();
+		void		pinged(time_t);
+
+		bool		&getPong();
 };
 
 #endif

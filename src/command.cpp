@@ -29,6 +29,7 @@ void	command::init_cmds(){
 	cmds.insert(std::pair<std::string, int>("KICK", CMD_KICK));
 	cmds.insert(std::pair<std::string, int>("DCC", CMD_DCC));
 	cmds.insert(std::pair<std::string, int>("PING", CMD_PING));
+	cmds.insert(std::pair<std::string, int>("PONG", CMD_PONG));
 }
 
 int		command::search_cmd(std::string &name){
@@ -38,8 +39,8 @@ int		command::search_cmd(std::string &name){
 	return (iter->second);
 }
 
-void	command::prvMsg(std::string sender, int fd){
-	std::string msg = ":" + sender + " " + name + " " + body + "\n";
+void	command::prvMsg(client &c, int fd){
+	std::string msg = c.getClinetFullname() + name + " " + body + "\n";
 	send(fd, msg.c_str(), msg.length(), 0);
 }
 
@@ -50,11 +51,16 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 	res = helper::split_(body.c_str(), ' ');
 	client = db->searchClient(res[0]);
 	if (client > 0)
-		prvMsg(c.getnickName(), client);
+		prvMsg(c, client);
 	else {
-		channel	ch = db->searchChannel(res[0]);
-		if (ch.getNameChannel() == res[0]){
-
+		dbManager::iterator_channel iter = db->searchChannel(res[0]);
+		if (!dbManager::isEndChannelIter(iter)){
+			std::map<std::string, int> &clients = iter->second.getClients();
+			std::map<std::string, int>::iterator iter = clients.begin();
+			for (; iter != clients.end(); iter++){
+				if (iter->second != fd)
+					prvMsg(c, iter->second);
+			}
 		}
 		else {
 			std::string msg = ":127.0.0.1 401 " + c.getnickName() + " " + res[0] + " :No such nick/channel\n";
@@ -80,9 +86,12 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c)
 		case CMD_LIST:
 			sendList(db, fd, c);
 			break;
+		case CMD_PONG:
+			c.pinged(std::time(NULL));
+			c.getPong() = true;
 		default :
 			std::string msg = ":127.0.0.1 421 ";
-			msg += c.getnickName() + " " + body + " :Unknown command\n";
+			msg += c.getnickName() + " " + name + " :Unknown command\n";
 			send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 	}
 }

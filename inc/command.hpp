@@ -21,6 +21,7 @@ typedef enum e_ctype{
 	CMD_KICK	= 10,
 	CMD_DCC		= 11,
 	CMD_PING	= 12,
+	CMD_PONG	= 13,
 	CMD_WRONG 	= 0,
 }	t_ctype;
 
@@ -46,7 +47,7 @@ class command{
 		const char							*getbuffer() const ;
 
 		void								sendMsg(dbManager *db, int fd, client &c);
-		void								prvMsg(std::string sender, int fd);
+		void								prvMsg(client &c, int fd);
 		
 		void								sendList(dbManager *db, int fd, client &c);
 };
