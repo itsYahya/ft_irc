@@ -9,25 +9,25 @@ class channel
 {
 	private:
 		std::map<std::string, int>					clients;
-		std::map<std::string, int>::iterator		iter;
+		std::vector<std::string>					ban_clients;
+		std::map<std::string, int>::iterator		cls_iter;
 		std::string									nameChannel;
-		bool										isPasswd;
 		std::string									passwd;
-		int											fd_op;
+		bool										isPasswd;
 
 	public:
-		channel(std::string name, int fd_op);
-		channel(std::string name, int fd_op, std::string passwd);
+		channel(std::string name);
+		channel(std::string name, std::string passwd);
 		~channel();
 		std::string			getNameChannel() const;
 		bool				insertClientToChannel(std::string name,int	fd);
 		bool				searchClient(std::string nick);
 		bool				deleteClient(std::string nick);
+		void				setBannedClient(std::string host);
 
 		std::string			getPasswd() const;
 		bool				getIsPasswd() const;
-		int					getfd_op()	const;
-		int					getNumberOfClients() const;
+		bool				getBannedClient(std::string host);
 
 		std::string			getInfo(std::string nick);
 		static std::string	getInfosHeader(std::string nick);

@@ -8,6 +8,11 @@ typedef enum e_type{
 	FDBUSY = 1
 }	t_type;
 
+typedef enum e_mode{
+	SM_CLIENT = 0,
+	OP_CLIENT = 1,
+}	t_mode;
+
 class client{
 	private:
 		int			fdClient;
@@ -19,13 +24,13 @@ class client{
 		bool		s_w;
 		std::string	list;
 		int			windex;
-
 		std::string	host;
 		
 		time_t		ping;
 		bool		pong;
 		
 	public:
+		t_mode		mode;
 		t_type		type;
 		client();
 		~client();
@@ -53,7 +58,6 @@ class client{
 		bool		writeState() const;
 		void		setWriteState();
 		void		unsetWriteState();
-		
 		std::string	&getList();
 		int			&getWindex();
 
