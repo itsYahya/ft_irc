@@ -8,14 +8,14 @@
 class channel
 {
 	private:
-		std::map<std::string, int>					clients;
 		std::vector<std::string>					ban_clients;
-		std::map<std::string, int>::iterator		cls_iter;
 		std::string									nameChannel;
 		std::string									passwd;
 		bool										isPasswd;
 
 	public:
+		std::map<std::string, int>					clients;
+		std::map<std::string, int>::iterator		cls_iter;
 		channel(std::string name);
 		channel(std::string name, std::string passwd);
 		~channel();
@@ -33,6 +33,7 @@ class channel
 		static std::string	getInfosHeader(std::string nick);
 		static std::string	getInfosFooter(std::string nick);
 
+		std::string			getListCl();
 		std::map<std::string, int>	&getClients();
 };
 

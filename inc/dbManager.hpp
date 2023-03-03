@@ -43,11 +43,8 @@ class dbManager
 		void						getInfoBan(int fd, std::string nick, std::string nameChannel);
 		void						getInfoInvalid(int fd, std::string nick);
 		void						getInfoNewJoin(client &cl, std::string namechannel);
-		void						getInfoListClInChannel(client &cl, channel& ch);
-
+		void						getInfoListClInChannel(client &cl, std::string nameChannel, std::vector<client> &cls);
+		void						sendMsgCls(std::string info, std::string nameChannel);
+		std::string					processInfoCls(channel &ch, client &cl, std::vector<client> &cls);
 };
-// :dan!~d@0::1 JOIN #test
-// :irc.example.com MODE #test +nt
-// :irc.example.com 353 dan = #test :@dan
-// :irc.example.com 366 dan #test :End of /NAMES list.
 #endif

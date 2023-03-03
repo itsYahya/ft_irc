@@ -2,7 +2,7 @@
 
 int main(int ac, char **av){
 	server server;
-
+	
 	try{
 		if (ac == 2 || ac == 3){
 			if (helper::parse_arguments(ac, av, server)){

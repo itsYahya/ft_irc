@@ -116,7 +116,7 @@ bool	&client::getPong(){
 
 void	client::setmode(std::string channel, t_mode mode){
 	if (!channel.empty())
-		list_mode.insert(std::pair<std::string, t_mode>(channel, mode));	
+		list_mode.insert(std::pair<std::string, t_mode>(channel, mode));
 }
 
 t_mode	client::getmode(std::string channel)

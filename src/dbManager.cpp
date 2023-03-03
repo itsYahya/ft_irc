@@ -78,10 +78,7 @@ bool		dbManager::joinClientChannel(std::string nameChannel, std::string nick, in
 {
 	channel &ch = dbManager::searchChannel(nameChannel)->second;
 	if (ch.insertClientToChannel(nick, fd))
-	{
-		std::cout << nameChannel << " => " << nick << " \n";
 		return (true);
-	}
 	else
 		return (false);
 }
@@ -153,17 +150,43 @@ void	dbManager::getInfoInvalid(int fd,std::string nick){
 void	dbManager::getInfoNewJoin(client &cl ,std::string namechannel)
 {
 	std::string info = cl.getClinetFullname() + " JOIN " + namechannel + "\n";
-	send(cl.getfdClient(), info.c_str(), info.size(), 0);
-	info.clear();
-	info = ":" + cl.getHost() + " MODE " + namechannel + " +nt\n";
-	send(cl.getfdClient(), info.c_str(), info.size(), 0);
+	sendMsgCls(info,namechannel);
 }
 
-void	dbManager::getInfoListClInChannel(client &cl, channel& ch)
+
+void	dbManager::getInfoListClInChannel(client &cl, std::string nameChannel, std::vector<client> &cls)
 {
-	std::string info = ":" + cl.getHost() + " 353 " + cl.getnickName() + " = " + ch.getNameChannel() + " :@" + cl.getnickName() + "\n";
-	send(cl.getfdClient(), info.c_str(), info.size(), 0);
+	channel& ch = searchChannel(nameChannel)->second;
+	std::string info = processInfoCls(ch, cl, cls);
+	sendMsgCls(info,ch.getNameChannel());
 	info.clear();
 	info = ":" + cl.getHost() + " 366 " + cl.getnickName() + " " + ch.getNameChannel() + " :End of /NAMES list.\n";
-	send(cl.getfdClient(), info.c_str(), info.size(), 0);
+	sendMsgCls(info, ch.getNameChannel());
+}
+
+void	dbManager::sendMsgCls(std::string info, std::string nameChannel)
+{
+	channel& ch = searchChannel(nameChannel)->second;
+	ch.cls_iter = ch.clients.begin();
+	while (ch.cls_iter != ch.clients.end())
+	{
+		send(ch.cls_iter->second, info.c_str(), info.size(), 0);
+		ch.cls_iter++;
+	}
+}
+
+std::string		dbManager::processInfoCls(channel &ch, client &cl, std::vector<client> &cls)
+{
+	std::string info = ":" + cl.getHost() + " 353 " + cl.getnickName() + " = " + ch.getNameChannel() + " :";
+	ch.cls_iter = ch.clients.begin();
+	while (ch.cls_iter != ch.clients.end())
+	{	
+		if (cls[ch.cls_iter->second].getmode(ch.getNameChannel()) == OP_CLIENT)
+			info += "@" + ch.cls_iter->first + " ";
+		else
+			info += ch.cls_iter->first + " ";
+		ch.cls_iter++;
+	}
+	info += "\n";
+	return (info);
 }

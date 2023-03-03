@@ -70,10 +70,8 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 	
 }
 
-void	command::switch_cmd(int fd, dbManager	*db, client &c)
+void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &cls)
 {
-	std::cout << "=> " << name << "\n";
-	std::cout << "=> " << body << "\n";
 	switch(type)
 	{
 		case CMD_PRIVMSG:
@@ -83,7 +81,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c)
 			partCommand(c, body, *db);
 			break;
 		case CMD_JOIN:
-			joinCommand(c, body, *db);
+			joinCommand(c, body, *db, cls);
 			break;
 		case CMD_LIST:
 			sendList(db, fd, c);
@@ -93,7 +91,6 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c)
 			c.getPong() = true;
 			break;
 		case CMD_MODE:
-			c.setmode(helper::split(body, ' ')[0], OP_CLIENT);
 			break;
 		default :
 			std::string msg = ":127.0.0.1 421 ";
@@ -123,20 +120,18 @@ const char	*command::getbuffer() const{
 	return (buffer);
 }
 
-void	command::joinCommand(client &cl, std::string body, dbManager& db)
+void	command::joinCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls)
 {
-	std::cout <<"==> " << body.length() << "\n";
-	std::cout <<"==> " << cl.getClinetFullname()<< "\n";
 	std::vector<std::string> str = helper::split(body, ' ');
 	if (str.size() == 1)
-		processJoin(cl, str, db);
+		processJoin(cl, str, db, cls);
 	else if (str.size() == 2)
-		processJoinPass(cl, str, db);
+		processJoinPass(cl, str, db, cls);
 	else
 		db.getInfoInvalid(cl.getfdClient(), cl.getnickName());
 }
 
-void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManager& db)
+void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManager& db, std::vector<client> &cls)
 {
 	if (body[0].c_str()[0] == '#' && body[0].length() > 1)
 	{
@@ -147,7 +142,7 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 			cl.setmode(body[0], OP_CLIENT);
 			db.joinClientChannel(ch.getNameChannel(), cl.getnickName(), cl.getfdClient());
 			db.getInfoNewJoin(cl, ch.getNameChannel());
-			db.getInfoListClInChannel(cl, ch);
+			db.getInfoListClInChannel(cl, ch.getNameChannel(), cls);
 		}
 		else
 		{
@@ -156,6 +151,8 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 			{
 				cl.setmode(body[0], SM_CLIENT);
 				db.joinClientChannel(body[0], cl.getnickName(), cl.getfdClient());
+				db.getInfoNewJoin(cl, body[0]);
+				db.getInfoListClInChannel(cl, body[0], cls);
 			}
 			else
 				db.getInfoBan(cl.getfdClient(), cl.getnickName(), body[0]);
@@ -165,16 +162,17 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 		db.getInfoInvalid(cl.getfdClient(), cl.getnickName());
 }
 
-void	command::processJoin(client &cl, std::vector<std::string> body, dbManager& db)
+void	command::processJoin(client &cl, std::vector<std::string> body, dbManager& db, std::vector<client> &cls)
 {
 	if (body[0].c_str()[0] == '#' && body[0].length() > 1)
 	{	if (!db.srchChannel(body[0]))
 		{
 			channel ch(body[0]);
 			db.insertChannel(ch);
+			cl.setmode(body[0], OP_CLIENT);
 			db.joinClientChannel(ch.getNameChannel(), cl.getnickName(), cl.getfdClient());
 			db.getInfoNewJoin(cl, ch.getNameChannel());
-			db.getInfoListClInChannel(cl, ch);
+			db.getInfoListClInChannel(cl, ch.getNameChannel(), cls);
 		}
 		else
 		{
@@ -182,6 +180,8 @@ void	command::processJoin(client &cl, std::vector<std::string> body, dbManager& 
 			{
 				cl.setmode(body[0], SM_CLIENT);
 				db.joinClientChannel(body[0], cl.getnickName(), cl.getfdClient());
+				db.getInfoNewJoin(cl, body[0]);
+				db.getInfoListClInChannel(cl, body[0], cls);
 			}
 			else
 				db.getInfoBan(cl.getfdClient(), cl.getnickName(), body[0]);
