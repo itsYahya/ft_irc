@@ -89,6 +89,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c)
 		case CMD_PONG:
 			c.pinged(std::time(NULL));
 			c.getPong() = true;
+			break;
 		default :
 			std::string msg = ":127.0.0.1 421 ";
 			msg += c.getnickName() + " " + name + " :Unknown command\n";
