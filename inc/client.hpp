@@ -34,6 +34,9 @@ class client{
 		time_t									ping;
 		bool									pong;
 
+
+		std::string								cmd;
+
 	public:
 		t_type		type;
 		client();
@@ -73,7 +76,8 @@ class client{
 		time_t				getPing();
 		void				pinged(time_t);
 		bool				&getPong();
-		
+
+		std::string			&getCmd();
 };
 
 #endif

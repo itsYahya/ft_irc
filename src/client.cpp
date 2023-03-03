@@ -18,7 +18,9 @@ void	client::reset(){
 	this->nickName = "";
 	this->list = "";
 	this->windex = 0;
-	pong = true;
+	this->pong = true;
+	this->cmd = "";
+	this->list_mode.clear();
 }
 
 bool	client::isfree(){
@@ -125,4 +127,8 @@ t_mode	client::getmode(std::string channel)
 	if (iter_mode != list_mode.end())
 		return (iter_mode->second);
 	return (NONE);
+}
+
+std::string	&client::getCmd(){
+	return (cmd);
 }
