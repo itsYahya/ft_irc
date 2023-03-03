@@ -139,7 +139,7 @@ void	server::read(int s){
 		if (cmd.gettype() == CMD_PASS || cmd.gettype() == CMD_NICK || cmd.gettype() == CMD_USER)
 			auth(clients[s], cmd);
 		else if (clients[s].authenticated())
-			cmd.switch_cmd(s, db, clients[s]);
+			cmd.switch_cmd(s, db, clients[s], clients);
 		else{
 			std::string msg = ":127.0.0.1 451 * " + cmd.getname() + " :You must finish connecting first.\n";
 			::send(s, msg.c_str(), msg.length(), 0);

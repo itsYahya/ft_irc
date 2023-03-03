@@ -70,7 +70,7 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 	
 }
 
-void	command::switch_cmd(int fd, dbManager	*db, client &c)
+void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &cls)
 {
 	switch(type)
 	{
@@ -81,7 +81,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c)
 			partCommand(c, body, *db);
 			break;
 		case CMD_JOIN:
-			joinCommand(c, body, *db);
+			joinCommand(c, body, *db, cls);
 			break;
 		case CMD_LIST:
 			sendList(db, fd, c);
@@ -89,6 +89,8 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c)
 		case CMD_PONG:
 			c.pinged(std::time(NULL));
 			c.getPong() = true;
+			break;
+		case CMD_MODE:
 			break;
 		default :
 			std::string msg = ":127.0.0.1 421 ";
@@ -118,21 +120,60 @@ const char	*command::getbuffer() const{
 	return (buffer);
 }
 
-void	command::joinCommand(client &cl, std::string body, dbManager& db)
+void	command::joinCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls)
 {
-	if (body.c_str()[0] == '#')
-	{	if (!db.srchChannel(body))
-		{
-			channel ch(body, cl.getfdClient());
-			db.insertChannel(ch);
-			db.joinClientChannel(ch.getNameChannel(), cl.getnickName(), cl.getfdClient());
-		}
-		else
-			db.joinClientChannel(body, cl.getnickName(), cl.getfdClient());
+	std::vector<std::string> str = helper::split(body, ' ');
+	if (str[0].c_str()[0] == '#' && str[0].length() > 1)
+			processJoinPass(cl, str, db, cls);
+	else
+		db.getInfoInvalid(cl.getfdClient(), cl.getnickName());
+}
+
+void	command::insertchannel(std::vector<std::string> body, dbManager &db)
+{
+	if (body.size() == 2)
+	{
+		channel ch(body[0], body[1]);
+		db.insertChannel(ch);
 	}
 	else
-		std::cout << "you must use #<channel> form !! \n";
+	{
+		channel ch(body[0]);
+		db.insertChannel(ch);
+	}
 }
+
+void	command::joinClChannel(client& cl, std::string body, dbManager& db, std::vector<client> &cls)
+{
+	db.joinClientChannel(body, cl.getnickName(), cl.getfdClient());
+	db.getInfoNewJoin(cl, body);
+	db.getInfoListClInChannel(cl, body, cls);
+}
+
+void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManager& db, std::vector<client> &cls)
+{
+	if (!db.srchChannel(body[0]))
+	{
+		insertchannel(body, db);
+		cl.setmode(body[0], OP_CLIENT);
+		joinClChannel(cl, body[0], db, cls);
+	}
+	else
+	{
+		channel &ch = db.searchChannel(body[0])->second;
+		if (!ch.getBannedClient(cl.getHost()) 
+				&& (!ch.getIsPasswd() 
+				|| (body.size() == 2 && !ch.getPasswd().compare(body[1]))))
+		{
+			cl.setmode(body[0], SM_CLIENT);
+			joinClChannel(cl, body[0], db, cls);
+		}
+		else
+			db.getInfoBan(cl.getfdClient(), cl.getnickName(), body[0]);
+	}
+}
+
+
 
 void	command::partCommand(client &cl, std::string body, dbManager& db)
 {
@@ -146,7 +187,7 @@ void	command::partCommand(client &cl, std::string body, dbManager& db)
 		}
 	}
 	else
-		std::cout << "you must use #<channel> form !! \n";
+		db.getInfoInvalid(cl.getfdClient(), cl.getnickName());
 }
 
 void	command::sendList(dbManager *db, int fd, client &c){

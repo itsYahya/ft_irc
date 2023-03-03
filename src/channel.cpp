@@ -1,11 +1,11 @@
 #include "channel.hpp"
 #include "helper.hpp"
 
-channel::channel(std::string name, int fd_op) : nameChannel(name), fd_op(fd_op)
+channel::channel(std::string name) : nameChannel(name)
 {
 	isPasswd = false;
 }
-channel::channel(std::string name, int fd_op, std::string passwd) : nameChannel(name), passwd(passwd), fd_op(fd_op)
+channel::channel(std::string name, std::string passwd) : nameChannel(name), passwd(passwd)
 {
 	isPasswd = true;
 }
@@ -28,8 +28,8 @@ bool	channel::insertClientToChannel(std::string name,int fd)
 
 bool	channel::searchClient(std::string nick)
 {
-	iter = clients.find(nick);
-	if (iter != clients.end() && iter->first == nick)
+	cls_iter = clients.find(nick);
+	if (cls_iter != clients.end() && cls_iter->first == nick)
 		return (true);
 	return (false);
 }
@@ -51,9 +51,20 @@ bool				channel::getIsPasswd() const
 	return (isPasswd);
 }
 
-int					channel::getfd_op()	const
+void				channel::setBannedClient(std::string host)
 {
-	return (fd_op);
+	if (!host.empty())
+		ban_clients.push_back(host);
+}
+
+bool				channel::getBannedClient(std::string host)
+{
+	for (size_t i = 0; i < ban_clients.size(); i++)
+	{
+		if (ban_clients[i].compare(host) == 0)
+			return (true);
+	}
+	return (false);
 }
 
 std::string		channel::getInfo(std::string nick){
@@ -61,6 +72,8 @@ std::string		channel::getInfo(std::string nick){
 	info += " " + nick + " " + nameChannel + " :channel status\n";
 	return (info);
 }
+
+
 
 std::string		channel::getInfosHeader(std::string nick){
 	std::string header = ":127.0.0.1 " + helper::itos(321);

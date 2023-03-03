@@ -2,14 +2,22 @@
 #define CLIENT_HPP
 
 #include <iostream>
-
+#include <map>
 typedef enum e_type{
 	FDFREE = 0,
 	FDBUSY = 1
 }	t_type;
 
+typedef enum e_mode{
+	SM_CLIENT = 2,
+	OP_CLIENT = 1,
+	NONE = 0
+}	t_mode;
+
 class client{
 	private:
+		std::map<std::string,t_mode>			list_mode;
+		std::map<std::string,t_mode>::iterator	iter_mode;
 		int			fdClient;
 		bool		auth;
 		std::string	nickName;
@@ -19,12 +27,10 @@ class client{
 		bool		s_w;
 		std::string	list;
 		int			windex;
-
 		std::string	host;
-		
 		time_t		ping;
 		bool		pong;
-		
+
 	public:
 		t_type		type;
 		client();
@@ -53,10 +59,10 @@ class client{
 		bool		writeState() const;
 		void		setWriteState();
 		void		unsetWriteState();
-		
 		std::string	&getList();
 		int			&getWindex();
-
+		void		setmode(std::string channel, t_mode mode);
+		t_mode		getmode(std::string channel);
 		std::string	&getHost();
 
 		std::string	getClinetFullname();

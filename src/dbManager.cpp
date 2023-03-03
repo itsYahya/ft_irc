@@ -1,4 +1,5 @@
 #include "dbManager.hpp"
+#include "helper.hpp"
 
 std::map<std::string, int> dbManager::clients;
 std::map<std::string, channel> dbManager::channels;
@@ -77,10 +78,7 @@ bool		dbManager::joinClientChannel(std::string nameChannel, std::string nick, in
 {
 	channel &ch = dbManager::searchChannel(nameChannel)->second;
 	if (ch.insertClientToChannel(nick, fd))
-	{
-		std::cout << nameChannel << " => " << nick << " \n";
 		return (true);
-	}
 	else
 		return (false);
 }
@@ -135,4 +133,60 @@ bool	dbManager::isEndChannelIter(iterator_channel iter){
 
 bool	dbManager::isEndClientIter(iterator_clinet iter){
 	return (iter == clients.end());
+}
+
+void	dbManager::getInfoBan(int fd,std::string nick, std::string nameChannel){
+	std::string	info = ":127.0.0.1 " + helper::itos(474);
+	info += " " + nick + " " + nameChannel + " :Cannot join channel (+b)\n";
+	send(fd, info.c_str(), info.size(), 0);
+}
+
+void	dbManager::getInfoInvalid(int fd,std::string nick){
+	std::string	info = ":127.0.0.1 " + helper::itos(476);
+	info += " " + nick + " 0  :Invalid channel name\n";
+	send(fd, info.c_str(), info.size(), 0);
+}
+
+void	dbManager::getInfoNewJoin(client &cl ,std::string namechannel)
+{
+	std::string info = cl.getClinetFullname() + " JOIN " + namechannel + "\n";
+	sendMsgCls(info,namechannel);
+}
+
+
+void	dbManager::getInfoListClInChannel(client &cl, std::string nameChannel, std::vector<client> &cls)
+{
+	channel& ch = searchChannel(nameChannel)->second;
+	std::string info = processInfoCls(ch, cl, cls);
+	sendMsgCls(info,ch.getNameChannel());
+	info.clear();
+	info = ":" + cl.getHost() + " 366 " + cl.getnickName() + " " + ch.getNameChannel() + " :End of /NAMES list.\n";
+	sendMsgCls(info, ch.getNameChannel());
+}
+
+void	dbManager::sendMsgCls(std::string info, std::string nameChannel)
+{
+	channel& ch = searchChannel(nameChannel)->second;
+	ch.cls_iter = ch.clients.begin();
+	while (ch.cls_iter != ch.clients.end())
+	{
+		send(ch.cls_iter->second, info.c_str(), info.size(), 0);
+		ch.cls_iter++;
+	}
+}
+
+std::string		dbManager::processInfoCls(channel &ch, client &cl, std::vector<client> &cls)
+{
+	std::string info = ":" + cl.getHost() + " 353 " + cl.getnickName() + " = " + ch.getNameChannel() + " :";
+	ch.cls_iter = ch.clients.begin();
+	while (ch.cls_iter != ch.clients.end())
+	{	
+		if (cls[ch.cls_iter->second].getmode(ch.getNameChannel()) == OP_CLIENT)
+			info += "@" + ch.cls_iter->first + " ";
+		else
+			info += ch.cls_iter->first + " ";
+		ch.cls_iter++;
+	}
+	info += "\n";
+	return (info);
 }

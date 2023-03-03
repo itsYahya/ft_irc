@@ -113,3 +113,16 @@ time_t	client::getPing(){
 bool	&client::getPong(){
 	return (pong);
 }
+
+void	client::setmode(std::string channel, t_mode mode){
+	if (!channel.empty())
+		list_mode.insert(std::pair<std::string, t_mode>(channel, mode));
+}
+
+t_mode	client::getmode(std::string channel)
+{
+	iter_mode = list_mode.find(channel);
+	if (iter_mode != list_mode.end())
+		return (iter_mode->second);
+	return (NONE);
+}
