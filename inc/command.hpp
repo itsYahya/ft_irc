@@ -33,8 +33,8 @@ class command{
 		const char							*buffer;
 		static std::map<std::string, int>	cmds;
 		void 	processJoinPass(client &cl, std::vector<std::string> body, dbManager &db, std::vector<client> &cls);
-		// void 	processJoin(client &cl, std::vector<std::string> body, dbManager &db, std::vector<client> &cls);
 		void	insertchannel(std::vector<std::string> body, dbManager &db);
+		void	joinClChannel(client& cl, std::string body, dbManager& db, std::vector<client> &cls);
 	public:
 		command(const char *buffer);
 		~command();
