@@ -81,8 +81,7 @@ void	server::init_fds(){
 	for (int i = 0; i < MAX_FDS; i++){
 		if (checkPing(clients[i], i)){
 			FD_SET(i, &s_read);
-			if (clients[i].writeState())
-				FD_SET(i, &s_write);
+			if (clients[i].writeState()) FD_SET(i, &s_write);
 			time.tv_sec = std::min(time.tv_sec, PINGTIME - clients[i].getPing());
 		}
 	}
@@ -96,14 +95,11 @@ void	server::listen(){
 			throw myexception("something went wrong !!");
 		for (int i = 0; i < MAX_FDS && n > 0; i++){
 			if (FD_ISSET(i, &s_read)){
-				if (sock == i)
-					accept();
-				else
-					read(i);
+				if (sock == i) accept();
+				else read(i);
 				n--;
 			}
-			if (FD_ISSET(i, &s_write))
-				write(i, clients[i]);
+			if (FD_ISSET(i, &s_write)) write(i, clients[i]);
 		}
 	}
 }
@@ -120,29 +116,39 @@ void	server::accept(){
 	read(s);
 }
 
-void	replace_nl(char *buffer){
+bool	replace_nl(char *buffer){
 	int	i = 0;
 	for (; buffer[i]; i++){
-		if (buffer[i] == '\n' || buffer[i] == 13)
-			break;
+		if (buffer[i] == '\n' || buffer[i] == 13){
+			buffer[i] = 0;
+			return (true);
+		}
 	}
-	buffer[i] = 0;
+	return (false);
 }
 
 void	server::read(int s){
-	int	rd = recv(s, buffer, BUFFER_SIZE, 0);
+	bool		nl;
+	int			rd;
+	std::string	&textCmd = clients[s].getCmd();
+	
+	rd = recv(s, buffer, BUFFER_SIZE, 0);
 	if (rd <= 0)
 		close(s);
 	else{
-		replace_nl(buffer);
-		command cmd(buffer);
-		if (cmd.gettype() == CMD_PASS || cmd.gettype() == CMD_NICK || cmd.gettype() == CMD_USER)
-			auth(clients[s], cmd);
-		else if (clients[s].authenticated())
-			cmd.switch_cmd(s, db, clients[s], clients);
-		else{
-			std::string msg = ":127.0.0.1 451 * " + cmd.getname() + " :You must finish connecting first.\n";
-			::send(s, msg.c_str(), msg.length(), 0);
+		nl = replace_nl(buffer);
+		textCmd += buffer;
+		if (nl){
+			command cmd(textCmd.c_str());
+			if (cmd.gettype() == CMD_PASS || cmd.gettype() == CMD_NICK || cmd.gettype() == CMD_USER)
+				auth(clients[s], cmd);
+			else if (clients[s].authenticated())
+				cmd.switch_cmd(s, db, clients[s], clients);
+			else{
+				std::string msg = ":127.0.0.1 451 * " + cmd.getname() + " :You must finish connecting first.\n";
+				::send(s, msg.c_str(), msg.length(), 0);
+			}
+			textCmd = "";
 		}
 	}
 }
