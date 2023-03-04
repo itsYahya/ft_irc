@@ -175,6 +175,22 @@ void	dbManager::sendMsgCls(std::string info, std::string nameChannel)
 	}
 }
 
+void	dbManager::getInfoPartChannel(client &cl, std::string namechannel, std::string body)
+{
+	std::string info = cl.getClinetFullname() + " PART " + namechannel + " " + body + "\n";
+	sendMsgCls(info, namechannel);
+}
+
+void	dbManager::getInfoPartError(client &cl, std::string namechannel, int num)
+{
+	std::string info = "";
+	if (num == 403)
+		info +=  ":127.0.0.1 403 " + cl.getnickName() + " " + namechannel + " :No such channel";
+	else if (num == 442)
+		info +=  ":127.0.0.1 442 " + cl.getnickName() + " " + namechannel + " :You're not on that channel";
+	send(cl.getfdClient(), info.c_str(), info.size(), 0);
+}
+
 std::string		dbManager::processInfoCls(channel &ch, client &cl, std::vector<client> &cls)
 {
 	std::string info = ":" + cl.getHost() + " 353 " + cl.getnickName() + " = " + ch.getNameChannel() + " :";

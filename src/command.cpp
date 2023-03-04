@@ -223,7 +223,7 @@ void	command::partCommand(client &cl, std::string body, dbManager& db)
 	{
 		if (db.srchChannel(body))
 		{
-			db.deleteClientChannel(body, cl.getnickName());
+			cl.quitChannel(body);
 			if (!db.getClients().size())
 				db.deleteChannel(body);
 		}

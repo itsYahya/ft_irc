@@ -44,7 +44,10 @@ class dbManager
 		void						getInfoInvalid(int fd, std::string nick);
 		void						getInfoNewJoin(client &cl, std::string namechannel);
 		void						getInfoListClInChannel(client &cl, std::string nameChannel, std::vector<client> &cls);
+		void						getInfoPartChannel(client &cl, std::string namechannel, std::string body);
+		void						getInfoPartError(client &cl, std::string namechannel, int num);
 		void						sendMsgCls(std::string info, std::string nameChannel);
 		std::string					processInfoCls(channel &ch, client &cl, std::vector<client> &cls);
+
 };
 #endif
