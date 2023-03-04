@@ -78,6 +78,9 @@ class client{
 		bool				&getPong();
 
 		std::string			&getCmd();
+
+		void				quitChannel(const std::string &ch);
+		void				quitChannels();
 };
 
 #endif

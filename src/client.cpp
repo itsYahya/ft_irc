@@ -10,6 +10,7 @@ client::~client(){
 }
 
 void	client::reset(){
+	quitChannels();
 	this->type = FDFREE;
 	this->fdClient = -1;
 	this->auth = false;
@@ -131,4 +132,14 @@ t_mode	client::getmode(std::string channel)
 
 std::string	&client::getCmd(){
 	return (cmd);
+}
+
+void	client::quitChannel(const std::string &channel){
+	dbManager::deleteClientChannel(channel, nickName);
+}
+
+void	client::quitChannels(){
+	iter_mode = list_mode.begin();
+	for (; iter_mode != list_mode.end(); iter_mode++)
+		quitChannel(iter_mode->first);
 }

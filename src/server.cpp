@@ -149,7 +149,6 @@ void	server::read(int s){
 				::send(s, msg.c_str(), msg.length(), 0);
 			}
 			textCmd = "";
-			std::cout << "textCmd after execution : " << textCmd << std::endl;
 		}
 	}
 }
