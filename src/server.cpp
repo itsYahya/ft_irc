@@ -81,8 +81,7 @@ void	server::init_fds(){
 	for (int i = 0; i < MAX_FDS; i++){
 		if (checkPing(clients[i], i)){
 			FD_SET(i, &s_read);
-			if (clients[i].writeState())
-				FD_SET(i, &s_write);
+			if (clients[i].writeState()) FD_SET(i, &s_write);
 			time.tv_sec = std::min(time.tv_sec, PINGTIME - clients[i].getPing());
 		}
 	}
@@ -96,14 +95,11 @@ void	server::listen(){
 			throw myexception("something went wrong !!");
 		for (int i = 0; i < MAX_FDS && n > 0; i++){
 			if (FD_ISSET(i, &s_read)){
-				if (sock == i)
-					accept();
-				else
-					read(i);
+				if (sock == i) accept();
+				else read(i);
 				n--;
 			}
-			if (FD_ISSET(i, &s_write))
-				write(i, clients[i]);
+			if (FD_ISSET(i, &s_write)) write(i, clients[i]);
 		}
 	}
 }
