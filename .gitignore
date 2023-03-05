@@ -2,4 +2,4 @@ server
 build
 *.o
 .vscode
-data
+data.C

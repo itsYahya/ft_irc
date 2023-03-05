@@ -225,10 +225,9 @@ void	server::clear(){
 	server::iterator	iter = clients.begin();
 	client				cl;
 
-	// ::close(sock);
-	(void)iter;
-	// for (; iter != clients.end(); iter++){
-	// 	cl = *iter;
-	// 	if (!(cl).isfree()) ::close(cl.getfdClient());
-	// }
+	::close(sock);
+	for (; iter != clients.end(); iter++){
+		cl = *iter;
+		if (!(cl).isfree()) ::close(cl.getfdClient());
+	}
 }

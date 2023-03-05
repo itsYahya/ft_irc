@@ -18,6 +18,7 @@ int main(int ac, char **av){
 			}
 			ptr = &server;
 			signal(SIGINT, sighandler);
+			signal(SIGPIPE, SIG_IGN);
 			server.create();
 			server.listen();
 		}else
