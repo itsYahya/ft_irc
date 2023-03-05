@@ -58,6 +58,7 @@ class server{
 		client						&getClientByFd(int fd);
 
 		bool						checkPing(client &c, int fd);
+		
 };
 
 #endif

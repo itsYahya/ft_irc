@@ -63,7 +63,7 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 			}
 		}
 		else {
-			std::string msg = ":127.0.0.1 401 " + c.getnickName() + " " + res[0] + " :No such nick/channel\n";
+			std::string msg = ":localhost 401 " + c.getnickName() + " " + res[0] + " :No such nick/channel\n";
 			send(fd, msg.c_str(), msg.length(), 0);
 		}
 	}
@@ -87,13 +87,14 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 			sendList(db, fd, c);
 			break;
 		case CMD_PONG:
+			std::cout << "we've got ponged back" << std::endl;
 			c.pinged(std::time(NULL));
 			c.getPong() = true;
 			break;
 		case CMD_MODE:
 			break;
 		default :
-			std::string msg = ":127.0.0.1 421 ";
+			std::string msg = ":localhost 421 ";
 			msg += c.getnickName() + " " + name + " :Unknown command\n";
 			send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 	}

@@ -59,7 +59,8 @@ void	server::close(int sock){
 bool	server::checkPing(client &c, int fd){
 	if (c.isfree()) return (false);
 	if (c.getPing() >= PINGTIME && c.getPong()){
-		std::string msg = "PING :127.0.0.1\n";
+		std::cout << "this client was pinged" << std::endl;
+		std::string msg = "PING :localhost\n";
 		::send(fd, msg.c_str(), msg.length(), 0);
 		c.getPong() = false;
 		c.pinged(std::time(NULL));
@@ -145,7 +146,7 @@ void	server::read(int s){
 			else if (clients[s].authenticated())
 				cmd.switch_cmd(s, db, clients[s], clients);
 			else{
-				std::string msg = ":127.0.0.1 451 * " + cmd.getname() + " :You must finish connecting first.\n";
+				std::string msg = ":localhost 451 * " + cmd.getname() + " :You must finish connecting first.\n";
 				::send(s, msg.c_str(), msg.length(), 0);
 			}
 			textCmd = "";
@@ -161,7 +162,7 @@ void	server::checkout_nick(client &c, std::string nick){
 		c.setnickName(nick);
 	}
 	else{
-		std::string msg = ":127.0.0.1 433 * " + nick + " :Nickname is already in use.\n";
+		std::string msg = ":localhost 433 * " + nick + " :Nickname is already in use.\n";
 		::send(c.getfdClient(),  msg.c_str(), msg.length(), 0);
 	}
 }
@@ -172,7 +173,7 @@ void	server::checkout_user(client &c, std::string body){
 		std::string nick = c.getnickName();
 		int			fd = c.getfdClient();
 		if (nick.compare("nick" + helper::itos(fd)) == 0) nick = "";
-		std::string msg = ":127.0.0.1 461 " + nick + " USER :Not enough parameters\n";
+		std::string msg = ":localhost 461 " + nick + " USER :Not enough parameters\n";
 		::send(fd, msg.c_str(), msg.length(), 0);
 	} else {
 		c.setloginName(arr[0]);
