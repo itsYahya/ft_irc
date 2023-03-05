@@ -18,21 +18,22 @@
 
 class server{
 	private:
-		int							sock;
-		int							n;
+		int										sock;
+		int										n;
 
-		int							port;
-		std::string					password;
+		int										port;
+		std::string								password;
 
-		fd_set						s_read;
-		fd_set						s_write;
-		struct sockaddr_in			addr;
-		socklen_t					len;
-		char						buffer[BUFFER_SIZE];
+		fd_set									s_read;
+		fd_set									s_write;
+		struct sockaddr_in						addr;
+		socklen_t								len;
+		char									buffer[BUFFER_SIZE];
 
-		std::vector<client> 		clients;
-		dbManager					*db;
-		timeval						time;
+		std::vector<client> 					clients;
+		typedef std::vector<client>::iterator	iterator;
+		dbManager								*db;
+		timeval									time;
 
 	public:
 		server();
@@ -59,6 +60,7 @@ class server{
 
 		bool						checkPing(client &c, int fd);
 		
+		void						clear();
 };
 
 #endif

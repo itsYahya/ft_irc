@@ -1,5 +1,12 @@
 #include "helper.hpp"
 
+server	*ptr;
+
+void	sighandler(int sig){
+	(void)sig;
+	ptr->clear();
+}
+
 int main(int ac, char **av){
 	server server;
 	
@@ -9,6 +16,8 @@ int main(int ac, char **av){
 				std::cerr << "error !" << std::endl;
 				return (1);
 			}
+			ptr = &server;
+			signal(SIGINT, sighandler);
 			server.create();
 			server.listen();
 		}else

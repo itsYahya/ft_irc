@@ -220,3 +220,15 @@ std::string	server::getClientHost(const void *addr, socklen_t len){
 client	&server::getClientByFd(int fd){
 	return (clients[fd]);
 }
+
+void	server::clear(){
+	server::iterator	iter = clients.begin();
+	client				cl;
+
+	// ::close(sock);
+	(void)iter;
+	// for (; iter != clients.end(); iter++){
+	// 	cl = *iter;
+	// 	if (!(cl).isfree()) ::close(cl.getfdClient());
+	// }
+}
