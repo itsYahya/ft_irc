@@ -30,6 +30,7 @@ void	command::init_cmds(){
 	cmds.insert(std::pair<std::string, int>("DCC", CMD_DCC));
 	cmds.insert(std::pair<std::string, int>("PING", CMD_PING));
 	cmds.insert(std::pair<std::string, int>("PONG", CMD_PONG));
+	cmds.insert(std::pair<std::string, int>("QUIT", CMD_QUIT));
 }
 
 int		command::search_cmd(std::string &name){
@@ -93,6 +94,14 @@ void	command::pongCmd(client &c){
 	}
 }
 
+std::string	makeReason(client &c, std::string body){
+	std::string reson = body;
+	
+	if (reson[0] == ':') reson.erase(reson.begin());
+	if (reson.empty()) reson = c.getnickName();
+	return ("(Quit: " + reson + ")\n");
+}
+
 void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &cls)
 {
 	switch(type)
@@ -111,6 +120,9 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 			break;
 		case CMD_PONG:
 			pongCmd(c);
+			break;
+		case CMD_QUIT:
+			server::closingLink(makeReason(c, body), c);
 			break;
 		case CMD_MODE:
 			break;
