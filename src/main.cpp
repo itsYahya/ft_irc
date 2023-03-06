@@ -5,6 +5,7 @@ server	*ptr;
 void	sighandler(int sig){
 	(void)sig;
 	ptr->clear();
+	exit(1);
 }
 
 int main(int ac, char **av){
