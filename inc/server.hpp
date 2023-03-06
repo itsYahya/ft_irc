@@ -48,7 +48,7 @@ class server{
 		void						setpassword(std::string pass);
 		std::string					&getpassword();
 
-		void						close(int sock);
+		static void					close(int sock, client &c);
 		void						auth(client &c, command cmd);
 		void						checkout_nick(client &c, std::string nick);
 		void						checkout_user(client &c, std::string str);
@@ -61,6 +61,8 @@ class server{
 		bool						checkPing(client &c, int fd);
 		
 		void						clear();
+
+		static void					closingLink(const std::string &reson, client &c);
 };
 
 #endif
