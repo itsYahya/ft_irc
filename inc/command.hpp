@@ -50,7 +50,7 @@ class command{
 		void								joinCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls);
 
 		void								sendMsg(dbManager *db, int fd, client &c);
-		void								prvMsg(client &c, int fd);
+		void								prvMsg(client &c, int fd, std::string nick);
 		
 		void								sendList(dbManager *db, int fd, client &c);
 

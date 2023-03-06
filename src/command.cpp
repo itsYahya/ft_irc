@@ -9,7 +9,7 @@ command::command(const char *buffer){
 	std::vector<std::string>	res;
 	res = helper::split_(buffer, ' ');
 	name = helper::capitalize(res[0]);
-	body = helper::capitalize(res[1]);
+	body = res[1];
 	type = search_cmd(name);
 	this->buffer = buffer;
 }
@@ -39,14 +39,15 @@ int		command::search_cmd(std::string &name){
 	return (iter->second);
 }
 
-void	command::prvMsg(client &c, int fd){
-	std::string msg = c.getClinetFullname() + name + " " + body + "\n";
+void	command::prvMsg(client &c, int fd, std::string nick){
+	std::string msg = c.getClinetFullname() + name + " " + nick + " " + helper::split(body, ' ')[1] + "\n";
 	send(fd, msg.c_str(), msg.length(), 0);
 }
 
 void	command::sendMsg(dbManager *db, int fd, client &c){
-	std::vector<std::string>	res;
-	int							client;
+	std::vector<std::string>			res;
+	std::vector<std::string>::iterator	siter;
+	int									client;
 
 	res = helper::split_(body.c_str(), ' ');
 	if (res.size() == 0){
@@ -58,25 +59,28 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 		return ;
 	}
-	client = db->searchClient(res[0]);
-	if (client > 0)
-		prvMsg(c, client);
-	else {
-		dbManager::iterator_channel iter = db->searchChannel(res[0]);
-		if (!dbManager::isEndChannelIter(iter)){
-			std::map<std::string, int> &clients = iter->second.getClients();
-			std::map<std::string, int>::iterator iter = clients.begin();
-			for (; iter != clients.end(); iter++){
-				if (iter->second != fd)
-					prvMsg(c, iter->second);
+	res = helper::split(res[0], ',');
+	siter = res.begin();
+	for (; siter != res.end(); siter++){
+		client = db->searchClient(*siter);
+		if (client > 0)
+			prvMsg(c, client, *siter);
+		else {
+			dbManager::iterator_channel iter = db->searchChannel(*siter);
+			if (!dbManager::isEndChannelIter(iter)){
+				std::map<std::string, int> &clients = iter->second.getClients();
+				std::map<std::string, int>::iterator iter = clients.begin();
+				for (; iter != clients.end(); iter++){
+					if (iter->second != fd)
+						prvMsg(c, iter->second, *siter);
+				}
+			}
+			else {
+				std::string msg = ":localhost 401 " + c.getnickName() + " " + *siter + " :No such nick/channel\n";
+				send(fd, msg.c_str(), msg.length(), 0);
 			}
 		}
-		else {
-			std::string msg = ":localhost 401 " + c.getnickName() + " " + res[0] + " :No such nick/channel\n";
-			send(fd, msg.c_str(), msg.length(), 0);
-		}
 	}
-	
 }
 
 void	command::pongCmd(client &c){
