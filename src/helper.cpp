@@ -50,3 +50,11 @@ std::string	helper::itos(int i){
 	stream >> string;
 	return (string);
 }
+
+std::string	helper::capitalize(std::string str){
+	std::string::iterator iter = str.begin();
+
+	for (; iter != str.end(); iter++)
+		*iter = std::toupper(*iter);
+	return (str);
+}
