@@ -8,8 +8,8 @@ std::map<std::string, int> command::cmds;
 command::command(const char *buffer){
 	std::vector<std::string>	res;
 	res = helper::split_(buffer, ' ');
-	name = res[0];
-	body = res[1];
+	name = helper::capitalize(res[0]);
+	body = helper::capitalize(res[1]);
 	type = search_cmd(name);
 	this->buffer = buffer;
 }
