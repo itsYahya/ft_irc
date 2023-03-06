@@ -53,6 +53,8 @@ class command{
 		void								prvMsg(client &c, int fd);
 		
 		void								sendList(dbManager *db, int fd, client &c);
+
+		void								pongCmd(client &c);
 };
 
 #endif

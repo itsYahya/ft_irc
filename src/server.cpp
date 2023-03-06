@@ -59,7 +59,6 @@ void	server::close(int sock){
 bool	server::checkPing(client &c, int fd){
 	if (c.isfree()) return (false);
 	if (c.getPing() >= PINGTIME && c.getPong()){
-		std::cout << "this client was pinged" << std::endl;
 		std::string msg = "PING :localhost\n";
 		::send(fd, msg.c_str(), msg.length(), 0);
 		c.getPong() = false;

@@ -70,6 +70,16 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 	
 }
 
+void	command::pongCmd(client &c){
+	if (body.empty()){
+		std::string msg = ":localhost 409 " + c.getnickName() + " :No origin specified\n";
+		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
+	}else{
+		c.pinged(std::time(NULL));
+		c.getPong() = true;
+	}
+}
+
 void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &cls)
 {
 	switch(type)
@@ -87,9 +97,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 			sendList(db, fd, c);
 			break;
 		case CMD_PONG:
-			std::cout << "we've got ponged back" << std::endl;
-			c.pinged(std::time(NULL));
-			c.getPong() = true;
+			pongCmd(c);
 			break;
 		case CMD_MODE:
 			break;
