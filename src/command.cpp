@@ -49,6 +49,15 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 	int							client;
 
 	res = helper::split_(body.c_str(), ' ');
+	if (res.size() == 0){
+		std::string msg = ":localhost 411 " + c.getnickName() + " :No recipient given (PRIVMSG)\n";
+		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
+		return ;
+	}else if (res.size() == 1){
+		std::string msg = ":localhost 412 " + c.getnickName() + " :No text to send\n";
+		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
+		return ;
+	}
 	client = db->searchClient(res[0]);
 	if (client > 0)
 		prvMsg(c, client);
