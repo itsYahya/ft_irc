@@ -8,7 +8,7 @@ std::map<std::string, int> command::cmds;
 command::command(const char *buffer){
 	std::vector<std::string>	res;
 	res = helper::split_(buffer, ' ');
-	name = res[0];
+	name = helper::capitalize(res[0]);
 	body = res[1];
 	type = search_cmd(name);
 	this->buffer = buffer;
@@ -30,6 +30,7 @@ void	command::init_cmds(){
 	cmds.insert(std::pair<std::string, int>("DCC", CMD_DCC));
 	cmds.insert(std::pair<std::string, int>("PING", CMD_PING));
 	cmds.insert(std::pair<std::string, int>("PONG", CMD_PONG));
+	cmds.insert(std::pair<std::string, int>("QUIT", CMD_QUIT));
 }
 
 int		command::search_cmd(std::string &name){
@@ -39,35 +40,66 @@ int		command::search_cmd(std::string &name){
 	return (iter->second);
 }
 
-void	command::prvMsg(client &c, int fd){
-	std::string msg = c.getClinetFullname() + name + " " + body + "\n";
+void	command::prvMsg(client &c, int fd, std::string nick){
+	std::string msg = c.getClinetFullname() + name + " " + nick + " " + helper::split(body, ' ')[1] + "\n";
 	send(fd, msg.c_str(), msg.length(), 0);
 }
 
 void	command::sendMsg(dbManager *db, int fd, client &c){
-	std::vector<std::string>	res;
-	int							client;
+	std::vector<std::string>			res;
+	std::vector<std::string>::iterator	siter;
+	int									client;
 
 	res = helper::split_(body.c_str(), ' ');
-	client = db->searchClient(res[0]);
-	if (client > 0)
-		prvMsg(c, client);
-	else {
-		dbManager::iterator_channel iter = db->searchChannel(res[0]);
-		if (!dbManager::isEndChannelIter(iter)){
-			std::map<std::string, int> &clients = iter->second.getClients();
-			std::map<std::string, int>::iterator iter = clients.begin();
-			for (; iter != clients.end(); iter++){
-				if (iter->second != fd)
-					prvMsg(c, iter->second);
+	if (res.size() == 0){
+		std::string msg = ":localhost 411 " + c.getnickName() + " :No recipient given (PRIVMSG)\n";
+		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
+		return ;
+	}else if (res.size() == 1){
+		std::string msg = ":localhost 412 " + c.getnickName() + " :No text to send\n";
+		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
+		return ;
+	}
+	res = helper::split(res[0], ',');
+	siter = res.begin();
+	for (; siter != res.end(); siter++){
+		client = db->searchClient(*siter);
+		if (client > 0)
+			prvMsg(c, client, *siter);
+		else {
+			dbManager::iterator_channel iter = db->searchChannel(*siter);
+			if (!dbManager::isEndChannelIter(iter)){
+				std::map<std::string, int> &clients = iter->second.getClients();
+				std::map<std::string, int>::iterator iter = clients.begin();
+				for (; iter != clients.end(); iter++){
+					if (iter->second != fd)
+						prvMsg(c, iter->second, *siter);
+				}
+			}
+			else {
+				std::string msg = ":localhost 401 " + c.getnickName() + " " + *siter + " :No such nick/channel\n";
+				send(fd, msg.c_str(), msg.length(), 0);
 			}
 		}
-		else {
-			std::string msg = ":127.0.0.1 401 " + c.getnickName() + " " + res[0] + " :No such nick/channel\n";
-			send(fd, msg.c_str(), msg.length(), 0);
-		}
 	}
+}
+
+void	command::pongCmd(client &c){
+	if (body.empty()){
+		std::string msg = ":localhost 409 " + c.getnickName() + " :No origin specified\n";
+		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
+	}else{
+		c.pinged(std::time(NULL));
+		c.getPong() = true;
+	}
+}
+
+std::string	makeReason(client &c, std::string body){
+	std::string reson = body;
 	
+	if (reson[0] == ':') reson.erase(reson.begin());
+	if (reson.empty()) reson = c.getnickName();
+	return ("(Quit: " + reson + ")\n");
 }
 
 void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &cls)
@@ -87,13 +119,15 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 			sendList(db, fd, c);
 			break;
 		case CMD_PONG:
-			c.pinged(std::time(NULL));
-			c.getPong() = true;
+			pongCmd(c);
+			break;
+		case CMD_QUIT:
+			server::closingLink(makeReason(c, body), c);
 			break;
 		case CMD_MODE:
 			break;
 		default :
-			std::string msg = ":127.0.0.1 421 ";
+			std::string msg = ":localhost 421 ";
 			msg += c.getnickName() + " " + name + " :Unknown command\n";
 			send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 	}

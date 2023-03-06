@@ -18,21 +18,22 @@
 
 class server{
 	private:
-		int							sock;
-		int							n;
+		int										sock;
+		int										n;
 
-		int							port;
-		std::string					password;
+		int										port;
+		std::string								password;
 
-		fd_set						s_read;
-		fd_set						s_write;
-		struct sockaddr_in			addr;
-		socklen_t					len;
-		char						buffer[BUFFER_SIZE];
+		fd_set									s_read;
+		fd_set									s_write;
+		struct sockaddr_in						addr;
+		socklen_t								len;
+		char									buffer[BUFFER_SIZE];
 
-		std::vector<client> 		clients;
-		dbManager					*db;
-		timeval						time;
+		std::vector<client> 					clients;
+		typedef std::vector<client>::iterator	iterator;
+		dbManager								*db;
+		timeval									time;
 
 	public:
 		server();
@@ -47,7 +48,7 @@ class server{
 		void						setpassword(std::string pass);
 		std::string					&getpassword();
 
-		void						close(int sock);
+		static void					close(int sock, client &c);
 		void						auth(client &c, command cmd);
 		void						checkout_nick(client &c, std::string nick);
 		void						checkout_user(client &c, std::string str);
@@ -58,6 +59,10 @@ class server{
 		client						&getClientByFd(int fd);
 
 		bool						checkPing(client &c, int fd);
+		
+		void						clear();
+
+		static void					closingLink(const std::string &reson, client &c);
 };
 
 #endif

@@ -68,7 +68,7 @@ bool				channel::getBannedClient(std::string host)
 }
 
 std::string		channel::getInfo(std::string nick){
-	std::string	info = ":127.0.0.1 " + helper::itos(322);
+	std::string	info = ":localhost " + helper::itos(322);
 	info += " " + nick + " " + nameChannel + " :channel status\n";
 	return (info);
 }
@@ -76,13 +76,13 @@ std::string		channel::getInfo(std::string nick){
 
 
 std::string		channel::getInfosHeader(std::string nick){
-	std::string header = ":127.0.0.1 " + helper::itos(321);
+	std::string header = ":localhost " + helper::itos(321);
 	header += " " + nick + " Channel :Users Name\n";
 	return (header);
 }
 
 std::string		channel::getInfosFooter(std::string nick){
-	std::string footer = ":127.0.0.1 " + helper::itos(323);
+	std::string footer = ":localhost " + helper::itos(323);
 	footer += " " + nick + " End of /LIST\n";
 	return (footer);
 }

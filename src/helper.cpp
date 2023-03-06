@@ -37,8 +37,8 @@ std::vector<std::string>	helper::split_(const char *buffer, char sep){
 	std::getline(stream, name, sep);
 	std::istreambuf_iterator<char> eos;
 	std::string ss(std::istreambuf_iterator<char>(stream), eos);
-	res.push_back(name);
-	res.push_back(ss);
+	if (!name.empty()) res.push_back(name);
+	if (!ss.empty()) res.push_back(ss);
 	return (res);
 }
 
@@ -49,4 +49,12 @@ std::string	helper::itos(int i){
 	stream << i;
 	stream >> string;
 	return (string);
+}
+
+std::string	helper::capitalize(std::string str){
+	std::string::iterator iter = str.begin();
+
+	for (; iter != str.end(); iter++)
+		*iter = std::toupper(*iter);
+	return (str);
 }

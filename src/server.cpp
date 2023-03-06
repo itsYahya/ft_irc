@@ -47,10 +47,9 @@ void	server::create(){
 		throw myexception("something went wrong !!");
 }
 
-void	server::close(int sock){
-	client	&c = clients[sock];
+void	server::close(int sock, client &c){
 
-	db->deleteClient(c.getnickName());
+	dbManager::deleteClient(c.getnickName());
 	c.reset();
 	::close(sock);
 	std::cout << "client went away !!" << std::endl;
@@ -59,15 +58,13 @@ void	server::close(int sock){
 bool	server::checkPing(client &c, int fd){
 	if (c.isfree()) return (false);
 	if (c.getPing() >= PINGTIME && c.getPong()){
-		std::string msg = "PING :127.0.0.1\n";
+		std::string msg = "PING :localhost\n";
 		::send(fd, msg.c_str(), msg.length(), 0);
 		c.getPong() = false;
 		c.pinged(std::time(NULL));
 	}
 	else if (c.getPing() >= PINGTIME){
-		std::string msg = "ERROR :Closing Link: " + c.getHost() + " (Ping timeout)\n";
-		::send(fd, msg.c_str(), msg.length(), 0);
-		close(fd);
+		closingLink("(Ping timeout)\n", c);
 		return (false);
 	}
 	return (true);
@@ -77,7 +74,7 @@ void	server::init_fds(){
 	time.tv_sec = 40;
 	FD_ZERO(&s_read);
 	FD_ZERO(&s_write);
-	FD_SET(sock, &s_read);
+	if (sock > 0) FD_SET(sock, &s_read);
 	for (int i = 0; i < MAX_FDS; i++){
 		if (checkPing(clients[i], i)){
 			FD_SET(i, &s_read);
@@ -134,7 +131,7 @@ void	server::read(int s){
 	
 	rd = recv(s, buffer, BUFFER_SIZE, 0);
 	if (rd <= 0)
-		close(s);
+		close(s, clients[s]);
 	else{
 		nl = replace_nl(buffer);
 		textCmd += buffer;
@@ -145,7 +142,7 @@ void	server::read(int s){
 			else if (clients[s].authenticated())
 				cmd.switch_cmd(s, db, clients[s], clients);
 			else{
-				std::string msg = ":127.0.0.1 451 * " + cmd.getname() + " :You must finish connecting first.\n";
+				std::string msg = ":localhost 451 * " + cmd.getname() + " :You must finish connecting first.\n";
 				::send(s, msg.c_str(), msg.length(), 0);
 			}
 			textCmd = "";
@@ -154,14 +151,20 @@ void	server::read(int s){
 }
 
 void	server::checkout_nick(client &c, std::string nick){
-	int fd = db->searchClient(nick);
-
+	int fd = -1; 
+	
+	if (nick.empty()){
+		std::string msg = ":localhost 431 :No nickname given\n";
+		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
+		return ;
+	}
+	fd = db->searchClient(nick);
 	if (fd == -1){
 		db->updateNickClient(c.getnickName(), nick);
 		c.setnickName(nick);
 	}
 	else{
-		std::string msg = ":127.0.0.1 433 * " + nick + " :Nickname is already in use.\n";
+		std::string msg = ":localhost 433 * " + nick + " :Nickname is already in use.\n";
 		::send(c.getfdClient(),  msg.c_str(), msg.length(), 0);
 	}
 }
@@ -171,8 +174,7 @@ void	server::checkout_user(client &c, std::string body){
 	if (arr.size() != 4){
 		std::string nick = c.getnickName();
 		int			fd = c.getfdClient();
-		if (nick.compare("nick" + helper::itos(fd)) == 0) nick = "";
-		std::string msg = ":127.0.0.1 461 " + nick + " USER :Not enough parameters\n";
+		std::string msg = ":localhost 461 " + nick + " USER :Not enough parameters\n";
 		::send(fd, msg.c_str(), msg.length(), 0);
 	} else {
 		c.setloginName(arr[0]);
@@ -186,10 +188,8 @@ void	server::auth(client &c, command cmd){
 	if (type == CMD_PASS){
 		if (password.compare(cmd.getbody()) == 0)
 			c.authenticate();
-		else{
-			send(c.getfdClient(), "wrong pass", 10, 0);
-			close(c.getfdClient());
-		}
+		else
+			closingLink("(Wrong password)\n", c);
 	}
 	else if (type == CMD_NICK)
 		checkout_nick(c, cmd.getbody());
@@ -218,4 +218,23 @@ std::string	server::getClientHost(const void *addr, socklen_t len){
 
 client	&server::getClientByFd(int fd){
 	return (clients[fd]);
+}
+
+void	server::clear(){
+	server::iterator	iter = clients.begin();
+	client				cl;
+
+	::close(sock);
+	sock = -1;
+	for (; iter != clients.end(); iter++){
+		cl = *iter;
+		if (!(cl).isfree()) close(cl.getfdClient(), cl);
+	}
+}
+
+void	server::closingLink(const std::string &reson, client &c){
+	int fd = c.getfdClient();
+	std::string msg = "ERROR :Closing Link: " + c.getHost() + " " + reson;
+	::send(fd, msg.c_str(), msg.length(), 0);
+	close(fd, c);
 }

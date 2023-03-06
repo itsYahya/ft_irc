@@ -22,6 +22,7 @@ typedef enum e_ctype{
 	CMD_DCC		= 11,
 	CMD_PING	= 12,
 	CMD_PONG	= 13,
+	CMD_QUIT	= 14,
 	CMD_WRONG 	= 0,
 }	t_ctype;
 
@@ -50,9 +51,11 @@ class command{
 		void								joinCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls);
 
 		void								sendMsg(dbManager *db, int fd, client &c);
-		void								prvMsg(client &c, int fd);
+		void								prvMsg(client &c, int fd, std::string nick);
 		
 		void								sendList(dbManager *db, int fd, client &c);
+
+		void								pongCmd(client &c);
 };
 
 #endif

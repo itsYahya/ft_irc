@@ -136,13 +136,13 @@ bool	dbManager::isEndClientIter(iterator_clinet iter){
 }
 
 void	dbManager::getInfoBan(int fd,std::string nick, std::string nameChannel){
-	std::string	info = ":127.0.0.1 " + helper::itos(474);
+	std::string	info = ":localhost " + helper::itos(474);
 	info += " " + nick + " " + nameChannel + " :Cannot join channel (+b)\n";
 	send(fd, info.c_str(), info.size(), 0);
 }
 
 void	dbManager::getInfoInvalid(int fd,std::string nick){
-	std::string	info = ":127.0.0.1 " + helper::itos(476);
+	std::string	info = ":localhost " + helper::itos(476);
 	info += " " + nick + " 0  :Invalid channel name\n";
 	send(fd, info.c_str(), info.size(), 0);
 }
