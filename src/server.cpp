@@ -154,8 +154,14 @@ void	server::read(int s){
 }
 
 void	server::checkout_nick(client &c, std::string nick){
-	int fd = db->searchClient(nick);
-
+	int fd = -1; 
+	
+	if (nick.empty()){
+		std::string msg = ":localhost 431 :No nickname given\n";
+		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
+		return ;
+	}
+	fd = db->searchClient(nick);
 	if (fd == -1){
 		db->updateNickClient(c.getnickName(), nick);
 		c.setnickName(nick);
@@ -171,7 +177,6 @@ void	server::checkout_user(client &c, std::string body){
 	if (arr.size() != 4){
 		std::string nick = c.getnickName();
 		int			fd = c.getfdClient();
-		if (nick.compare("nick" + helper::itos(fd)) == 0) nick = "";
 		std::string msg = ":localhost 461 " + nick + " USER :Not enough parameters\n";
 		::send(fd, msg.c_str(), msg.length(), 0);
 	} else {
