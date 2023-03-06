@@ -40,12 +40,12 @@ class dbManager
 
 		static	bool				isEndChannelIter(iterator_channel iter);
 		static  bool				isEndClientIter(iterator_clinet iter);
+		static	void				getInfoPartError(client &cl, std::string namechannel, int num);
 		void						getInfoBan(int fd, std::string nick, std::string nameChannel);
 		void						getInfoInvalid(int fd, std::string nick);
 		void						getInfoNewJoin(client &cl, std::string namechannel);
 		void						getInfoListClInChannel(client &cl, std::string nameChannel, std::vector<client> &cls);
-		void						getInfoPartChannel(client &cl, std::string namechannel, std::string body);
-		void						getInfoPartError(client &cl, std::string namechannel, int num);
+		void						getInfoPartChannel(client &cl, std::vector<std::string> info);
 		void						sendMsgCls(std::string info, std::string nameChannel);
 		std::string					processInfoCls(channel &ch, client &cl, std::vector<client> &cls);
 

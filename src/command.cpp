@@ -219,17 +219,22 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 
 void	command::partCommand(client &cl, std::string body, dbManager& db)
 {
-	if (body.c_str()[0] == '#')
+	std::vector<std::string> info = helper::split(body, ' ');
+	if (info[0].c_str()[0] == '#' && info[0].length() > 1)
 	{
-		if (db.srchChannel(body))
+		if (db.srchChannel(info[0]))
 		{
-			cl.quitChannel(body);
-			if (!db.getClients().size())
-				db.deleteChannel(body);
+			db.getInfoPartChannel(cl, info);
+			if (!cl.quitChannel(info[0]))
+				db.getInfoPartError(cl, info[0], 442);
+			// if (db.getClients().size() == 0)
+				// db.deleteChannel(info[0]);
 		}
+		else
+			db.getInfoPartError(cl, info[0], 403);
 	}
 	else
-		db.getInfoInvalid(cl.getfdClient(), cl.getnickName());
+		db.getInfoPartError(cl, info[0], 403);
 }
 
 void	command::sendList(dbManager *db, int fd, client &c){

@@ -175,19 +175,28 @@ void	dbManager::sendMsgCls(std::string info, std::string nameChannel)
 	}
 }
 
-void	dbManager::getInfoPartChannel(client &cl, std::string namechannel, std::string body)
+void	dbManager::getInfoPartChannel(client &cl, std::vector<std::string> info)
 {
-	std::string info = cl.getClinetFullname() + " PART " + namechannel + " " + body + "\n";
-	sendMsgCls(info, namechannel);
+	std::string msg = "";
+	if (info.size() > 1)
+	{
+		msg += cl.getClinetFullname() + " PART " + info[0] + " ";
+		for (size_t i = 1; i < info.size(); i++)
+			msg += " " + info[i];
+		msg += "\n";
+	}
+	else
+		msg += cl.getClinetFullname() + " PART " + info[0] + "\n";
+	sendMsgCls(msg, info[0]);
 }
 
 void	dbManager::getInfoPartError(client &cl, std::string namechannel, int num)
 {
 	std::string info = "";
 	if (num == 403)
-		info +=  ":127.0.0.1 403 " + cl.getnickName() + " " + namechannel + " :No such channel";
+		info +=  ":127.0.0.1 403 " + cl.getnickName() + " " + namechannel + " :No such channel\n";
 	else if (num == 442)
-		info +=  ":127.0.0.1 442 " + cl.getnickName() + " " + namechannel + " :You're not on that channel";
+		info +=  ":127.0.0.1 442 " + cl.getnickName() + " " + namechannel + " :You're not on that channel\n";
 	send(cl.getfdClient(), info.c_str(), info.size(), 0);
 }
 

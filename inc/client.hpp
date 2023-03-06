@@ -81,7 +81,7 @@ class client{
 
 		std::string			&getCmd();
 
-		void				quitChannel(const std::string &ch);
+		bool				quitChannel(const std::string &ch);
 		void				quitChannels();
 
 		time_t				getSessionTime();

@@ -134,8 +134,9 @@ std::string	&client::getCmd(){
 	return (cmd);
 }
 
-void	client::quitChannel(const std::string &channel){
-	dbManager::deleteClientChannel(channel, nickName);
+bool	client::quitChannel(const std::string &channel){
+
+	return (dbManager::deleteClientChannel(channel, nickName));
 }
 
 void	client::quitChannels(){
