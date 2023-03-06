@@ -65,9 +65,7 @@ bool	server::checkPing(client &c, int fd){
 		c.pinged(std::time(NULL));
 	}
 	else if (c.getPing() >= PINGTIME){
-		std::string msg = "ERROR :Closing Link: " + c.getHost() + " (Ping timeout)\n";
-		::send(fd, msg.c_str(), msg.length(), 0);
-		close(fd);
+		command::closingLink("(Ping timeout)\n", c);
 		return (false);
 	}
 	return (true);
