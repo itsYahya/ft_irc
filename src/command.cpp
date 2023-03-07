@@ -203,29 +203,31 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 	else
 	{
 		channel &ch = db.searchChannel(body[0])->second;
-		if (!ch.getBannedClient(cl.getHost()) 
-				&& (!ch.getIsPasswd() 
-				|| (body.size() == 2 && !ch.getPasswd().compare(body[1]))))
+		if (ch.getBannedClient(cl.getHost())) 
+			db.getInfoBan(cl.getfdClient(), cl.getnickName(), body[0]);
+		else if(cl.checkChannel(body[0]))
+			db.getInfoPartError(cl, body[0], 500);
+		else if (!ch.getIsPasswd() 
+				|| (body.size() == 2 && !ch.getPasswd().compare(body[1])))
 		{
 			cl.setmode(body[0], SM_CLIENT);
 			joinClChannel(cl, body[0], db, cls);
 		}
 		else
-			db.getInfoBan(cl.getfdClient(), cl.getnickName(), body[0]);
+			db.getInfoPartError(cl, body[0], 475);
 	}
 }
-
-
 
 void	command::partCommand(client &cl, std::string body, dbManager& db)
 {
 	std::vector<std::string> info = helper::split(body, ' ');
+
 	if (info[0].c_str()[0] == '#' && info[0].length() > 1)
 	{
 		if (db.srchChannel(info[0]))
 		{
 			db.getInfoPartChannel(cl, info);
-			if (!cl.quitChannel(info[0]))
+			if (cl.quitChannel(info[0]))
 				db.getInfoPartError(cl, info[0], 442);
 			// if (db.getClients().size() == 0)
 				// db.deleteChannel(info[0]);

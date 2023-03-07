@@ -193,10 +193,14 @@ void	dbManager::getInfoPartChannel(client &cl, std::vector<std::string> info)
 void	dbManager::getInfoPartError(client &cl, std::string namechannel, int num)
 {
 	std::string info = "";
-	if (num == 403)
-		info +=  ":127.0.0.1 403 " + cl.getnickName() + " " + namechannel + " :No such channel\n";
+	if (num == 500)
+		info +=  ":localhost  " + cl.getnickName() + " " + namechannel + " : the client has already joined the channel\n";
+	else if (num == 475)
+		info +=  ":localhost 475 " + cl.getnickName() + " " + namechannel + " :Cannot join channel (+k) - bad key\n";
+	else if (num == 403)
+		info +=  ":localhost 403 " + cl.getnickName() + " " + namechannel + " :No such channel\n";
 	else if (num == 442)
-		info +=  ":127.0.0.1 442 " + cl.getnickName() + " " + namechannel + " :You're not on that channel\n";
+		info +=  ":localhost 442 " + cl.getnickName() + " " + namechannel + " :You're not on that channel\n";
 	send(cl.getfdClient(), info.c_str(), info.size(), 0);
 }
 

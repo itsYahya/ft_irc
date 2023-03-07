@@ -81,6 +81,7 @@ class client{
 
 		std::string			&getCmd();
 
+		bool				checkChannel(const std::string &ch);
 		bool				quitChannel(const std::string &ch);
 		void				quitChannels();
 

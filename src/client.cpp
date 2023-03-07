@@ -134,6 +134,17 @@ std::string	&client::getCmd(){
 	return (cmd);
 }
 
+bool	client::checkChannel(const std::string &ch)
+{
+	iter_mode = list_mode.begin();
+	for(; iter_mode != list_mode.end(); iter_mode++)
+	{
+		if (iter_mode->first == ch)
+			return (true);
+	}
+	return (false);
+}
+
 bool	client::quitChannel(const std::string &channel){
 
 	return (dbManager::deleteClientChannel(channel, nickName));
