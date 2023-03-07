@@ -33,7 +33,6 @@ class channel
 		static std::string	getInfosHeader(std::string nick);
 		static std::string	getInfosFooter(std::string nick);
 
-		std::string			getListCl();
 		std::map<std::string, int>	&getClients();
 };
 

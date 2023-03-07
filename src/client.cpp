@@ -146,7 +146,6 @@ bool	client::checkChannel(const std::string &ch)
 }
 
 bool	client::quitChannel(const std::string &channel){
-
 	return (dbManager::deleteClientChannel(channel, nickName));
 }
 
@@ -162,4 +161,10 @@ time_t	client::getSessionTime(){
 
 void	client::setSessionTime(){
 	session = std::time(NULL);
+}
+
+void	client::erasemode(std::string channel)
+{
+	if (checkChannel(channel))
+		list_mode.erase(channel);
 }

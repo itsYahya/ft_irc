@@ -219,3 +219,18 @@ std::string		dbManager::processInfoCls(channel &ch, client &cl, std::vector<clie
 	info += "\n";
 	return (info);
 }
+
+bool		dbManager::nextClientmode(client &cl,channel &ch,std::vector<client> & cls)
+{
+	ch.cls_iter = ch.clients.begin();
+	while (ch.cls_iter != ch.clients.end())
+	{
+		if (ch.cls_iter->second != cl.getfdClient())
+		{
+			cls[ch.cls_iter->second].setmode(ch.getNameChannel(), OP_CLIENT);
+			return (true);
+		}
+		ch.cls_iter++;
+	}
+	return (false);
+}

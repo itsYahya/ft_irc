@@ -48,6 +48,7 @@ class dbManager
 		void						getInfoPartChannel(client &cl, std::vector<std::string> info);
 		void						sendMsgCls(std::string info, std::string nameChannel);
 		std::string					processInfoCls(channel &ch, client &cl, std::vector<client> &cls);
+		bool						nextClientmode(client &cl, channel &ch, std::vector<client> &cls);
 
 };
 #endif

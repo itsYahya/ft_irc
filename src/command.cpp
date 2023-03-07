@@ -115,7 +115,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 			sendMsg(db, fd, c);
 			break;
 		case CMD_PART:
-			partCommand(c, body, *db);
+			partCommand(c, body, *db, cls);
 			break;
 		case CMD_JOIN:
 			joinCommand(c, body, *db, cls);
@@ -218,26 +218,30 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 	}
 }
 
-void	command::partCommand(client &cl, std::string body, dbManager& db)
+void	command::partCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls)
 {
 	std::vector<std::string> info = helper::split(body, ' ');
-
-	if (info[0].c_str()[0] == '#' && info[0].length() > 1)
+	channel &ch = db.searchChannel(info[0])->second;
+	if (info[0].c_str()[0] == '#' && info[0].length() > 1 && db.srchChannel(info[0]))
 	{
-		if (db.srchChannel(info[0]))
+		if (cl.checkChannel(info[0]))
 		{
 			db.getInfoPartChannel(cl, info);
-			if (cl.quitChannel(info[0]))
-				db.getInfoPartError(cl, info[0], 442);
-			// if (db.getClients().size() == 0)
-				// db.deleteChannel(info[0]);
+			if (ch.clients.size() > 1)
+				db.nextClientmode(cl, ch, cls);
+			cl.erasemode(info[0]);
+			cl.quitChannel(info[0]);
+			if (ch.clients.size() == 0)
+				db.deleteChannel(info[0]);
 		}
 		else
-			db.getInfoPartError(cl, info[0], 403);
+			db.getInfoPartError(cl, info[0], 442);
 	}
 	else
 		db.getInfoPartError(cl, info[0], 403);
 }
+
+
 
 void	command::sendList(dbManager *db, int fd, client &c){
 	dbManager::iterator_channel		iter;
