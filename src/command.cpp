@@ -52,11 +52,11 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 
 	res = helper::split_(body.c_str(), ' ');
 	if (res.size() == 0){
-		std::string msg = ":localhost 411 " + c.getnickName() + " :No recipient given (PRIVMSG)\n";
+		std::string msg = ":" + server::getShost() + " 411 " + c.getnickName() + " :No recipient given (PRIVMSG)\n";
 		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 		return ;
 	}else if (res.size() == 1){
-		std::string msg = ":localhost 412 " + c.getnickName() + " :No text to send\n";
+		std::string msg = ":" + server::getShost() + " 412 " + c.getnickName() + " :No text to send\n";
 		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 		return ;
 	}
@@ -77,7 +77,7 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 				}
 			}
 			else {
-				std::string msg = ":localhost 401 " + c.getnickName() + " " + *siter + " :No such nick/channel\n";
+				std::string msg = ":" + server::getShost() + " 401 " + c.getnickName() + " " + *siter + " :No such nick/channel\n";
 				send(fd, msg.c_str(), msg.length(), 0);
 			}
 		}
@@ -86,7 +86,7 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 
 void	command::pongCmd(client &c){
 	if (body.empty()){
-		std::string msg = ":localhost 409 " + c.getnickName() + " :No origin specified\n";
+		std::string msg = ":" + server::getShost() + " 409 " + c.getnickName() + " :No origin specified\n";
 		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 	}else{
 		c.pinged(std::time(NULL));
@@ -127,7 +127,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 		case CMD_MODE:
 			break;
 		default :
-			std::string msg = ":localhost 421 ";
+			std::string msg = ":" + server::getShost() + " 421 ";
 			msg += c.getnickName() + " " + name + " :Unknown command\n";
 			send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 	}

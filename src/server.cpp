@@ -44,7 +44,6 @@ void	server::create(){
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
 	getShost() = getClientHost(&addr.sin_addr, addr.sin_len);
-	std::cout << getShost() << std::endl;
 	if (bind(sock, (struct sockaddr*)&addr, len) < 0)
 		throw myexception("port already in use !!");
 	if (::listen(sock, MAX_FDS) < 0)
@@ -62,7 +61,7 @@ void	server::close(int sock, client &c){
 bool	server::checkPing(client &c, int fd){
 	if (c.isfree()) return (false);
 	if (c.getPing() >= PINGTIME && c.getPong()){
-		std::string msg = "PING :localhost\n";
+		std::string msg = "PING :" + getShost() + "\n";
 		::send(fd, msg.c_str(), msg.length(), 0);
 		c.getPong() = false;
 		c.pinged(std::time(NULL));
@@ -146,7 +145,7 @@ void	server::read(int s){
 			else if (clients[s].authenticated())
 				cmd.switch_cmd(s, db, clients[s], clients);
 			else{
-				std::string msg = ":localhost 451 * " + cmd.getname() + " :You must finish connecting first.\n";
+				std::string msg = ":" + getShost() + " 451 * " + cmd.getname() + " :You must finish connecting first.\n";
 				::send(s, msg.c_str(), msg.length(), 0);
 			}
 			textCmd = "";
@@ -158,7 +157,7 @@ void	server::checkout_nick(client &c, std::string nick){
 	int fd = -1; 
 	
 	if (nick.empty()){
-		std::string msg = ":localhost 431 :No nickname given\n";
+		std::string msg = ":" + getShost() + " 431 :No nickname given\n";
 		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 		return ;
 	}
@@ -168,7 +167,7 @@ void	server::checkout_nick(client &c, std::string nick){
 		c.setnickName(nick);
 	}
 	else{
-		std::string msg = ":localhost 433 * " + nick + " :Nickname is already in use.\n";
+		std::string msg = ":" + getShost() + " 433 * " + nick + " :Nickname is already in use.\n";
 		::send(c.getfdClient(),  msg.c_str(), msg.length(), 0);
 	}
 }
@@ -178,7 +177,7 @@ void	server::checkout_user(client &c, std::string body){
 	if (arr.size() != 4){
 		std::string nick = c.getnickName();
 		int			fd = c.getfdClient();
-		std::string msg = ":localhost 461 " + nick + " USER :Not enough parameters\n";
+		std::string msg = ":" + getShost() + " 461 " + nick + " USER :Not enough parameters\n";
 		::send(fd, msg.c_str(), msg.length(), 0);
 	} else {
 		c.setloginName(arr[0]);
