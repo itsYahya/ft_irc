@@ -4,6 +4,8 @@
 #include "helper.hpp"
 #include  <netdb.h>
 
+std::string server::shost;
+
 server::server()
 {
 	sock = 0;
@@ -38,9 +40,11 @@ void	server::create(){
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock < 0)
 		throw myexception("something went wrong !!");
-	addr.sin_addr.s_addr = INADDR_ANY;
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
+	getShost() = getClientHost(&addr.sin_addr, addr.sin_len);
+	std::cout << getShost() << std::endl;
 	if (bind(sock, (struct sockaddr*)&addr, len) < 0)
 		throw myexception("port already in use !!");
 	if (::listen(sock, MAX_FDS) < 0)
@@ -237,4 +241,8 @@ void	server::closingLink(const std::string &reson, client &c){
 	std::string msg = "ERROR :Closing Link: " + c.getHost() + " " + reson;
 	::send(fd, msg.c_str(), msg.length(), 0);
 	close(fd, c);
+}
+
+std::string	&server::getShost(){
+	return (shost);
 }
