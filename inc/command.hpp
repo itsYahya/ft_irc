@@ -57,6 +57,9 @@ class command{
 		void								sendList(dbManager *db, int fd, client &c);
 
 		void								pongCmd(client &c);
+
+		void								botHandler(client &c, int fd);
+		std::string							botList(client &c);
 };
 
 #endif
