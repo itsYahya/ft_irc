@@ -37,6 +37,8 @@ class client{
 
 		std::string								cmd;
 
+		time_t									session;
+
 	public:
 		t_type		type;
 		client();
@@ -81,6 +83,8 @@ class client{
 
 		void				quitChannel(const std::string &ch);
 		void				quitChannels();
+
+		time_t				getSessionTime();
 };
 
 #endif
