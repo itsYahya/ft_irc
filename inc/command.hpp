@@ -23,6 +23,7 @@ typedef enum e_ctype{
 	CMD_PING	= 12,
 	CMD_PONG	= 13,
 	CMD_QUIT	= 14,
+	CMD_BOT		= 15,
 	CMD_WRONG 	= 0,
 }	t_ctype;
 

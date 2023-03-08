@@ -31,6 +31,7 @@ void	command::init_cmds(){
 	cmds.insert(std::pair<std::string, int>("PING", CMD_PING));
 	cmds.insert(std::pair<std::string, int>("PONG", CMD_PONG));
 	cmds.insert(std::pair<std::string, int>("QUIT", CMD_QUIT));
+	cmds.insert(std::pair<std::string, int>("BOT", CMD_BOT));
 }
 
 int		command::search_cmd(std::string &name){
@@ -125,6 +126,9 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 			server::closingLink(makeReason(c, body), c);
 			break;
 		case CMD_MODE:
+			break;
+		case CMD_BOT:
+			::send(fd, "the server said hey\n", 21, 0);
 			break;
 		default :
 			std::string msg = ":" + server::getShost() + " 421 ";
