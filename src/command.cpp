@@ -237,6 +237,8 @@ void	command::partCommand(client &cl, std::string body, dbManager& db, std::vect
 			cl.quitChannel(info[0]);
 			if (ch.clients.size() == 0)
 				db.deleteChannel(info[0]);
+			// db.getInfoNewJoin(cl, ch.getNameChannel());
+			db.getInfoListClInChannel(cl,ch.getNameChannel(), cls);
 		}
 		else
 			db.getInfoPartError(cl, info[0], 442);

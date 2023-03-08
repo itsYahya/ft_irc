@@ -168,7 +168,6 @@ void	dbManager::sendMsgCls(std::string info, std::string nameChannel)
 {
 	channel& ch = searchChannel(nameChannel)->second;
 	ch.cls_iter = ch.clients.begin();
-	// std::cout << "=> " << info << "\n";
 	while (ch.cls_iter != ch.clients.end())
 	{
 		send(ch.cls_iter->second, info.c_str(), info.size(), 0);
