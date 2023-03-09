@@ -35,6 +35,8 @@ class server{
 		dbManager								*db;
 		timeval									time;
 
+		static std::string						shost;
+
 	public:
 		server();
 		~server();
@@ -63,6 +65,8 @@ class server{
 		void						clear();
 
 		static void					closingLink(const std::string &reson, client &c);
+
+		static std::string			&getShost();
 };
 
 #endif

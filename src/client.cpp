@@ -143,3 +143,11 @@ void	client::quitChannels(){
 	for (; iter_mode != list_mode.end(); iter_mode++)
 		quitChannel(iter_mode->first);
 }
+
+time_t	client::getSessionTime(){
+	return (std::difftime(std::time(NULL), session));
+}
+
+void	client::setSessionTime(){
+	session = std::time(NULL);
+}

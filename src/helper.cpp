@@ -58,3 +58,19 @@ std::string	helper::capitalize(std::string str){
 		*iter = std::toupper(*iter);
 	return (str);
 }
+
+std::string	helper::timeToString(time_t time){
+	int m, h, s;
+
+	m = time / 60;
+	h = m / 60;
+	m = m % 60;
+	s = time % 60;
+	return (helper::itos(h) + "h " + helper::itos(m) + "m " + helper::itos(s) + "s");
+}
+
+std::string	helper::nowTime(){
+	time_t	time = std::time(NULL);
+	std::string str = std::ctime(&time);
+	return (str);
+}
