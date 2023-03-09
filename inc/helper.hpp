@@ -15,6 +15,7 @@ class helper{
 		static int						parse_arguments(int ac, char **av, server &server);
 		static std::string				itos(int i);
 		static std::string				capitalize(std::string str);
+		static std::string				timeToString(time_t time);
 };
 
 #endif
