@@ -113,6 +113,7 @@ void	server::accept(){
 	clients[s].getHost() = getClientHost(&addr.sin_addr, addr.sin_len);
 	db->insertClient(clients[s].getnickName(), s);
 	clients[s].pinged(std::time(NULL));
+	clients[s].setSessionTime();
 	read(s);
 }
 
