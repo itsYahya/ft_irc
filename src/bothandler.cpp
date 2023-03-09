@@ -2,7 +2,7 @@
 #include "helper.hpp"
 
 std::string	command::botList(client &c){
-	std::string info = "\n300 * :";
+	std::string info = "300 * :";
 	info += c.getnickName() + " :BOT :Commands to use with it. (BOT CMD)\n";
 	info += "300 * :HELP :List of all the commands available in the server\n";
 	info += "300 * :SESS :The time you spend on the server\n";
@@ -47,6 +47,12 @@ void	command::checkNick(int fd, std::string nick){
 	::send(fd, msg.c_str(), msg.length(), 0);
 }
 
+void	command::timeCmd(int fd){
+	std::string msg = "300 * :BOT :Time ";
+	msg += helper::nowTime();
+	::send(fd, msg.c_str(), msg.length(), 0);
+}
+
 void	command::botHandler(client &c, int fd){
 	std::string					&list = c.getList();
 	int							&index = c.getWindex();
@@ -74,8 +80,11 @@ void	command::botHandler(client &c, int fd){
 			case BOT_CHECKNICK:
 				checkNick(fd, res[1]);
 				break;
+			case BOT_TIME:
+				timeCmd(fd);
+				break;
 			default:
-				std::string msg = ":localhost 421 ";
+				std::string msg = ":" + server::getShost() + " 421 ";
 				msg += c.getnickName() + " " + body + " :It's not a BOT command\n";
 				send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 		}
