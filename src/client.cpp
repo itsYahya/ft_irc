@@ -118,8 +118,10 @@ bool	&client::getPong(){
 }
 
 void	client::setmode(std::string channel, t_mode mode){
-	if (!channel.empty())
+	if (!channel.empty() && list_mode.find(channel)->first != channel)
 		list_mode.insert(std::pair<std::string, t_mode>(channel, mode));
+	if (!channel.empty() && list_mode.find(channel)->first == channel)
+		list_mode.find(channel)->second = mode;
 }
 
 t_mode	client::getmode(std::string channel)
@@ -134,8 +136,19 @@ std::string	&client::getCmd(){
 	return (cmd);
 }
 
-void	client::quitChannel(const std::string &channel){
-	dbManager::deleteClientChannel(channel, nickName);
+bool	client::checkChannel(const std::string &ch)
+{
+	iter_mode = list_mode.begin();
+	for(; iter_mode != list_mode.end(); iter_mode++)
+	{
+		if (iter_mode->first == ch)
+			return (true);
+	}
+	return (false);
+}
+
+bool	client::quitChannel(const std::string &channel){
+	return (dbManager::deleteClientChannel(channel, nickName));
 }
 
 void	client::quitChannels(){
@@ -150,4 +163,10 @@ time_t	client::getSessionTime(){
 
 void	client::setSessionTime(){
 	session = std::time(NULL);
+}
+
+void	client::erasemode(std::string channel)
+{
+	if (checkChannel(channel))
+		list_mode.erase(channel);
 }

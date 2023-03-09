@@ -175,6 +175,35 @@ void	dbManager::sendMsgCls(std::string info, std::string nameChannel)
 	}
 }
 
+void	dbManager::getInfoPartChannel(client &cl, std::vector<std::string> info)
+{
+	std::string msg = "";
+	if (info.size() > 1)
+	{
+		msg += cl.getClinetFullname() + " PART " + info[0] + " ";
+		for (size_t i = 1; i < info.size(); i++)
+			msg += " " + info[i];
+		msg += "\n";
+	}
+	else
+		msg += cl.getClinetFullname() + " PART " + info[0] + "\n";
+	sendMsgCls(msg, info[0]);
+}
+
+void	dbManager::getInfoPartError(client &cl, std::string namechannel, int num)
+{
+	std::string info = "";
+	if (num == 500)
+		info +=  ":localhost  " + cl.getnickName() + " " + namechannel + " : the client has already joined the channel\n";
+	else if (num == 475)
+		info +=  ":localhost 475 " + cl.getnickName() + " " + namechannel + " :Cannot join channel (+k) - bad key\n";
+	else if (num == 403)
+		info +=  ":localhost 403 " + cl.getnickName() + " " + namechannel + " :No such channel\n";
+	else if (num == 442)
+		info +=  ":localhost 442 " + cl.getnickName() + " " + namechannel + " :You're not on that channel\n";
+	send(cl.getfdClient(), info.c_str(), info.size(), 0);
+}
+
 std::string		dbManager::processInfoCls(channel &ch, client &cl, std::vector<client> &cls)
 {
 	std::string info = ":" + cl.getHost() + " 353 " + cl.getnickName() + " = " + ch.getNameChannel() + " :";
@@ -189,4 +218,20 @@ std::string		dbManager::processInfoCls(channel &ch, client &cl, std::vector<clie
 	}
 	info += "\n";
 	return (info);
+}
+
+bool		dbManager::nextClientmode(client &cl,channel &ch,std::vector<client> & cls)
+{
+	std::vector<std::string> str = helper::split(ch.getNameChannel(), ' ');
+	ch.cls_iter = ch.clients.begin();
+	while (ch.cls_iter != ch.clients.end())
+	{
+		if (ch.cls_iter->second != cl.getfdClient())
+		{
+			cls[ch.cls_iter->second].setmode(ch.getNameChannel(), OP_CLIENT);
+			return (true);
+		}
+		ch.cls_iter++;
+	}
+	return (false);
 }

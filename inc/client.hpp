@@ -71,6 +71,7 @@ class client{
 		int					&getWindex();
 		void				setmode(std::string channel, t_mode mode);
 		t_mode				getmode(std::string channel);
+		void				erasemode(std::string channel);
 		std::string			&getHost();
 
 		std::string			getClinetFullname();
@@ -81,7 +82,8 @@ class client{
 
 		std::string			&getCmd();
 
-		void				quitChannel(const std::string &ch);
+		bool				checkChannel(const std::string &ch);
+		bool				quitChannel(const std::string &ch);
 		void				quitChannels();
 
 		time_t				getSessionTime();

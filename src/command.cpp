@@ -46,7 +46,11 @@ int		command::search_cmd(const std::string &name){
 }
 
 void	command::prvMsg(client &c, int fd, std::string nick){
-	std::string msg = c.getClinetFullname() + name + " " + nick + " " + helper::split(body, ' ')[1] + "\n";
+	std::vector<std::string> vec = helper::split(body, ' ');
+	std::string msg = c.getClinetFullname() + name + " " + nick + " ";
+	for (size_t i = 1 ;  i < vec.size() ; i++)
+		msg += " " + vec[i];
+	msg += "\n";
 	send(fd, msg.c_str(), msg.length(), 0);
 }
 
@@ -115,7 +119,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 			sendMsg(db, fd, c);
 			break;
 		case CMD_PART:
-			partCommand(c, body, *db);
+			partCommand(c, body, *db, cls);
 			break;
 		case CMD_JOIN:
 			joinCommand(c, body, *db, cls);
@@ -203,34 +207,46 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 	else
 	{
 		channel &ch = db.searchChannel(body[0])->second;
-		if (!ch.getBannedClient(cl.getHost()) 
-				&& (!ch.getIsPasswd() 
-				|| (body.size() == 2 && !ch.getPasswd().compare(body[1]))))
+		if (ch.getBannedClient(cl.getHost())) 
+			db.getInfoBan(cl.getfdClient(), cl.getnickName(), body[0]);
+		else if(cl.checkChannel(body[0]))
+			db.getInfoPartError(cl, body[0], 500);
+		else if (!ch.getIsPasswd() 
+				|| (body.size() == 2 && !ch.getPasswd().compare(body[1])))
 		{
 			cl.setmode(body[0], SM_CLIENT);
 			joinClChannel(cl, body[0], db, cls);
 		}
 		else
-			db.getInfoBan(cl.getfdClient(), cl.getnickName(), body[0]);
+			db.getInfoPartError(cl, body[0], 475);
 	}
 }
 
-
-
-void	command::partCommand(client &cl, std::string body, dbManager& db)
+void	command::partCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls)
 {
-	if (body.c_str()[0] == '#')
+	std::vector<std::string> info = helper::split(body, ' ');
+	channel &ch = db.searchChannel(info[0])->second;
+	if (info[0].c_str()[0] == '#' && info[0].length() > 1 && db.srchChannel(info[0]))
 	{
-		if (db.srchChannel(body))
+		if (cl.checkChannel(info[0]))
 		{
-			db.deleteClientChannel(body, cl.getnickName());
-			if (!db.getClients().size())
-				db.deleteChannel(body);
+			db.getInfoPartChannel(cl, info);
+			if (ch.clients.size() > 1)
+				db.nextClientmode(cl, ch, cls);
+			cl.erasemode(info[0]);
+			cl.quitChannel(info[0]);
+			if (ch.clients.size() == 0)
+				db.deleteChannel(info[0]);
+			db.getInfoListClInChannel(cl,ch.getNameChannel(), cls);
 		}
+		else
+			db.getInfoPartError(cl, info[0], 442);
 	}
 	else
-		db.getInfoInvalid(cl.getfdClient(), cl.getnickName());
+		db.getInfoPartError(cl, info[0], 403);
 }
+
+
 
 void	command::sendList(dbManager *db, int fd, client &c){
 	dbManager::iterator_channel		iter;
