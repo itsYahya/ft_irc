@@ -138,6 +138,9 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 		case CMD_BOT:
 			botHandler(c, fd);
 			break;
+		case CMD_KICK:
+			kickCommand(c, body, *db, cls);
+			break;
 		default :
 			std::string msg = ":" + server::getShost() + " 421 ";
 			msg += c.getnickName() + " " + name + " :Unknown command\n";
@@ -246,6 +249,20 @@ void	command::partCommand(client &cl, std::string body, dbManager& db, std::vect
 		db.getInfoPartError(cl, info[0], 403);
 }
 
+void	command::kickCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls)
+{
+	std::vector<std::string> info = helper::split(body, ' ');
+	if (db.getInfoKickError(cl, info))
+	{
+		channel &ch = db.searchChannel(info[0])->second;
+		client 	&clK = cls[db.searchClient(info[1])];
+
+		db.deleteClientChannel(ch.getNameChannel(), clK.getnickName());
+		ch.setBannedClient(clK.getHost());
+		clK.erasemode(info[1]);
+		db.getInfoKickChannel(cl, info);
+	}
+}
 
 
 void	command::sendList(dbManager *db, int fd, client &c){
