@@ -222,6 +222,7 @@ std::string		dbManager::processInfoCls(channel &ch, client &cl, std::vector<clie
 
 bool		dbManager::nextClientmode(client &cl,channel &ch,std::vector<client> & cls)
 {
+	std::vector<std::string> str = helper::split(ch.getNameChannel(), ' ');
 	ch.cls_iter = ch.clients.begin();
 	while (ch.cls_iter != ch.clients.end())
 	{
