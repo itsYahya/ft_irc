@@ -43,7 +43,7 @@ class command{
 		command(const char *buffer);
 		~command();
 		static void							init_cmds();
-		static int							search_cmd(std::string &name);
+		static int							search_cmd(const std::string &name);
 		void								switch_cmd(int fd, dbManager *cl, client &c, std::vector<client> &cls);
 		friend std::ostream					&operator<<(std::ostream &o, const command &cmd);
 		int									gettype() const ;

@@ -36,7 +36,7 @@ void	command::init_cmds(){
 	cmds.insert(std::pair<std::string, int>("SESS", BOT_SESS));
 }
 
-int		command::search_cmd(std::string &name){
+int		command::search_cmd(const std::string &name){
 	std::map<std::string, int>::iterator iter = cmds.find(name);
 	if (iter == cmds.end())
 		return (CMD_WRONG);

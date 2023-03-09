@@ -8,7 +8,7 @@ std::string	command::botList(client &c){
 	info += "300 * :SESS :The time you spend on the server\n";
 	info += "300 * :CHECKNICK :Check if a given nick name is free\n";
 	info += "300 * :FAV :Add a favorite list of friends\n\n";
-	info += "300 * :BOT :" + c.getnickName() + " End of /LIST\n";
+	info += "300 * :BOT :-------------------------------------\n";
 	return (info);
 }
 
@@ -21,12 +21,12 @@ std::string	command::cmdList(client &c){
 	info += "300 * :LIST\n";
 	info += "300 * :KICK\n";
 	info += "300 * :QUIT\n\n";
-	info += "300 * :HELP :" + c.getnickName() + " End of /LIST\n";
+	info += "300 * :HELP :-------------------------------------\n";
 	return (info);
 }
 
 std::string	command::sessionTime(client &c, int fd){
-	std::string msg = "300 * :" + c.getnickName() + " :BOT :Your log time on the server is : ";
+	std::string msg = "300 * :" + c.getnickName() + " :SESS :Your log time on the server is : ";
 	msg += helper::timeToString(c.getSessionTime()) + "\n";
 	::send(fd, msg.c_str(), msg.length(), 0);
 	return (msg);
@@ -43,7 +43,7 @@ void	command::botHandler(client &c, int fd){
 		server::write(fd, c);
 	}
 	else{
-		switch (search_cmd(body))
+		switch (search_cmd(helper::capitalize(body)))
 		{
 			case BOT_HELP:
 				list = cmdList(c);
@@ -55,7 +55,9 @@ void	command::botHandler(client &c, int fd){
 				sessionTime(c, fd);
 				break;
 			default:
-				break;
+				std::string msg = ":localhost 421 ";
+				msg += c.getnickName() + " " + body + " :It's not a BOT command\n";
+				send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 		}
 	}
 }
