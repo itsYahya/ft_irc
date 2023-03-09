@@ -147,3 +147,7 @@ void	client::quitChannels(){
 time_t	client::getSessionTime(){
 	return (std::difftime(std::time(NULL), session));
 }
+
+void	client::setSessionTime(){
+	session = std::time(NULL);
+}

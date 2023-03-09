@@ -85,6 +85,7 @@ class client{
 		void				quitChannels();
 
 		time_t				getSessionTime();
+		void				setSessionTime();
 };
 
 #endif
