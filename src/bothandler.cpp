@@ -7,7 +7,7 @@ std::string	command::botList(client &c){
 	info += "300 * :HELP :List of all the commands available in the server\n";
 	info += "300 * :SESS :The time you spend on the server\n";
 	info += "300 * :CHECKNICK :Check if a given nick name is free\n";
-	info += "300 * :FAV :Add a favorite list of friends\n\n";
+	info += "300 * :TIME :This command tells the date and time of based on the server region\n";
 	info += "300 * :BOT :-------------------------------------\n";
 	return (info);
 }
@@ -20,7 +20,7 @@ std::string	command::cmdList(client &c){
 	info += "300 * :PART\n";
 	info += "300 * :LIST\n";
 	info += "300 * :KICK\n";
-	info += "300 * :QUIT\n\n";
+	info += "300 * :QUIT\n";
 	info += "300 * :HELP :-------------------------------------\n";
 	return (info);
 }
