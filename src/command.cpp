@@ -34,6 +34,7 @@ void	command::init_cmds(){
 	cmds.insert(std::pair<std::string, int>("BOT", CMD_BOT));
 	cmds.insert(std::pair<std::string, int>("HELP", BOT_HELP));
 	cmds.insert(std::pair<std::string, int>("SESS", BOT_SESS));
+	cmds.insert(std::pair<std::string, int>("CHECKNICK", BOT_CHECKNICK));
 }
 
 int		command::search_cmd(const std::string &name){

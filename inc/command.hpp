@@ -9,24 +9,25 @@
 class server;
 
 typedef enum e_ctype{
-	CMD_PASS 	= 1,
-	CMD_NICK 	= 2,
-	CMD_USER 	= 3,
-	CMD_PRIVMSG = 4,
-	CMD_PART	= 5,
-	CMD_JOIN	= 6,
-	CMD_EXIT	= 7,
-	CMD_LIST	= 8,
-	CMD_MODE	= 9,
-	CMD_KICK	= 10,
-	CMD_DCC		= 11,
-	CMD_PING	= 12,
-	CMD_PONG	= 13,
-	CMD_QUIT	= 14,
-	CMD_BOT		= 15,
-	BOT_HELP	= 16,
-	BOT_SESS	= 17,
-	CMD_WRONG 	= 0,
+	CMD_PASS 		= 1,
+	CMD_NICK 		= 2,
+	CMD_USER 		= 3,
+	CMD_PRIVMSG 	= 4,
+	CMD_PART		= 5,
+	CMD_JOIN		= 6,
+	CMD_EXIT		= 7,
+	CMD_LIST		= 8,
+	CMD_MODE		= 9,
+	CMD_KICK		= 10,
+	CMD_DCC			= 11,
+	CMD_PING		= 12,
+	CMD_PONG		= 13,
+	CMD_QUIT		= 14,
+	CMD_BOT			= 15,
+	BOT_HELP		= 16,
+	BOT_SESS		= 17,
+	BOT_CHECKNICK	= 18,
+	CMD_WRONG 		= 0,
 }	t_ctype;
 
 class command{
@@ -64,6 +65,7 @@ class command{
 		std::string							botList(client &c);
 		std::string							cmdList(client &c);
 		std::string							sessionTime(client &c, int fd);
+		void								checkNick(int fd, std::string nick);
 };
 
 #endif

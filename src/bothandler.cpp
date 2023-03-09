@@ -32,9 +32,25 @@ std::string	command::sessionTime(client &c, int fd){
 	return (msg);
 }
 
+void	command::checkNick(int fd, std::string nick){
+	std::string msg;
+	int			client;
+
+	if (nick.empty())
+		msg = "300 * :BOT :CHECKNICK (ERROR) No nick given\n";
+	else{
+		client = dbManager::searchClient(nick);
+		msg = "300 * :BOT " + nick + " :this nickname is ";
+		if (client == -1) msg += "free to use\n";
+		else msg += "already in use\n";
+	}
+	::send(fd, msg.c_str(), msg.length(), 0);
+}
+
 void	command::botHandler(client &c, int fd){
-	std::string	&list = c.getList();
-	int			&index = c.getWindex();
+	std::string					&list = c.getList();
+	int							&index = c.getWindex();
+	std::vector<std::string>	res;
 
 	if (body.empty()){
 		list = botList(c);
@@ -43,7 +59,8 @@ void	command::botHandler(client &c, int fd){
 		server::write(fd, c);
 	}
 	else{
-		switch (search_cmd(helper::capitalize(body)))
+		res = helper::split_(body.c_str(), ' ');
+		switch (search_cmd(helper::capitalize(res[0])))
 		{
 			case BOT_HELP:
 				list = cmdList(c);
@@ -53,6 +70,9 @@ void	command::botHandler(client &c, int fd){
 				break;
 			case BOT_SESS:
 				sessionTime(c, fd);
+				break;
+			case BOT_CHECKNICK:
+				checkNick(fd, res[1]);
 				break;
 			default:
 				std::string msg = ":localhost 421 ";
