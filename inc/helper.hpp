@@ -16,6 +16,7 @@ class helper{
 		static std::string				itos(int i);
 		static std::string				capitalize(std::string str);
 		static std::string				timeToString(time_t time);
+		static std::string				nowTime();
 };
 
 #endif

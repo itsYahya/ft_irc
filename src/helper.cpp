@@ -68,3 +68,9 @@ std::string	helper::timeToString(time_t time){
 	s = time % 60;
 	return (helper::itos(h) + "h " + helper::itos(m) + "m " + helper::itos(s) + "s");
 }
+
+std::string	helper::nowTime(){
+	time_t	time = std::time(NULL);
+	std::string str = std::ctime(&time);
+	return (str);
+}
