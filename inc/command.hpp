@@ -25,6 +25,7 @@ typedef enum e_ctype{
 	CMD_QUIT	= 14,
 	CMD_BOT		= 15,
 	BOT_HELP	= 16,
+	BOT_SESS	= 17,
 	CMD_WRONG 	= 0,
 }	t_ctype;
 
@@ -61,7 +62,8 @@ class command{
 
 		void								botHandler(client &c, int fd);
 		std::string							botList(client &c);
-		std::string							CmdList(client &c);
+		std::string							cmdList(client &c);
+		std::string							sessionTime(client &c, int fd);
 };
 
 #endif

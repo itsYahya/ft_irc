@@ -33,6 +33,7 @@ void	command::init_cmds(){
 	cmds.insert(std::pair<std::string, int>("QUIT", CMD_QUIT));
 	cmds.insert(std::pair<std::string, int>("BOT", CMD_BOT));
 	cmds.insert(std::pair<std::string, int>("HELP", BOT_HELP));
+	cmds.insert(std::pair<std::string, int>("SESS", BOT_SESS));
 }
 
 int		command::search_cmd(std::string &name){
@@ -255,7 +256,7 @@ std::string	command::botList(client &c){
 	return (info);
 }
 
-std::string	command::CmdList(client &c){
+std::string	command::cmdList(client &c){
 	std::string	info = ":localhost " + helper::itos(321);
 	info += " " + c.getnickName() + " HELP :Commands available on this IRC server\n";
 	info += ":localhost " + helper::itos(322) + " " + c.getnickName() + " PRIVMSG\n";
@@ -266,6 +267,13 @@ std::string	command::CmdList(client &c){
 	info += ":localhost " + helper::itos(322) + " " + c.getnickName() + " QUIT\n";
 	info += ":localhost " + helper::itos(323) + " " + c.getnickName() + " End of /LIST\n";
 	return (info);
+}
+
+std::string	command::sessionTime(client &c, int fd){
+	std::string msg = "300 * :BOT " + c.getnickName() + " :Your log time on the server is : ";
+	msg += helper::timeToString(c.getSessionTime()) + "\n";
+	::send(fd, msg.c_str(), msg.length(), 0);
+	return (msg);
 }
 
 void	command::botHandler(client &c, int fd){
@@ -282,10 +290,13 @@ void	command::botHandler(client &c, int fd){
 		switch (search_cmd(body))
 		{
 			case BOT_HELP:
-				list = CmdList(c);
+				list = cmdList(c);
 				c.setWriteState();
 				index = 0;
 				server::write(fd, c);
+				break;
+			case BOT_SESS:
+				sessionTime(c, fd);
 				break;
 			default:
 				break;
