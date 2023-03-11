@@ -17,6 +17,7 @@ class helper{
 		static std::string				capitalize(std::string str);
 		static std::string				timeToString(time_t time);
 		static std::string				nowTime();
+		static std::vector<std::string>	splitCmds(std::string buffer, char sep);
 };
 
 #endif
