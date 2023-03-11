@@ -137,18 +137,8 @@ void	server::read(int s){
 	else{
 		nl = checkhNl(buffer);
 		textCmd += buffer;
-		if (nl){
-			command cmd(textCmd.c_str());
-			if (cmd.gettype() == CMD_PASS || cmd.gettype() == CMD_NICK || cmd.gettype() == CMD_USER)
-				auth(clients[s], cmd);
-			else if (clients[s].authenticated())
-				cmd.switch_cmd(s, db, clients[s], clients);
-			else{
-				std::string msg = ":" + getShost() + " 451 * " + cmd.getname() + " :You must finish connecting first.\n";
-				::send(s, msg.c_str(), msg.length(), 0);
-			}
-			textCmd = "";
-		}
+		if (nl)
+			execut(clients[s], textCmd, s);
 	}
 }
 
@@ -245,6 +235,23 @@ std::string	&server::getShost(){
 	return (shost);
 }
 
-void	server::execut(client &c, std::string &cmd, int fd){
-	
+void	server::execut(client &c, std::string &textCmd, int fd){
+	std::vector<std::string>			res;
+	std::vector<std::string>::iterator	iter;
+
+	res = helper::splitCmds(textCmd, '\r');
+	iter = res.begin();
+	for (; iter != res.end(); iter++){
+		command cmd((*iter).c_str());
+		std::cout << cmd << std::endl;
+		if (cmd.gettype() == CMD_PASS || cmd.gettype() == CMD_NICK || cmd.gettype() == CMD_USER)
+			auth(c, cmd);
+		else if (c.authenticated())
+			cmd.switch_cmd(fd, db, c, clients);
+		else{
+			std::string msg = ":" + getShost() + " 451 * " + cmd.getname() + " :You must finish connecting first.\n";
+			::send(fd, msg.c_str(), msg.length(), 0);
+		}
+	}
+	textCmd = "";
 }
