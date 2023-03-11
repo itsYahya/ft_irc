@@ -244,3 +244,7 @@ void	server::closingLink(const std::string &reson, client &c){
 std::string	&server::getShost(){
 	return (shost);
 }
+
+void	server::execut(client &c, std::string &cmd, int fd){
+	
+}
