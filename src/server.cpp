@@ -117,15 +117,13 @@ void	server::accept(){
 	read(s);
 }
 
-bool	replace_nl(char *buffer){
-	int	i = 0;
-	for (; buffer[i]; i++){
-		if (buffer[i] == '\n' || buffer[i] == 13){
-			buffer[i] = 0;
-			return (true);
-		}
-	}
-	return (false);
+static bool	checkhNl(const char *buffer){
+	size_t	len;
+	
+	len = strlen(buffer);
+	if (len == 0) return (false);
+	char	ch = buffer[len - 1];
+	return (ch == '\n');
 }
 
 void	server::read(int s){
@@ -137,7 +135,7 @@ void	server::read(int s){
 	if (rd <= 0)
 		close(s, clients[s]);
 	else{
-		nl = replace_nl(buffer);
+		nl = checkhNl(buffer);
 		textCmd += buffer;
 		if (nl){
 			command cmd(textCmd.c_str());
