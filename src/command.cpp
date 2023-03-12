@@ -238,9 +238,9 @@ void	command::partCommand(client &cl, std::string body, dbManager& db, std::vect
 				db.nextClientmode(cl, ch, cls);
 			cl.erasemode(info[0]);
 			cl.quitChannel(info[0]);
+			db.getInfoListClInChannel(cl, ch.getNameChannel(), cls);
 			if (ch.clients.size() == 0)
 				db.deleteChannel(info[0]);
-			db.getInfoListClInChannel(cl,ch.getNameChannel(), cls);
 		}
 		else
 			db.getInfoPartError(cl, info[0], 442);
@@ -263,7 +263,6 @@ void	command::kickCommand(client &cl, std::string body, dbManager& db, std::vect
 	}
 }
 
-
 void	command::sendList(dbManager *db, int fd, client &c){
 	dbManager::iterator_channel		iter;
 	dbManager::channels_type		&map_ch = db->getChannels();
@@ -278,4 +277,3 @@ void	command::sendList(dbManager *db, int fd, client &c){
 	c.getWindex() = 0;
 	server::write(fd, c);
 }
-
