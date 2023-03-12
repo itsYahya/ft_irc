@@ -252,11 +252,10 @@ void	command::partCommand(client &cl, std::string body, dbManager& db, std::vect
 void	command::kickCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls)
 {
 	std::vector<std::string> info = helper::split(body, ' ');
-	if (db.getInfoKickError(cl, info))
+	channel &ch = db.searchChannel(info[0])->second;
+	client 	&clK = cls[db.searchClient(info[1])];
+	if (db.getInfoKickError(cl, db, info))
 	{
-		channel &ch = db.searchChannel(info[0])->second;
-		client 	&clK = cls[db.searchClient(info[1])];
-
 		db.deleteClientChannel(ch.getNameChannel(), clK.getnickName());
 		ch.setBannedClient(clK.getHost());
 		clK.erasemode(info[1]);

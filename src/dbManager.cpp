@@ -213,16 +213,16 @@ void	dbManager::getInfoPartError(client &cl, std::string namechannel, int num)
 	send(cl.getfdClient(), info.c_str(), info.size(), 0);
 }
 
-bool	dbManager::getInfoKickError(client &cl, std::vector<std::string> body)
+bool	dbManager::getInfoKickError(client &cl, dbManager &db,std::vector<std::string> body)
 {
 	std::string info = "";
 	bool result = true;
 	std::cout << "size => "<<body.size() << "\n";
 	if (body[0].c_str()[0] == '#' && body[0].length() <= 1 && srchChannel(body[0]))
 		info +=  ":localhost 403 " + cl.getnickName() + " " + body[0] + " :No such channel\n";
-	else if (body.size() <= 2)
+	else if (body.size() < 2)
 		info +=  ":localhost 401 " + cl.getnickName() + " " + body[1] + " :no such nick/channel\n";	
-	else if (isEndChannelIter(searchChannel(body[0])) && !searchChannel(body[0])->second.searchClient(body[1]))
+	else if (isEndChannelIter(searchChannel(body[0])) && db.searchChannel(body[0])->second.searchClient(body[1]))
 		info +=  ":localhost 441 " + cl.getnickName() + " " + body[0] + " " + body[1] + " :They aren't on that channel\n";
 	else if (cl.getmode(body[0]) != OP_CLIENT)
 		info += ":localhost 482 " + cl.getnickName() + " " + body[0] + " :You're not channel operator\n";
