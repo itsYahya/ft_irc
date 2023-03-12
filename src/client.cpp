@@ -14,6 +14,7 @@ void	client::reset(){
 	this->type = FDFREE;
 	this->fdClient = -1;
 	this->auth = false;
+	this->flauth = false;
 	this->s_w = false;
 	this->realName = "";
 	this->nickName = "";
@@ -65,7 +66,8 @@ void	client::authenticate(){
 }
 
 bool	client::authenticated() const{
-	return (auth && !nickName.empty() && !realName.empty());
+	std::string nick = "nick" + helper::itos(fdClient);
+	return (auth && nickName.compare(nick) && !realName.empty());
 }
 
 void	client::register_(int fd){
@@ -169,4 +171,8 @@ void	client::erasemode(std::string channel)
 {
 	if (checkChannel(channel))
 		list_mode.erase(channel);
+}
+
+bool	&client::getFlauth(){
+	return (flauth);
 }

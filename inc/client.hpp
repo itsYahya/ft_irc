@@ -21,6 +21,7 @@ class client{
 
 		int										fdClient;
 		bool									auth;
+		bool									flauth;
 		std::string								nickName;
 		std::string								realName;
 		std::string								loginName;
@@ -88,6 +89,8 @@ class client{
 
 		time_t				getSessionTime();
 		void				setSessionTime();
+
+		bool				&getFlauth();
 };
 
 #endif
