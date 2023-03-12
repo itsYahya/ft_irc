@@ -49,7 +49,7 @@ int		command::search_cmd(const std::string &name){
 
 void	command::prvMsg(client &c, int fd, std::string nick){
 	std::vector<std::string> vec = helper::split(body, ' ');
-	std::string msg = c.getClinetFullname() + name + " " + nick + " ";
+	std::string msg = c.getClinetFullname() + name + " " + nick;
 	for (size_t i = 1 ;  i < vec.size() ; i++)
 		msg += " " + vec[i];
 	msg += "\n";
