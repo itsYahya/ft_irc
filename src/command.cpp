@@ -10,6 +10,7 @@ command::command(const char *buffer){
 	res = helper::split_(buffer, ' ');
 	name = helper::capitalize(res[0]);
 	body = res[1];
+	if (body.size() && body.front() == ':') body.erase(body.begin());
 	type = search_cmd(name);
 	this->buffer = buffer;
 }
@@ -32,6 +33,7 @@ void	command::init_cmds(){
 	cmds.insert(std::pair<std::string, int>("PONG", CMD_PONG));
 	cmds.insert(std::pair<std::string, int>("QUIT", CMD_QUIT));
 	cmds.insert(std::pair<std::string, int>("BOT", CMD_BOT));
+	cmds.insert(std::pair<std::string, int>("AWAY", CMD_AWAY));
 	cmds.insert(std::pair<std::string, int>("HELP", BOT_HELP));
 	cmds.insert(std::pair<std::string, int>("SESS", BOT_SESS));
 	cmds.insert(std::pair<std::string, int>("TIME", BOT_TIME));
@@ -47,7 +49,7 @@ int		command::search_cmd(const std::string &name){
 
 void	command::prvMsg(client &c, int fd, std::string nick){
 	std::vector<std::string> vec = helper::split(body, ' ');
-	std::string msg = c.getClinetFullname() + name + " " + nick + " ";
+	std::string msg = c.getClinetFullname() + name + " " + nick;
 	for (size_t i = 1 ;  i < vec.size() ; i++)
 		msg += " " + vec[i];
 	msg += "\n";
@@ -134,6 +136,10 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 			server::closingLink(makeReason(c, body), c);
 			break;
 		case CMD_MODE:
+			break;
+		case CMD_AWAY:
+			break;
+		case CMD_PING:
 			break;
 		case CMD_BOT:
 			botHandler(c, fd);

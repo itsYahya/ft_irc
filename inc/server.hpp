@@ -67,6 +67,9 @@ class server{
 		static void					closingLink(const std::string &reson, client &c);
 
 		static std::string			&getShost();
+		
+		void						execut(client &c, std::string &cmd, int fd);
+		bool						welcome(client &c);
 };
 
 #endif

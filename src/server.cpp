@@ -117,15 +117,13 @@ void	server::accept(){
 	read(s);
 }
 
-bool	replace_nl(char *buffer){
-	int	i = 0;
-	for (; buffer[i]; i++){
-		if (buffer[i] == '\n' || buffer[i] == 13){
-			buffer[i] = 0;
-			return (true);
-		}
-	}
-	return (false);
+static bool	checkhNl(const char *buffer){
+	size_t	len;
+	
+	len = strlen(buffer);
+	if (len == 0) return (false);
+	char	ch = buffer[len - 1];
+	return (ch == '\n');
 }
 
 void	server::read(int s){
@@ -134,21 +132,14 @@ void	server::read(int s){
 	std::string	&textCmd = clients[s].getCmd();
 	
 	rd = recv(s, buffer, BUFFER_SIZE, 0);
+	buffer[rd] = 0;
 	if (rd <= 0)
 		close(s, clients[s]);
 	else{
-		nl = replace_nl(buffer);
+		nl = checkhNl(buffer);
 		textCmd += buffer;
 		if (nl){
-			command cmd(textCmd.c_str());
-			if (cmd.gettype() == CMD_PASS || cmd.gettype() == CMD_NICK || cmd.gettype() == CMD_USER)
-				auth(clients[s], cmd);
-			else if (clients[s].authenticated())
-				cmd.switch_cmd(s, db, clients[s], clients);
-			else{
-				std::string msg = ":" + getShost() + " 451 * " + cmd.getname() + " :You must finish connecting first.\n";
-				::send(s, msg.c_str(), msg.length(), 0);
-			}
+			execut(clients[s], textCmd, s);
 			textCmd = "";
 		}
 	}
@@ -187,7 +178,8 @@ void	server::checkout_user(client &c, std::string body){
 }
 
 void	server::auth(client &c, command cmd){
-	int	type = cmd.gettype();
+	int			type = cmd.gettype();
+	bool		&auth = c.getFlauth();
 
 	if (type == CMD_PASS){
 		if (password.compare(cmd.getbody()) == 0)
@@ -199,6 +191,9 @@ void	server::auth(client &c, command cmd){
 		checkout_nick(c, cmd.getbody());
 	else if (type == CMD_USER)
 		checkout_user(c, cmd.getbody());
+	if (!auth && c.authenticated()){
+		auth = welcome(c);
+	}
 }
 
 void	server::write(int fd, client &c){
@@ -245,4 +240,40 @@ void	server::closingLink(const std::string &reson, client &c){
 
 std::string	&server::getShost(){
 	return (shost);
+}
+
+void	server::execut(client &c, std::string &textCmd, int fd){
+	std::vector<std::string>			res;
+	std::vector<std::string>::iterator	iter;
+
+	res = helper::splitCmds(textCmd, '\r');
+	iter = res.begin();
+	for (; iter != res.end(); iter++){
+		command cmd((*iter).c_str());
+		if (cmd.gettype() == CMD_PASS || cmd.gettype() == CMD_NICK || cmd.gettype() == CMD_USER)
+			auth(c, cmd);
+		else if (c.authenticated())
+			cmd.switch_cmd(fd, db, c, clients);
+		else{
+			std::string msg = ":" + getShost() + " 451 * " + cmd.getname() + " :You must finish connecting first.\n";
+			::send(fd, msg.c_str(), msg.length(), 0);
+		}
+	}
+}
+
+bool	server::welcome(client &c){
+	int			fd = c.getfdClient();
+	int			&index = c.getWindex();
+	std::string &list = c.getList();
+
+	list = ":" + getShost() + " 001 " + c.getnickName() + " :Welcome to our IRC server that was create by itsYahya && ababouel\r\n:";
+	list += getShost() + " 002 " + c.getnickName() + " :Your host is " + getShost() + "\r\n:";
+	list += getShost() + " 003 " + c.getnickName() + " :This server was created 01/03/2023\r\n:";
+	list += getShost() + " 004 " + c.getnickName() + " localhost 1.0 - -\r\n:";
+	list += getShost() + " 372 " + c.getnickName() + " welcome to localhost\r\n:";
+	list += getShost() + " 376 " + c.getnickName() + " :To show msg of the day run /MOTD command\r\n";
+	c.setWriteState();
+	index = 0;
+	server::write(fd, c);
+	return (true);
 }
