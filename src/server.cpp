@@ -132,13 +132,16 @@ void	server::read(int s){
 	std::string	&textCmd = clients[s].getCmd();
 	
 	rd = recv(s, buffer, BUFFER_SIZE, 0);
+	buffer[rd] = 0;
 	if (rd <= 0)
 		close(s, clients[s]);
 	else{
 		nl = checkhNl(buffer);
 		textCmd += buffer;
-		if (nl)
+		if (nl){
 			execut(clients[s], textCmd, s);
+			textCmd = "";
+		}
 	}
 }
 
@@ -175,7 +178,8 @@ void	server::checkout_user(client &c, std::string body){
 }
 
 void	server::auth(client &c, command cmd){
-	int	type = cmd.gettype();
+	int			type = cmd.gettype();
+	bool		&auth = c.getFlauth();
 
 	if (type == CMD_PASS){
 		if (password.compare(cmd.getbody()) == 0)
@@ -187,6 +191,9 @@ void	server::auth(client &c, command cmd){
 		checkout_nick(c, cmd.getbody());
 	else if (type == CMD_USER)
 		checkout_user(c, cmd.getbody());
+	if (!auth && c.authenticated()){
+		auth = welcome(c);
+	}
 }
 
 void	server::write(int fd, client &c){
@@ -243,7 +250,6 @@ void	server::execut(client &c, std::string &textCmd, int fd){
 	iter = res.begin();
 	for (; iter != res.end(); iter++){
 		command cmd((*iter).c_str());
-		std::cout << cmd << std::endl;
 		if (cmd.gettype() == CMD_PASS || cmd.gettype() == CMD_NICK || cmd.gettype() == CMD_USER)
 			auth(c, cmd);
 		else if (c.authenticated())
@@ -253,5 +259,21 @@ void	server::execut(client &c, std::string &textCmd, int fd){
 			::send(fd, msg.c_str(), msg.length(), 0);
 		}
 	}
-	textCmd = "";
+}
+
+bool	server::welcome(client &c){
+	int			fd = c.getfdClient();
+	int			&index = c.getWindex();
+	std::string &list = c.getList();
+
+	list = ":" + getShost() + " 001 " + c.getnickName() + " :Welcome to our IRC server that was create by itsYahya && ababouel\r\n:";
+	list += getShost() + " 002 " + c.getnickName() + " :Your host is " + getShost() + "\r\n:";
+	list += getShost() + " 003 " + c.getnickName() + " :This server was created 01/03/2023\r\n:";
+	list += getShost() + " 004 " + c.getnickName() + " localhost 1.0 - -\r\n:";
+	list += getShost() + " 372 " + c.getnickName() + " welcome to localhost\r\n:";
+	list += getShost() + " 376 " + c.getnickName() + " :To show msg of the day run /MOTD command\r\n";
+	c.setWriteState();
+	index = 0;
+	server::write(fd, c);
+	return (true);
 }
