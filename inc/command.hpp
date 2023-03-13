@@ -29,6 +29,7 @@ typedef enum e_ctype{
 	BOT_CHECKNICK	= 18,
 	BOT_TIME		= 19,
 	CMD_AWAY		= 20,
+	CMD_TOPIC		= 21,
 	CMD_WRONG 		= 0,
 }	t_ctype;
 

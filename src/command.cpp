@@ -8,10 +8,10 @@ std::map<std::string, int> command::cmds;
 command::command(const char *buffer){
 	std::vector<std::string>	res;
 	res = helper::split_(buffer, ' ');
-	name = helper::capitalize(res[0]);
+	name = res[0];
 	body = res[1];
 	if (body.size() && body.front() == ':') body.erase(body.begin());
-	type = search_cmd(name);
+	type = search_cmd(helper::capitalize(res[0]));
 	this->buffer = buffer;
 }
 
@@ -34,6 +34,7 @@ void	command::init_cmds(){
 	cmds.insert(std::pair<std::string, int>("QUIT", CMD_QUIT));
 	cmds.insert(std::pair<std::string, int>("BOT", CMD_BOT));
 	cmds.insert(std::pair<std::string, int>("AWAY", CMD_AWAY));
+	cmds.insert(std::pair<std::string, int>("TOPIC", CMD_TOPIC));
 	cmds.insert(std::pair<std::string, int>("HELP", BOT_HELP));
 	cmds.insert(std::pair<std::string, int>("SESS", BOT_SESS));
 	cmds.insert(std::pair<std::string, int>("TIME", BOT_TIME));
