@@ -190,6 +190,15 @@ void	dbManager::getInfoPartChannel(client &cl, std::vector<std::string> info)
 	sendMsgCls(msg, info[0]);
 }
 
+void	dbManager::getInfoKickChannel(client &cl, std::vector<std::string> info)
+{
+	std::string msg = cl.getClinetFullname() + " KICK " + info[0] + " ";
+	for (size_t i = 1; i < info.size(); i++)
+		msg += " " + info[i];
+	msg += "\n";
+	sendMsgCls(msg, info[0]);
+}
+
 void	dbManager::getInfoPartError(client &cl, std::string namechannel, int num)
 {
 	std::string info = "";
@@ -202,6 +211,27 @@ void	dbManager::getInfoPartError(client &cl, std::string namechannel, int num)
 	else if (num == 442)
 		info +=  ":localhost 442 " + cl.getnickName() + " " + namechannel + " :You're not on that channel\n";
 	send(cl.getfdClient(), info.c_str(), info.size(), 0);
+}
+
+bool	dbManager::getInfoKickError(client &cl, dbManager &db,std::vector<std::string> body)
+{
+	std::string info = "";
+	bool result = true;
+	// std::cout << "size => "<<body.size() << "\n";
+	if (body[0].c_str()[0] == '#' && body[0].length() <= 1 && srchChannel(body[0]))
+		info +=  ":localhost 403 " + cl.getnickName() + " " + body[0] + " :No such channel\n";
+	else if (body.size() < 2)
+		info +=  ":localhost 401 " + cl.getnickName() + " " + body[1] + " :no such nick/channel\n";	
+	else if (isEndChannelIter(searchChannel(body[0])) && db.searchChannel(body[0])->second.searchClient(body[1]))
+		info +=  ":localhost 441 " + cl.getnickName() + " " + body[0] + " " + body[1] + " :They aren't on that channel\n";
+	else if (cl.getmode(body[0]) != OP_CLIENT)
+		info += ":localhost 482 " + cl.getnickName() + " " + body[0] + " :You're not channel operator\n";
+	if (!info.empty())
+	{
+		send(cl.getfdClient(), info.c_str(), info.size(), 0); 
+		result = false;
+	}
+	return (result);
 }
 
 std::string		dbManager::processInfoCls(channel &ch, client &cl, std::vector<client> &cls)

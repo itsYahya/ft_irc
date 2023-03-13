@@ -56,7 +56,7 @@ class command{
 		const char							*getbuffer() const ;
 		void								partCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls);
 		void								joinCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls);
-
+		void 								kickCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls);
 		void								sendMsg(dbManager *db, int fd, client &c);
 		void								prvMsg(client &c, int fd, std::string nick);
 		
