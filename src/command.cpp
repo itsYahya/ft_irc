@@ -49,55 +49,6 @@ int		command::search_cmd(const std::string &name){
 	return (iter->second);
 }
 
-void	command::prvMsg(client &c, int fd, std::string nick){
-	std::vector<std::string> vec = helper::split(body, ' ');
-	std::string msg = c.getClinetFullname() + name + " " + nick;
-	for (size_t i = 1 ;  i < vec.size() ; i++)
-		msg += " " + vec[i];
-	msg += "\n";
-	send(fd, msg.c_str(), msg.length(), 0);
-}
-
-void	command::sendMsg(dbManager *db, int fd, client &c){
-	std::vector<std::string>			res;
-	std::vector<std::string>::iterator	siter;
-	int									client;
-
-	res = helper::split_(body.c_str(), ' ');
-	if (res.size() == 0){
-		std::string msg = ":" + server::getShost() + " 411 " + c.getnickName() + " :No recipient given (PRIVMSG)\n";
-		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
-		return ;
-	}else if (res.size() == 1){
-		std::string msg = ":" + server::getShost() + " 412 " + c.getnickName() + " :No text to send\n";
-		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
-		return ;
-	}
-	res = helper::split(res[0], ',');
-	siter = res.begin();
-	for (; siter != res.end(); siter++){
-		client = db->searchClient(*siter);
-		if (client > 0)
-			prvMsg(c, client, *siter);
-		else {
-			dbManager::iterator_channel iter = db->searchChannel(*siter);
-			
-			if (!dbManager::isEndChannelIter(iter) && iter->second.searchClient(c.getnickName())){
-				std::map<std::string, int> &clients = iter->second.getClients();
-				std::map<std::string, int>::iterator iter = clients.begin();
-				for (; iter != clients.end(); iter++){
-					if (iter->second != fd)
-						prvMsg(c, iter->second, *siter);
-				}
-			}
-			else {
-				std::string msg = ":" + server::getShost() + " 401 " + c.getnickName() + " " + *siter + " :No such nick/channel\n";
-				send(fd, msg.c_str(), msg.length(), 0);
-			}
-		}
-	}
-}
-
 void	command::pongCmd(client &c){
 	if (body.empty()){
 		std::string msg = ":" + server::getShost() + " 409 " + c.getnickName() + " :No origin specified\n";
@@ -121,7 +72,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 	switch(type)
 	{
 		case CMD_PRIVMSG:
-			sendMsg(db, fd, c);
+			sendMsg(db, fd, c, true);
 			break;
 		case CMD_PART:
 			partCommand(c, body, *db, cls);

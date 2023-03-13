@@ -57,8 +57,8 @@ class command{
 		void								partCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls);
 		void								joinCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls);
 		void 								kickCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls);
-		void								sendMsg(dbManager *db, int fd, client &c);
-		void								prvMsg(client &c, int fd, std::string nick);
+		void								sendMsg(dbManager *db, int fd, client &c, bool err);
+		void								prvMsg(client &c, int fd, std::string nick, std::string body_);
 		
 		void								sendList(dbManager *db, int fd, client &c);
 
