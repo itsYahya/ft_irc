@@ -8,7 +8,8 @@ std::map<std::string, int> command::cmds;
 command::command(const char *buffer){
 	std::vector<std::string>	res;
 	res = helper::split_(buffer, ' ');
-	name = helper::capitalize(res[0]);
+	if (name.empty())
+		name = helper::capitalize(res[0]);
 	body = res[1];
 	if (body.size() && body.front() == ':') body.erase(body.begin());
 	type = search_cmd(name);
@@ -79,7 +80,8 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 			prvMsg(c, client, *siter);
 		else {
 			dbManager::iterator_channel iter = db->searchChannel(*siter);
-			if (!dbManager::isEndChannelIter(iter)){
+			
+			if (!dbManager::isEndChannelIter(iter) && iter->second.searchClient(c.getnickName())){
 				std::map<std::string, int> &clients = iter->second.getClients();
 				std::map<std::string, int>::iterator iter = clients.begin();
 				for (; iter != clients.end(); iter++){
@@ -144,6 +146,9 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 		case CMD_BOT:
 			botHandler(c, fd);
 			break;
+		case CMD_KICK:
+			kickCommand(c, body, *db, cls);
+			break;
 		default :
 			std::string msg = ":" + server::getShost() + " 421 ";
 			msg += c.getnickName() + " " + name + " :Unknown command\n";
@@ -176,7 +181,7 @@ void	command::joinCommand(client &cl, std::string body, dbManager& db, std::vect
 {
 	std::vector<std::string> str = helper::split(body, ' ');
 	if (str[0].c_str()[0] == '#' && str[0].length() > 1)
-			processJoinPass(cl, str, db, cls);
+		processJoinPass(cl, str, db, cls);
 	else
 		db.getInfoInvalid(cl.getfdClient(), cl.getnickName());
 }
@@ -241,9 +246,9 @@ void	command::partCommand(client &cl, std::string body, dbManager& db, std::vect
 				db.nextClientmode(cl, ch, cls);
 			cl.erasemode(info[0]);
 			cl.quitChannel(info[0]);
+			db.getInfoListClInChannel(cl, ch.getNameChannel(), cls);
 			if (ch.clients.size() == 0)
 				db.deleteChannel(info[0]);
-			db.getInfoListClInChannel(cl,ch.getNameChannel(), cls);
 		}
 		else
 			db.getInfoPartError(cl, info[0], 442);
@@ -252,7 +257,20 @@ void	command::partCommand(client &cl, std::string body, dbManager& db, std::vect
 		db.getInfoPartError(cl, info[0], 403);
 }
 
-
+void	command::kickCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls)
+{
+	std::vector<std::string> info = helper::split(body, ' ');
+	channel &ch = db.searchChannel(info[0])->second;
+	client 	&clK = cls[db.searchClient(info[1])];
+	if (db.getInfoKickError(cl, db, info))
+	{
+		db.getInfoKickChannel(cl, info);
+		db.deleteClientChannel(ch.getNameChannel(), clK.getnickName());
+		// ch.deleteClient(clK.getnickName());
+		ch.setBannedClient(clK.getHost());
+		clK.erasemode(info[1]);
+	}
+}
 
 void	command::sendList(dbManager *db, int fd, client &c){
 	dbManager::iterator_channel		iter;
@@ -268,4 +286,3 @@ void	command::sendList(dbManager *db, int fd, client &c){
 	c.getWindex() = 0;
 	server::write(fd, c);
 }
-
