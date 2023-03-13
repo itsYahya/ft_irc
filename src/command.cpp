@@ -5,14 +5,14 @@
 
 std::map<std::string, int> command::cmds;
 
-command::command(const char *buffer){
+command::command(const char *buffer): body(""){
 	std::vector<std::string>	res;
 	res = helper::split_(buffer, ' ');
-	if (name.empty())
-		name = helper::capitalize(res[0]);
+	name = res[0];
+	if (res.size() == 2) body = res[1];
 	body = res[1];
 	if (body.size() && body.front() == ':') body.erase(body.begin());
-	type = search_cmd(name);
+	type = search_cmd(helper::capitalize(res[0]));
 	this->buffer = buffer;
 }
 
@@ -35,6 +35,7 @@ void	command::init_cmds(){
 	cmds.insert(std::pair<std::string, int>("QUIT", CMD_QUIT));
 	cmds.insert(std::pair<std::string, int>("BOT", CMD_BOT));
 	cmds.insert(std::pair<std::string, int>("AWAY", CMD_AWAY));
+	cmds.insert(std::pair<std::string, int>("TOPIC", CMD_TOPIC));
 	cmds.insert(std::pair<std::string, int>("HELP", BOT_HELP));
 	cmds.insert(std::pair<std::string, int>("SESS", BOT_SESS));
 	cmds.insert(std::pair<std::string, int>("TIME", BOT_TIME));
@@ -142,6 +143,9 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 		case CMD_AWAY:
 			break;
 		case CMD_PING:
+			break;
+		case CMD_TOPIC:
+			topiCmd(c, fd);
 			break;
 		case CMD_BOT:
 			botHandler(c, fd);

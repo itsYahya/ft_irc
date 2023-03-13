@@ -29,6 +29,7 @@ typedef enum e_ctype{
 	BOT_CHECKNICK	= 18,
 	BOT_TIME		= 19,
 	CMD_AWAY		= 20,
+	CMD_TOPIC		= 21,
 	CMD_WRONG 		= 0,
 }	t_ctype;
 
@@ -69,6 +70,11 @@ class command{
 		std::string							sessionTime(client &c, int fd);
 		void								checkNick(int fd, std::string nick);
 		void								timeCmd(int fd);
+
+		void								topiCmd(client &c, int fd);
+		void								topicInform(client &c, const std::string &ch, const std::string &topic, dbManager::iterator_channel iter);
+		static std::string					sendErrMsg(int fd, const std::string &nick, const std::string &name,
+											const std::string &body_, const std::string &code);
 };
 
 #endif
