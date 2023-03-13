@@ -8,7 +8,8 @@ std::map<std::string, int> command::cmds;
 command::command(const char *buffer){
 	std::vector<std::string>	res;
 	res = helper::split_(buffer, ' ');
-	name = helper::capitalize(res[0]);
+	if (name.empty())
+		name = helper::capitalize(res[0]);
 	body = res[1];
 	type = search_cmd(name);
 	this->buffer = buffer;
@@ -77,7 +78,8 @@ void	command::sendMsg(dbManager *db, int fd, client &c){
 			prvMsg(c, client, *siter);
 		else {
 			dbManager::iterator_channel iter = db->searchChannel(*siter);
-			if (!dbManager::isEndChannelIter(iter)){
+			
+			if (!dbManager::isEndChannelIter(iter) && iter->second.searchClient(c.getnickName())){
 				std::map<std::string, int> &clients = iter->second.getClients();
 				std::map<std::string, int>::iterator iter = clients.begin();
 				for (; iter != clients.end(); iter++){
@@ -173,7 +175,7 @@ void	command::joinCommand(client &cl, std::string body, dbManager& db, std::vect
 {
 	std::vector<std::string> str = helper::split(body, ' ');
 	if (str[0].c_str()[0] == '#' && str[0].length() > 1)
-			processJoinPass(cl, str, db, cls);
+		processJoinPass(cl, str, db, cls);
 	else
 		db.getInfoInvalid(cl.getfdClient(), cl.getnickName());
 }
@@ -256,10 +258,11 @@ void	command::kickCommand(client &cl, std::string body, dbManager& db, std::vect
 	client 	&clK = cls[db.searchClient(info[1])];
 	if (db.getInfoKickError(cl, db, info))
 	{
+		db.getInfoKickChannel(cl, info);
 		db.deleteClientChannel(ch.getNameChannel(), clK.getnickName());
+		// ch.deleteClient(clK.getnickName());
 		ch.setBannedClient(clK.getHost());
 		clK.erasemode(info[1]);
-		db.getInfoKickChannel(cl, info);
 	}
 }
 

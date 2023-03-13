@@ -217,7 +217,7 @@ bool	dbManager::getInfoKickError(client &cl, dbManager &db,std::vector<std::stri
 {
 	std::string info = "";
 	bool result = true;
-	std::cout << "size => "<<body.size() << "\n";
+	// std::cout << "size => "<<body.size() << "\n";
 	if (body[0].c_str()[0] == '#' && body[0].length() <= 1 && srchChannel(body[0]))
 		info +=  ":localhost 403 " + cl.getnickName() + " " + body[0] + " :No such channel\n";
 	else if (body.size() < 2)

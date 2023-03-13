@@ -36,8 +36,21 @@ bool	channel::searchClient(std::string nick)
 
 bool		channel::deleteClient(std::string nick)
 {
-	if (clients.erase(nick))
+	std::map<std::string, int> &cl = getClients();
+	std::map<std::string, int>::iterator it = cl.find(nick);
+	if (it != clients.end())
+	{
+		
+		std::cout << "before check => " << it->first<< "\n";
+		clients.erase(it);
+		it = clients.begin();
+		while (it != clients.end())
+		{
+			std::cout << "check => " << it->first<< "\n";
+			it++;
+		}
 		return (true);
+	}
 	return (false);
 }
 
