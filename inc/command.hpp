@@ -70,6 +70,11 @@ class command{
 		std::string							sessionTime(client &c, int fd);
 		void								checkNick(int fd, std::string nick);
 		void								timeCmd(int fd);
+
+		void								topiCmd(client &c, int fd);
+		void								topicInform(client &c, const std::string &ch, const std::string &topic, dbManager::iterator_channel iter);
+		static std::string					sendErrMsg(int fd, const std::string &nick, const std::string &name,
+											const std::string &body_, const std::string &code);
 };
 
 #endif

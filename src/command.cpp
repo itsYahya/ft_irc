@@ -5,11 +5,11 @@
 
 std::map<std::string, int> command::cmds;
 
-command::command(const char *buffer){
+command::command(const char *buffer): body(""){
 	std::vector<std::string>	res;
 	res = helper::split_(buffer, ' ');
 	name = res[0];
-	body = res[1];
+	if (res.size() == 2) body = res[1];
 	if (body.size() && body.front() == ':') body.erase(body.begin());
 	type = search_cmd(helper::capitalize(res[0]));
 	this->buffer = buffer;
@@ -114,6 +114,15 @@ std::string	makeReason(client &c, std::string body){
 	return ("(Quit: " + reson + ")\n");
 }
 
+std::string	command::sendErrMsg(int fd, const std::string &nick, const std::string &name,
+					const std::string &body_, const std::string &code){
+	std::string msg = ":" + server::getShost() + code + nick;
+	msg += " " + name + body_;
+	::send(fd, msg.c_str(), msg.length(), 0);
+	return (msg);
+}
+
+
 void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &cls)
 {
 	switch(type)
@@ -141,6 +150,9 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 		case CMD_AWAY:
 			break;
 		case CMD_PING:
+			break;
+		case CMD_TOPIC:
+			topiCmd(c, fd);
 			break;
 		case CMD_BOT:
 			botHandler(c, fd);
