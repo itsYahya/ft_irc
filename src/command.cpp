@@ -122,6 +122,15 @@ std::string	command::sendErrMsg(int fd, const std::string &nick, const std::stri
 	return (msg);
 }
 
+void	command::topicInform(client &c, const std::string &ch, const std::string &topic, dbManager::iterator_channel iter){
+	std::map<std::string, int> &clients = iter->second.getClients();
+	std::map<std::string, int>::iterator it = clients.begin(), end = clients.end();
+	std::string msg = c.getClinetFullname() + "TOPIC " + ch + " :" + topic + "\r\n";
+	for (; it != end; it++)
+		::send(it->second, msg.c_str(), msg.length(), 0);
+}
+
+
 
 void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &cls)
 {
