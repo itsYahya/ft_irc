@@ -12,6 +12,7 @@ class channel
 		std::string									nameChannel;
 		std::string									passwd;
 		bool										isPasswd;
+		std::string									topic;
 
 	public:
 		std::map<std::string, int>					clients;
@@ -19,21 +20,23 @@ class channel
 		channel(std::string name);
 		channel(std::string name, std::string passwd);
 		~channel();
-		std::string			getNameChannel() const;
-		bool				insertClientToChannel(std::string name,int	fd);
-		bool				searchClient(std::string nick);
-		bool				deleteClient(std::string nick);
-		void				setBannedClient(std::string host);
+		std::string									getNameChannel() const;
+		bool										insertClientToChannel(std::string name,int	fd);
+		bool										searchClient(std::string nick);
+		bool										deleteClient(std::string nick);
+		void										setBannedClient(std::string host);
 
-		std::string			getPasswd() const;
-		bool				getIsPasswd() const;
-		bool				getBannedClient(std::string host);
+		std::string									getPasswd() const;
+		bool										getIsPasswd() const;
+		bool										getBannedClient(std::string host);
 
-		std::string			getInfo(std::string nick);
-		static std::string	getInfosHeader(std::string nick);
-		static std::string	getInfosFooter(std::string nick);
+		std::string									getInfo(std::string nick);
+		static std::string							getInfosHeader(std::string nick);
+		static std::string							getInfosFooter(std::string nick);
 
-		std::map<std::string, int>	&getClients();
+		std::map<std::string, int>					&getClients();
+		std::string									geTopic() const;
+		void										seTopic(const std::string &topic);
 };
 
 #endif

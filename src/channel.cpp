@@ -1,11 +1,11 @@
 #include "channel.hpp"
 #include "helper.hpp"
 
-channel::channel(std::string name) : nameChannel(name)
+channel::channel(std::string name) : nameChannel(name), topic("")
 {
 	isPasswd = false;
 }
-channel::channel(std::string name, std::string passwd) : nameChannel(name), passwd(passwd)
+channel::channel(std::string name, std::string passwd) : nameChannel(name), passwd(passwd), topic("")
 {
 	isPasswd = true;
 }
@@ -89,4 +89,12 @@ std::string		channel::getInfosFooter(std::string nick){
 
 std::map<std::string, int>	&channel::getClients(){
 	return (clients);
+}
+
+std::string channel::geTopic() const{
+	return (topic);
+}
+
+void		channel::seTopic(const std::string &topic){
+	this->topic = topic;
 }
