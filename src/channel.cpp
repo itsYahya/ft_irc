@@ -69,7 +69,7 @@ bool				channel::getBannedClient(std::string host)
 
 std::string		channel::getInfo(std::string nick){
 	std::string	info = ":" + server::getShost() + " " + helper::itos(322);
-	info += " " + nick + " " + nameChannel + " :channel status\n";
+	info += " " + nick + " " + nameChannel + " " + helper::itos(clients.size()) + " :" + topic + "\r\n";
 	return (info);
 }
 
