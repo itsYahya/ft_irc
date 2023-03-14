@@ -14,6 +14,7 @@ void	command::sendMsg(dbManager *db, int fd, client &c, bool err){
 	std::vector<std::string>			res;
 	std::vector<std::string>::iterator	siter;
 	int									client;
+	std::string							body_;
 
 	res = helper::split_(body.c_str(), ' ');
 	if (res.size() == 0){
@@ -23,12 +24,13 @@ void	command::sendMsg(dbManager *db, int fd, client &c, bool err){
 		if (!err) sendErrMsg(fd, c.getnickName(), "", ":No text to send\r\n", " 412 ");
 		return ;
 	}
+	body_ = res[1];
 	res = helper::split(res[0], ',');
 	siter = res.begin();
 	for (; siter != res.end(); siter++){
 		client = db->searchClient(*siter);
 		if (client > 0)
-			prvMsg(c, client, *siter, res[1]);
+			prvMsg(c, client, *siter, body_);
 		else {
 			dbManager::iterator_channel iter = db->searchChannel(*siter);
 			if (dbManager::isEndChannelIter(iter)){
