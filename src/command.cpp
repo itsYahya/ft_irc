@@ -36,6 +36,7 @@ void	command::init_cmds(){
 	cmds.insert(std::pair<std::string, int>("BOT", CMD_BOT));
 	cmds.insert(std::pair<std::string, int>("AWAY", CMD_AWAY));
 	cmds.insert(std::pair<std::string, int>("TOPIC", CMD_TOPIC));
+	cmds.insert(std::pair<std::string, int>("NOTICE", CMD_NOTICE));
 	cmds.insert(std::pair<std::string, int>("HELP", BOT_HELP));
 	cmds.insert(std::pair<std::string, int>("SESS", BOT_SESS));
 	cmds.insert(std::pair<std::string, int>("TIME", BOT_TIME));
@@ -73,6 +74,9 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 	{
 		case CMD_PRIVMSG:
 			sendMsg(db, fd, c, true);
+			break;
+		case CMD_NOTICE:
+			sendMsg(db, fd, c, false);
 			break;
 		case CMD_PART:
 			partCommand(c, body, *db, cls);
