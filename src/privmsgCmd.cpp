@@ -17,12 +17,10 @@ void	command::sendMsg(dbManager *db, int fd, client &c, bool err){
 
 	res = helper::split_(body.c_str(), ' ');
 	if (res.size() == 0){
-		if (!err) return ;
-		sendErrMsg(fd, c.getnickName(), "", ":No recipient given (PRIVMSG)\r\n", " 411 ");
+		if (err) sendErrMsg(fd, c.getnickName(), "", ":No recipient given (PRIVMSG)\r\n", " 411 ");
 		return ;
 	}else if (res.size() == 1){
-		if (!err) return ;
-		sendErrMsg(fd, c.getnickName(), "", ":No text to send\r\n", " 412 ");
+		if (!err) sendErrMsg(fd, c.getnickName(), "", ":No text to send\r\n", " 412 ");
 		return ;
 	}
 	res = helper::split(res[0], ',');
@@ -33,8 +31,9 @@ void	command::sendMsg(dbManager *db, int fd, client &c, bool err){
 			prvMsg(c, client, *siter, res[1]);
 		else {
 			dbManager::iterator_channel iter = db->searchChannel(*siter);
-			if (dbManager::isEndChannelIter(iter))
-				sendErrMsg(fd, c.getnickName(), *siter, " :No such nick/channel\r\n", " 401 ");
+			if (dbManager::isEndChannelIter(iter)){
+				if (err) sendErrMsg(fd, c.getnickName(), *siter, " :No such nick/channel\r\n", " 401 ");
+			}
 			else {
 				std::map<std::string, int> &clients = iter->second.getClients();
 				std::map<std::string, int>::iterator iter = clients.begin();
