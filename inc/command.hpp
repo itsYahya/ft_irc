@@ -30,6 +30,7 @@ typedef enum e_ctype{
 	BOT_TIME		= 19,
 	CMD_AWAY		= 20,
 	CMD_TOPIC		= 21,
+	CMD_NOTICE		= 22,
 	CMD_WRONG 		= 0,
 }	t_ctype;
 
@@ -57,8 +58,8 @@ class command{
 		void								partCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls);
 		void								joinCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls);
 		void 								kickCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls);
-		void								sendMsg(dbManager *db, int fd, client &c);
-		void								prvMsg(client &c, int fd, std::string nick);
+		void								sendMsg(dbManager *db, int fd, client &c, bool err);
+		void								prvMsg(client &c, int fd, std::string nick, std::string body_);
 		
 		void								sendList(dbManager *db, int fd, client &c);
 
