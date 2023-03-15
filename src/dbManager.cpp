@@ -158,10 +158,10 @@ void	dbManager::getInfoListClInChannel(client &cl, std::string nameChannel, std:
 {
 	channel& ch = searchChannel(nameChannel)->second;
 	std::string info = processInfoCls(ch, cl, cls);
-	sendMsgCls(info,ch.getNameChannel());
+	send(cl.getfdClient(), info.c_str(), info.size(), 0);
 	info.clear();
 	info = ":" + cl.getHost() + " 366 " + cl.getnickName() + " " + ch.getNameChannel() + " :End of /NAMES list.\n";
-	sendMsgCls(info, ch.getNameChannel());
+	send(cl.getfdClient(), info.c_str(), info.size(), 0);
 }
 
 void	dbManager::sendMsgCls(std::string info, std::string nameChannel)
@@ -217,8 +217,7 @@ bool	dbManager::getInfoKickError(client &cl, dbManager &db,std::vector<std::stri
 {
 	std::string info = "";
 	bool result = true;
-	// std::cout << "size => "<<body.size() << "\n";
-	if (body[0].c_str()[0] == '#' && body[0].length() <= 1 && srchChannel(body[0]))
+	if (body[0].c_str()[0] == '#' && body[0].length() <= 1 && !srchChannel(body[0]))
 		info +=  ":localhost 403 " + cl.getnickName() + " " + body[0] + " :No such channel\n";
 	else if (body.size() < 2)
 		info +=  ":localhost 401 " + cl.getnickName() + " " + body[1] + " :no such nick/channel\n";	

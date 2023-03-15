@@ -140,12 +140,10 @@ std::string	&client::getCmd(){
 
 bool	client::checkChannel(const std::string &ch)
 {
-	iter_mode = list_mode.begin();
-	for(; iter_mode != list_mode.end(); iter_mode++)
-	{
-		if (iter_mode->first == ch)
-			return (true);
-	}
+	std::map<std::string, t_mode> &cl = getClientMode();
+	 std::map<std::string, t_mode>::iterator it = cl.find(ch);
+	if (it->first == ch)
+		return (true);
 	return (false);
 }
 
@@ -169,14 +167,45 @@ void	client::setSessionTime(){
 
 void	client::erasemode(std::string channel)
 {
-	if (checkChannel(channel))
-		list_mode.erase(channel);
+	std::map<std::string, t_mode> &cl = getClientMode();
+	std::map<std::string, t_mode>::iterator it = cl.find(channel);
+	if (it != cl.end())
+		cl.erase(it);
 }
 
 bool	&client::getFlauth(){
 	return (flauth);
 }
 
+void	client::setInvite(std::string channel)
+{
+	if(getInvite(channel) == -1)
+		list_invite.push_back(channel);
+}
+
+int	client::getInvite(std::string channel)
+{
+	int index = 0;
+	for (size_t x = 0; x < list_invite.size(); x++)
+	{
+		if (list_invite[x] == channel)
+			return (index);
+		index++;
+	}
+	return (-1);
+}
+
+void	client::eraseInvite(std::string channel)
+{
+	size_t index = getInvite(channel);
+	if (!list_invite.empty() && index >= 0)
+		list_invite.erase(list_invite.begin() + index);
+}
+
+std::map<std::string, t_mode>	&client::getClientMode()
+{
+	return (list_mode);
+}
 client::mode_type	&client::getmodelist(){
 	return (list_mode);
 }
