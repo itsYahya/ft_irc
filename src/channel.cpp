@@ -109,7 +109,6 @@ void		channel::seTopic(const std::string &topic){
 void		channel::deleteBannedClient(std::string host)
 {
 	int index = getBannedClient(host);
-	// std::cout << "index => " << index << " name => " << ban_clients[index]<< "\n";
 	if (!ban_clients.empty() && index >= 0)
 		ban_clients.erase(ban_clients.begin() + index);
 }

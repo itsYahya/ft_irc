@@ -142,11 +142,8 @@ bool	client::checkChannel(const std::string &ch)
 {
 	std::map<std::string, t_mode> &cl = getClientMode();
 	 std::map<std::string, t_mode>::iterator it = cl.find(ch);
-	if (it->first == ch){
-		std::cout << "true client::checkChannel\n";
+	if (it->first == ch)
 		return (true);
-	}
-	std::cout << "false client::checkChannel\n";
 	return (false);
 }
 
@@ -173,13 +170,7 @@ void	client::erasemode(std::string channel)
 	std::map<std::string, t_mode> &cl = getClientMode();
 	std::map<std::string, t_mode>::iterator it = cl.find(channel);
 	if (it != cl.end())
-	{
 		cl.erase(it);
-		// return (true);
-		std::cout << "true erasemode\n";
-	}
-	// return (false);	
-	std::cout << "false erasemode\n";
 }
 
 bool	&client::getFlauth(){
@@ -207,7 +198,6 @@ int	client::getInvite(std::string channel)
 void	client::eraseInvite(std::string channel)
 {
 	size_t index = getInvite(channel);
-	// std::cout << "index => " << index << " name => " << list_invite[index] << "\n";
 	if (!list_invite.empty() && index >= 0)
 		list_invite.erase(list_invite.begin() + index);
 }

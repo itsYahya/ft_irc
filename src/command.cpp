@@ -193,7 +193,6 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 			cl.setmode(body[0], SM_CLIENT);
 			cl.eraseInvite(ch.getNameChannel());
 			joinClChannel(cl, body[0], db, cls);
-			std::cout << "im here\n";
 		}
 		else
 			db.getInfoPartError(cl, body[0], 475);

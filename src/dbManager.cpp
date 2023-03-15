@@ -158,10 +158,10 @@ void	dbManager::getInfoListClInChannel(client &cl, std::string nameChannel, std:
 {
 	channel& ch = searchChannel(nameChannel)->second;
 	std::string info = processInfoCls(ch, cl, cls);
-	sendMsgCls(info,ch.getNameChannel());
+	send(cl.getfdClient(), info.c_str(), info.size(), 0);
 	info.clear();
 	info = ":" + cl.getHost() + " 366 " + cl.getnickName() + " " + ch.getNameChannel() + " :End of /NAMES list.\n";
-	sendMsgCls(info, ch.getNameChannel());
+	send(cl.getfdClient(), info.c_str(), info.size(), 0);
 }
 
 void	dbManager::sendMsgCls(std::string info, std::string nameChannel)
