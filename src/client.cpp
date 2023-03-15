@@ -176,3 +176,28 @@ void	client::erasemode(std::string channel)
 bool	&client::getFlauth(){
 	return (flauth);
 }
+
+void	client::setInvite(std::string channel)
+{
+	if(getInvite(channel) == -1)
+		list_invite.push_back(channel);
+}
+
+int	client::getInvite(std::string channel)
+{
+	int index = 0;
+	for (size_t x = 0; x < list_invite.size(); x++)
+	{
+		if (list_invite[x] == channel)
+			return (index);
+		index++;
+	}
+	return (-1);
+}
+
+void	client::eraseInvite(std::string channel)
+{
+	size_t index = getInvite(channel);
+	if (index > 0)
+		list_invite[index].erase();
+}

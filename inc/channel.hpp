@@ -25,10 +25,10 @@ class channel
 		bool										searchClient(std::string nick);
 		bool										deleteClient(std::string nick);
 		void										setBannedClient(std::string host);
-
+		void										deleteBannedClient(std::string host);
 		std::string									getPasswd() const;
 		bool										getIsPasswd() const;
-		bool										getBannedClient(std::string host);
+		int											getBannedClient(std::string host);
 
 		std::string									getInfo(std::string nick);
 		static std::string							getInfosHeader(std::string nick);

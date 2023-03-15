@@ -66,18 +66,20 @@ bool				channel::getIsPasswd() const
 
 void				channel::setBannedClient(std::string host)
 {
-	if (!host.empty())
+	if (!host.empty() && getBannedClient(host) == -1)
 		ban_clients.push_back(host);
 }
 
-bool				channel::getBannedClient(std::string host)
+int					channel::getBannedClient(std::string host)
 {
+	int	index = 0;
 	for (size_t i = 0; i < ban_clients.size(); i++)
 	{
-		if (ban_clients[i].compare(host) == 0)
-			return (true);
+		if (ban_clients[i] == host)
+			return (index);
+		index++;
 	}
-	return (false);
+	return (-1);
 }
 
 std::string		channel::getInfo(std::string nick){
@@ -110,4 +112,11 @@ std::string channel::geTopic() const{
 
 void		channel::seTopic(const std::string &topic){
 	this->topic = topic;
+}
+
+void		channel::deleteBannedClient(std::string host)
+{
+	int index = getBannedClient(host);
+	if (index > 0)
+		ban_clients[index].erase();
 }

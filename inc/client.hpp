@@ -2,6 +2,7 @@
 #define CLIENT_HPP
 
 #include <iostream>
+#include <vector>
 #include <map>
 typedef enum e_type{
 	FDFREE = 0,
@@ -18,6 +19,7 @@ class client{
 	private:
 		std::map<std::string,t_mode>			list_mode;
 		std::map<std::string,t_mode>::iterator	iter_mode;
+		std::vector<std::string>				list_invite;
 
 		int										fdClient;
 		bool									auth;
@@ -73,6 +75,9 @@ class client{
 		void				setmode(std::string channel, t_mode mode);
 		t_mode				getmode(std::string channel);
 		void				erasemode(std::string channel);
+		void				setInvite(std::string channel);
+		int					getInvite(std::string channel);
+		void				eraseInvite(std::string channel);
 		std::string			&getHost();
 
 		std::string			getClinetFullname();

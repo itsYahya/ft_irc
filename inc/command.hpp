@@ -31,6 +31,7 @@ typedef enum e_ctype{
 	CMD_AWAY		= 20,
 	CMD_TOPIC		= 21,
 	CMD_NOTICE		= 22,
+	CMD_INVITE		= 23,
 	CMD_WRONG 		= 0,
 }	t_ctype;
 
@@ -71,7 +72,7 @@ class command{
 		std::string							sessionTime(client &c, int fd);
 		void								checkNick(int fd, std::string nick);
 		void								timeCmd(int fd);
-
+		void								inviteCmd(client &c, std::string body, dbManager& db, std::vector<client> &cls);
 		void								topiCmd(client &c, int fd);
 		void								topicInform(client &c, const std::string &ch, const std::string &topic, dbManager::iterator_channel iter);
 		static std::string					sendErrMsg(int fd, const std::string &nick, const std::string &name,
