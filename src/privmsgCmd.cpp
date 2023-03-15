@@ -37,8 +37,8 @@ void	command::sendMsg(dbManager *db, int fd, client &c, bool err){
 				if (err) sendErrMsg(fd, c.getnickName(), *siter, " :No such nick/channel\r\n", " 401 ");
 			}
 			else {
-				std::map<std::string, int> &clients = iter->second.getClients();
-				std::map<std::string, int>::iterator iter = clients.begin();
+				channel::clients_type &clients = iter->second.getClients();
+				channel::clients_iter_type iter = clients.begin();
 				for (; iter != clients.end(); iter++){
 					if (iter->second != fd) prvMsg(c, iter->second, *siter, res[1]);
 				}
