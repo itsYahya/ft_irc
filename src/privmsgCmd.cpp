@@ -21,7 +21,7 @@ void	command::sendMsg(dbManager *db, int fd, client &c, bool err){
 		if (err) sendErrMsg(fd, c.getnickName(), "", ":No recipient given (PRIVMSG)\r\n", " 411 ");
 		return ;
 	}else if (res.size() == 1){
-		if (!err) sendErrMsg(fd, c.getnickName(), "", ":No text to send\r\n", " 412 ");
+		if (err) sendErrMsg(fd, c.getnickName(), "", ":No text to send\r\n", " 412 ");
 		return ;
 	}
 	body_ = res[1];
@@ -37,8 +37,8 @@ void	command::sendMsg(dbManager *db, int fd, client &c, bool err){
 				if (err) sendErrMsg(fd, c.getnickName(), *siter, " :No such nick/channel\r\n", " 401 ");
 			}
 			else {
-				std::map<std::string, int> &clients = iter->second.getClients();
-				std::map<std::string, int>::iterator iter = clients.begin();
+				channel::clients_type &clients = iter->second.getClients();
+				channel::clients_iter_type iter = clients.begin();
 				for (; iter != clients.end(); iter++){
 					if (iter->second != fd) prvMsg(c, iter->second, *siter, res[1]);
 				}

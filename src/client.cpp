@@ -176,3 +176,7 @@ void	client::erasemode(std::string channel)
 bool	&client::getFlauth(){
 	return (flauth);
 }
+
+client::mode_type	&client::getmodelist(){
+	return (list_mode);
+}
