@@ -206,3 +206,6 @@ std::map<std::string, t_mode>	&client::getClientMode()
 {
 	return (list_mode);
 }
+client::mode_type	&client::getmodelist(){
+	return (list_mode);
+}

@@ -7,6 +7,10 @@
 
 class channel
 {
+	public:
+		typedef std::map<std::string, int>			clients_type;
+		typedef clients_type::iterator				clients_iter_type;
+
 	private:
 		std::vector<std::string>					ban_clients;
 		std::string									nameChannel;
@@ -15,8 +19,8 @@ class channel
 		std::string									topic;
 
 	public:
-		std::map<std::string, int>					clients;
-		std::map<std::string, int>::iterator		cls_iter;
+		clients_type								clients;
+		clients_iter_type							cls_iter;
 		channel(std::string name);
 		channel(std::string name, std::string passwd);
 		~channel();
@@ -34,7 +38,7 @@ class channel
 		static std::string							getInfosHeader(std::string nick);
 		static std::string							getInfosFooter(std::string nick);
 
-		std::map<std::string, int>					&getClients();
+		clients_type								&getClients();
 		std::string									geTopic() const;
 		void										seTopic(const std::string &topic);
 };
