@@ -76,6 +76,8 @@ class command{
 		void								topicInform(client &c, const std::string &ch, const std::string &topic, dbManager::iterator_channel iter);
 		static std::string					sendErrMsg(int fd, const std::string &nick, const std::string &name,
 											const std::string &body_, const std::string &code);
+
+		void								modeCmd(client &c, int fd);
 };
 
 #endif

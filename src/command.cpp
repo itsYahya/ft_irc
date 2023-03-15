@@ -94,6 +94,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 			server::closingLink(makeReason(c, body), c);
 			break;
 		case CMD_MODE:
+			modeCmd(c, fd);
 			break;
 		case CMD_AWAY:
 			break;
