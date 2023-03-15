@@ -78,6 +78,7 @@ class command{
 											const std::string &body_, const std::string &code);
 
 		void								modeCmd(client &c, int fd);
+		void								handlModes(client &c, channel &ch, std::string &body);
 };
 
 #endif
