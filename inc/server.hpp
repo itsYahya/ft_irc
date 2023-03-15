@@ -30,7 +30,7 @@ class server{
 		socklen_t								len;
 		char									buffer[BUFFER_SIZE];
 
-		std::vector<client> 					clients;
+		static std::vector<client> 				clients;
 		typedef std::vector<client>::iterator	iterator;
 		dbManager								*db;
 		timeval									time;
@@ -58,7 +58,7 @@ class server{
 		static void					write(int fd, client &c);
 
 		std::string					getClientHost(const void *addr, socklen_t len);
-		client						&getClientByFd(int fd);
+		static client				&getClientByFd(int fd);
 
 		bool						checkPing(client &c, int fd);
 		

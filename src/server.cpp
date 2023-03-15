@@ -4,7 +4,8 @@
 #include "helper.hpp"
 #include  <netdb.h>
 
-std::string server::shost;
+std::string 		server::shost;
+std::vector<client>	server::clients;
 
 server::server()
 {
