@@ -79,7 +79,7 @@ class client{
 		int					getInvite(std::string channel);
 		void				eraseInvite(std::string channel);
 		std::string			&getHost();
-
+		std::map<std::string, t_mode> &getClientMode();
 		std::string			getClinetFullname();
 
 		time_t				getPing();

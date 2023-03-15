@@ -71,8 +71,8 @@ std::string	makeReason(client &c, std::string body){
 
 void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &cls)
 {
-	std::cout << "name => " << name << "\n";
-	std::cout << "body => " << body << "\n";
+	// std::cout << "name => " << name << "\n";
+	// std::cout << "body => " << body << "\n";
 	switch(type)
 	{
 		case CMD_PRIVMSG:
@@ -183,17 +183,17 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 	else
 	{
 		channel &ch = db.searchChannel(body[0])->second;
-		if (ch.getBannedClient(cl.getHost()) > 0) 
+		if (ch.getBannedClient(cl.getHost()) >= 0) 
 			db.getInfoBan(cl.getfdClient(), cl.getnickName(), body[0]);
 		else if(cl.checkChannel(body[0]))
 			db.getInfoPartError(cl, body[0], 500);
-		else if (!ch.getIsPasswd()
-				|| cl.getInvite(ch.getNameChannel()) 
+		else if (!ch.getIsPasswd() || cl.getInvite(ch.getNameChannel()) >= 0 
 				|| (body.size() == 2 && !ch.getPasswd().compare(body[1])))
 		{
 			cl.setmode(body[0], SM_CLIENT);
 			cl.eraseInvite(ch.getNameChannel());
 			joinClChannel(cl, body[0], db, cls);
+			std::cout << "im here\n";
 		}
 		else
 			db.getInfoPartError(cl, body[0], 475);
@@ -231,11 +231,11 @@ void	command::inviteCmd(client &c, std::string body, dbManager& db, std::vector<
 	if (fd > 0)
 	{
 		client& cl = cls[fd];
+		channel& ch = db.searchChannel(str[1])->second;
 		if (db.srchChannel(str[1]) && c.getmode(str[1]) == OP_CLIENT)
 		{
-			channel& ch = db.searchChannel(str[1])->second;
 			cl.setInvite(str[1]);
-			if (ch.getBannedClient(cl.getHost()) > 0)
+			if (ch.getBannedClient(cl.getHost()) >= 0)
 				ch.deleteBannedClient(cl.getHost());
 			std::string info = " join channel: " + str[1]; 
 			command::prvMsg(c,cl.getfdClient(), cl.getnickName(), info);
@@ -246,14 +246,17 @@ void	command::inviteCmd(client &c, std::string body, dbManager& db, std::vector<
 void	command::kickCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls)
 {
 	std::vector<std::string> info = helper::split(body, ' ');
-	channel &ch = db.searchChannel(info[0])->second;
-	client 	&clK = cls[db.searchClient(info[1])];
-	if (db.getInfoKickError(cl, db, info))
+	if (info.size() > 2)
 	{
-		db.getInfoKickChannel(cl, info);
-		db.deleteClientChannel(ch.getNameChannel(), clK.getnickName());
-		ch.setBannedClient(clK.getHost());
-		clK.erasemode(info[1]);
+		channel &ch = db.searchChannel(info[0])->second;
+		client 	&clK = cls[db.searchClient(info[1])];
+		if (db.getInfoKickError(cl, db, info))
+		{
+			db.getInfoKickChannel(cl, info);
+			db.deleteClientChannel(ch.getNameChannel(), clK.getnickName());
+			ch.setBannedClient(clK.getHost());
+			clK.erasemode(info[0]);
+		}
 	}
 }
 

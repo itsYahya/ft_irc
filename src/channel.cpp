@@ -40,15 +40,7 @@ bool		channel::deleteClient(std::string nick)
 	std::map<std::string, int>::iterator it = cl.find(nick);
 	if (it != clients.end())
 	{
-		
-		std::cout << "before check => " << it->first<< "\n";
 		clients.erase(it);
-		it = clients.begin();
-		while (it != clients.end())
-		{
-			std::cout << "check => " << it->first<< "\n";
-			it++;
-		}
 		return (true);
 	}
 	return (false);
@@ -117,6 +109,7 @@ void		channel::seTopic(const std::string &topic){
 void		channel::deleteBannedClient(std::string host)
 {
 	int index = getBannedClient(host);
-	if (index > 0)
-		ban_clients[index].erase();
+	// std::cout << "index => " << index << " name => " << ban_clients[index]<< "\n";
+	if (!ban_clients.empty() && index >= 0)
+		ban_clients.erase(ban_clients.begin() + index);
 }
