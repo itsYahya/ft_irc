@@ -176,3 +176,11 @@ void	client::erasemode(std::string channel)
 bool	&client::getFlauth(){
 	return (flauth);
 }
+
+void client::changeMode(const std::string &ch, t_mode mode){
+	mode_iter_type iter = list_mode.find(ch);
+	
+	if (iter == list_mode.end()) return ;
+	if (iter->second != OP_CLIENT)
+		iter->second = mode;
+}
