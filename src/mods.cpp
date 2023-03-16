@@ -4,6 +4,17 @@
 #include "helper.hpp"
 #include "dbManager.hpp"
 
+bool	command::channelMode(client &c, channel &ch, std::string::iterator iter){
+	std::string	msg;
+	(void) c;
+	(void)ch;
+	if (*iter == 'm'){
+		msg = c.getClinetFullname() + "MODE " + ch.getNameChannel() + " +m\r\n";
+		ch.moderate(msg);
+	}
+	return (true);
+}
+
 void	command::handlModes(client &c, channel &ch, std::string &body){
 	std::string::iterator iter = body.begin();
 	(void)ch;
@@ -13,7 +24,7 @@ void	command::handlModes(client &c, channel &ch, std::string &body){
 		if (*iter == ' ') break;
 		if (*iter == '+') continue;
 		if (*iter == 't' || *iter == 'm' || *iter == 'l' || *iter == 'k')
-			std::cout << "hello there1" << std::endl;// channelMode(c, ch, *iter);
+			channelMode(c, ch, iter);
 		else if (*iter == 'v' || *iter == 'o')
 			std::cout << "hello there2" << std::endl;// clientMode(c, ch, *iter);
 		else
