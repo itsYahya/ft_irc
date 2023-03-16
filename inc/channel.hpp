@@ -15,6 +15,7 @@ class channel
 		std::string									topic;
 		bool										isModerate;
 		bool										isTopicProtected;
+		size_t										limit;
 
 	public:
 		typedef std::map<std::string, int>			clients_type;
@@ -47,6 +48,8 @@ class channel
 
 		void										protecTopic(const std::string &msg);
 		bool										topicProtected();
+		bool										wantsMore();
+		void										setLimit(size_t l, const std::string &msg);
 };
 
 #endif

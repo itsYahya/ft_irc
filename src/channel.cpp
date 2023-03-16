@@ -147,3 +147,18 @@ void channel::protecTopic(const std::string &msg){
 bool channel::topicProtected(){
 	return isTopicProtected;
 }
+
+bool	channel::wantsMore(){
+	return (clients.size() < limit || limit < 0);
+}
+
+void	channel::setLimit(size_t l, const std::string &msg){
+	int					fd;
+	clients_iter_type	iter = clients.begin();
+
+	for (; iter != clients.end(); iter++){
+		fd = iter->second;
+		::send(fd, msg.c_str(), msg.length(), 0);
+	}
+	limit = l;
+}
