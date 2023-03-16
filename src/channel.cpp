@@ -5,11 +5,13 @@ channel::channel(std::string name) : nameChannel(name), topic("")
 {
 	isPasswd = false;
 	isModerate = false;
+	isTopicProtected = false;
 }
 channel::channel(std::string name, std::string passwd) : nameChannel(name), passwd(passwd), topic("")
 {
 	isPasswd = true;
 	isModerate = false;
+	isTopicProtected = false;
 }
 
 channel::~channel(){}
@@ -129,4 +131,19 @@ void channel::moderate(const std::string &msg){
 
 bool channel::moderated(){
 	return (isModerate);
+}
+
+void channel::protecTopic(const std::string &msg){
+	int					fd;
+	clients_iter_type	iter = clients.begin();
+
+	for (; iter != clients.end(); iter++){
+		fd = iter->second;
+		::send(fd, msg.c_str(), msg.length(), 0);
+	}
+	isTopicProtected = true;
+}
+
+bool channel::topicProtected(){
+	return isTopicProtected;
 }

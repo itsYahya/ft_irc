@@ -14,6 +14,7 @@ class channel
 		bool										isPasswd;
 		std::string									topic;
 		bool										isModerate;
+		bool										isTopicProtected;
 
 	public:
 		typedef std::map<std::string, int>			clients_type;
@@ -43,6 +44,9 @@ class channel
 
 		void										moderate(const std::string &msg);
 		bool										moderated();
+
+		void										protecTopic(const std::string &msg);
+		bool										topicProtected();
 };
 
 #endif
