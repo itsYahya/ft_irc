@@ -39,8 +39,8 @@ void	command::topiCmd(client &c, int fd){
 		md = c.getmode(res[0]);
 		if (md == NONE)
 			sendErrMsg(fd, c.getnickName(), res[0], " :You're not on that channel\r\n", " 442 ");
-		else if (md == SM_CLIENT)
-			sendErrMsg(fd, c.getnickName(), res[0], " :You're not an operator on that channel\r\n", " 442 ");
+		else if (md != OP_CLIENT && iter->second.topicProtected())
+			sendErrMsg(fd, c.getnickName(), res[0], " :You're not an operator on the channel\r\n", " 442 ");
 		else{
 			if (res[1].front() == ':') res[1].erase(res[1].begin());
 			iter->second.seTopic(res[1]);

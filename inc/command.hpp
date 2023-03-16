@@ -79,7 +79,7 @@ class command{
 
 		void								modeCmd(client &c, int fd);
 		void								handlModes(client &c, channel &ch, std::string &body);
-		bool								channelMode(client &c, channel &ch, std::string::iterator iter);
+		bool								channelMode(client &c, channel &ch, std::string::iterator iter, std::string &body);
 };
 
 #endif
