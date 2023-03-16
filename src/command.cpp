@@ -185,7 +185,7 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 		else if (!ch.getIsPasswd() 
 				|| (body.size() == 2 && !ch.getPasswd().compare(body[1])))
 		{
-			cl.setmode(body[0], SM_CLIENT);
+			cl.setmode(body[0], (ch.moderated() ? M_CLIENT : SM_CLIENT));
 			joinClChannel(cl, body[0], db, cls);
 		}
 		else
