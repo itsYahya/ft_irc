@@ -13,8 +13,11 @@ class channel
 		std::string									passwd;
 		bool										isPasswd;
 		std::string									topic;
+		bool										isModerate;
 
 	public:
+		typedef std::map<std::string, int>			clients_type;
+		typedef clients_type::iterator				clients_iter_type;
 		std::map<std::string, int>					clients;
 		std::map<std::string, int>::iterator		cls_iter;
 		channel(std::string name);
@@ -37,6 +40,9 @@ class channel
 		std::map<std::string, int>					&getClients();
 		std::string									geTopic() const;
 		void										seTopic(const std::string &topic);
+
+		void										moderate(const std::string &msg);
+		bool										moderated();
 };
 
 #endif

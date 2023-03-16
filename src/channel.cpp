@@ -4,11 +4,14 @@
 channel::channel(std::string name) : nameChannel(name), topic("")
 {
 	isPasswd = false;
+	isModerate = false;
 }
 channel::channel(std::string name, std::string passwd) : nameChannel(name), passwd(passwd), topic("")
 {
 	isPasswd = true;
+	isModerate = false;
 }
+
 channel::~channel(){}
 
 std::string channel::getNameChannel() const
@@ -110,4 +113,20 @@ std::string channel::geTopic() const{
 
 void		channel::seTopic(const std::string &topic){
 	this->topic = topic;
+}
+
+void channel::moderate(const std::string &msg){
+	int					fd;
+	clients_iter_type	iter = clients.begin();
+
+	for (; iter != clients.end(); iter++){
+		fd = iter->second;
+		server::getClientByFd(fd).changeMode(iter->first, M_CLIENT);
+		::send(fd, msg.c_str(), msg.length(), 0);
+	}
+	isModerate = true;
+}
+
+bool channel::moderated(){
+	return (isModerate);
 }
