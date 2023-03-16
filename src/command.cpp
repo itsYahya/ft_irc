@@ -227,19 +227,32 @@ void	command::inviteCmd(client &c, std::string body, dbManager& db, std::vector<
 {
 	std::vector<std::string> str = helper::split(body, ' ');
 	int fd = db.searchClient(str[0]);
-	if (fd > 0)
+	if (fd > 0 && str.size() >= 2)
 	{
 		client& cl = cls[fd];
 		channel& ch = db.searchChannel(str[1])->second;
-		if (db.srchChannel(str[1]) && c.getmode(str[1]) == OP_CLIENT)
+		if (db.srchChannel(str[1]))
 		{
-			cl.setInvite(str[1]);
-			if (ch.getBannedClient(cl.getHost()) >= 0)
-				ch.deleteBannedClient(cl.getHost());
-			std::string info = " join channel: " + str[1]; 
-			command::prvMsg(c,cl.getfdClient(), cl.getnickName(), info);
+			if(c.getmode(str[1]) == OP_CLIENT)
+			{
+				cl.setInvite(str[1]);
+				if (ch.getBannedClient(cl.getHost()) >= 0)
+					ch.deleteBannedClient(cl.getHost());
+				std::string info = " join channel: " + str[1]; 
+				command::prvMsg(c,cl.getfdClient(), cl.getnickName(), info);
+			}
+			else
+				db.getInfoPartError(c, str[1], 482);
 		}
+		else
+			db.getInfoPartError(c, str[1], 403);
 	}
+	else
+	{
+		std::string info =  ":localhost 401 " + str[0] + " " + str[1] + " :no such nick/channel\n";
+		send(c.getfdClient(), info.c_str(), info.size(), 0);
+	}
+		
 }
 
 void	command::kickCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls)
@@ -249,7 +262,7 @@ void	command::kickCommand(client &cl, std::string body, dbManager& db, std::vect
 	{
 		channel &ch = db.searchChannel(info[0])->second;
 		client 	&clK = cls[db.searchClient(info[1])];
-		if (db.getInfoKickError(cl, db, info))
+		if (db.getInfoKickError(cl, ch, info))
 		{
 			db.getInfoKickChannel(cl, info);
 			db.deleteClientChannel(ch.getNameChannel(), clK.getnickName());
