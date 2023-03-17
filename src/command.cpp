@@ -259,7 +259,7 @@ void	command::inviteCmd(client &c, std::string body, dbManager& db, std::vector<
 void	command::kickCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls)
 {
 	std::vector<std::string> info = helper::split(body, ' ');
-	if (info.size() > 2)
+	if (info.size() >= 2)
 	{
 		channel &ch = db.searchChannel(info[0])->second;
 		client 	&clK = cls[db.searchClient(info[1])];
