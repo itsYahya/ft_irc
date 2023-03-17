@@ -95,8 +95,8 @@ long helper::strtol(std::string str){
 	for (; iter != str.end() && *iter == ' '; iter++)
 		;
 	for (; iter != str.end(); iter++){
+		if (res < 0 || !std::isdigit(*iter)) return (res);
 		res = res * 10 + (*iter - '0');
-		if (res < 0) return (-1);
 	}
 	return (res);
 }
