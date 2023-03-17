@@ -156,8 +156,6 @@ void	server::informNick(client &c, std::string nick){
 	
 	fd = c.getfdClient();
 	msg = c.getClinetFullname() + "NICK :" + nick + "\n";
-	send(fd, msg.c_str(), msg.length(), 0);
-	fds[fd] = fd;
 	client::mode_type &modes = c.getmodelist();
 	iter = modes.begin();
 	for (; iter != modes.end(); iter++){
