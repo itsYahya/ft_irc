@@ -6,7 +6,7 @@
 
 bool	command::channelMode(client &c, channel &ch, std::string::iterator iter, std::string &body){
 	std::string		msg, rest;
-	size_t			len;
+	long			len;
 	helper::vector	result;
 
 	if (*iter == 'm'){
@@ -18,25 +18,21 @@ bool	command::channelMode(client &c, channel &ch, std::string::iterator iter, st
 		ch.protecTopic(msg);
 	}
 	else {
-		std::cout << *iter << std::endl;
-		if (*(iter + 1) != ' ')
+		if (*(iter + 1) && *(iter + 1) != ' ')
 			return false;
-		rest = std::string((iter + 2), body.end());
+		rest = std::string(iter + 1, body.end());
 		result = helper::split(rest, ' ');
-		std::cout << result.size() << std::endl;
 		if (result.size() == 0)
-			sendErrMsg(c.getfdClient(), c.getnickName(), std::string("MODE +") + (*iter), " :Not enough parameters\r\n", " 461 ");
-		else{
-			if (*iter == 'l'){
-				len = std::stol(result[0]);
-				if (len <= 0)
-					return (false);
-				msg = c.getClinetFullname() + "MODE " + ch.getNameChannel() + " +l " + helper::itos(len) + "\r\n";
-				ch.setLimit(len, msg);
-			}else {
-				msg = c.getClinetFullname() + "MODE " + ch.getNameChannel() + " +k " + result[0] + "\r\n";
-				
-			}
+			return (sendErrMsg(c.getfdClient(), c.getnickName(), std::string("MODE +") + (*iter), " :Not enough parameters\r\n", " 461 "), false);
+		if (*iter == 'l'){
+			len = helper::strtol(result[0]);
+			if (len <= 0)
+				return (false);
+			msg = c.getClinetFullname() + "MODE " + ch.getNameChannel() + " +l " + helper::itos(len) + "\r\n";
+			ch.setLimit(len, msg);
+		}else {
+			msg = c.getClinetFullname() + "MODE " + ch.getNameChannel() + " +k " + result[0] + "\r\n";
+			
 		}
 		return (false);
 	}
