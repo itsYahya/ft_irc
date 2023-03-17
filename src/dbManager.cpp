@@ -175,6 +175,17 @@ void	dbManager::sendMsgCls(std::string info, std::string nameChannel)
 	}
 }
 
+void	dbManager::sendStatMsgCls(std::string info, std::string nameChannel)
+{
+	channel& ch = searchChannel(nameChannel)->second;
+	ch.cls_iter = ch.clients.begin();
+	while (ch.cls_iter != ch.clients.end())
+	{
+		send(ch.cls_iter->second, info.c_str(), info.size(), 0);
+		ch.cls_iter++;
+	}
+}
+
 void	dbManager::getInfoPartChannel(client &cl, std::vector<std::string> info)
 {
 	std::string msg = "";
@@ -189,6 +200,13 @@ void	dbManager::getInfoPartChannel(client &cl, std::vector<std::string> info)
 		msg += cl.getClinetFullname() + " PART " + info[0] + "\n";
 	sendMsgCls(msg, info[0]);
 }
+
+void	dbManager::getInfoStatPartChannel(std::string cl,const std::string &info)
+{
+	std::string msg = cl + " PART " + info + "\n";
+	sendStatMsgCls(msg, info);
+}
+
 
 void	dbManager::getInfoKickChannel(client &cl, std::vector<std::string> info)
 {

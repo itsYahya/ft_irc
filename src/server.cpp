@@ -52,11 +52,15 @@ void	server::create(){
 }
 
 void	server::close(int sock, client &c){
-
+	std::string info = c.getnickName();
 	dbManager::deleteClient(c.getnickName());
+	client::mode_type list_mode = c.getmodelist();
+	client::mode_type::iterator iter = list_mode.begin();
+	for (; iter != list_mode.end(); iter++)
+		dbManager::getInfoStatPartChannel(c.getClinetFullname(), iter->first);
 	c.reset();
 	::close(sock);
-	std::cout << "client went away !!" << std::endl;
+	std::cout << info <<" went away !!" << std::endl;
 }
 
 bool	server::checkPing(client &c, int fd){
@@ -148,13 +152,13 @@ void	server::read(int s){
 
 void	server::informNick(client &c, std::string nick){
 	std::string						msg;
-	int								fd;
+	// int								fd;
 	client::mode_iter_type			iter;
 	dbManager::iterator_channel		it;
 	channel::clients_iter_type		cit;
 	std::map<int, int>				fds;
 	
-	fd = c.getfdClient();
+	// fd = c.getfdClient();
 	msg = c.getClinetFullname() + "NICK :" + nick + "\n";
 	client::mode_type &modes = c.getmodelist();
 	iter = modes.begin();
