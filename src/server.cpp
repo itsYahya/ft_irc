@@ -4,7 +4,8 @@
 #include "helper.hpp"
 #include  <netdb.h>
 
-std::string server::shost;
+std::string 		server::shost;
+std::vector<client>	server::clients;
 
 server::server()
 {
@@ -155,8 +156,6 @@ void	server::informNick(client &c, std::string nick){
 	
 	fd = c.getfdClient();
 	msg = c.getClinetFullname() + "NICK :" + nick + "\n";
-	send(fd, msg.c_str(), msg.length(), 0);
-	fds[fd] = fd;
 	client::mode_type &modes = c.getmodelist();
 	iter = modes.begin();
 	for (; iter != modes.end(); iter++){

@@ -10,6 +10,8 @@ typedef enum e_type{
 }	t_type;
 
 typedef enum e_mode{
+	V_CLIENT  = 4,
+	M_CLIENT  = 3,
 	SM_CLIENT = 2,
 	OP_CLIENT = 1,
 	NONE = 0
@@ -42,12 +44,13 @@ class client{
 		time_t											session;
 
 	public:
-		t_type		type;
 		typedef std::map<std::string,t_mode>			mode_type;
-		typedef std::map<std::string,t_mode>::iterator	mode_iter_type;
+		typedef	mode_type::iterator						mode_iter_type;
+		t_type		type;
 		client();
 		~client();
 		
+		void											changeMode(const std::string &channel, t_mode mode);
 		void 											reset();
 		bool											isfree();
 		

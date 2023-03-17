@@ -97,6 +97,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 			server::closingLink(makeReason(c, body), c);
 			break;
 		case CMD_MODE:
+			modeCmd(c, fd);
 			break;
 		case CMD_AWAY:
 			break;
@@ -190,7 +191,7 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 		else if (!ch.getIsPasswd() || cl.getInvite(ch.getNameChannel()) >= 0 
 				|| (body.size() == 2 && !ch.getPasswd().compare(body[1])))
 		{
-			cl.setmode(body[0], SM_CLIENT);
+			cl.setmode(body[0], (ch.moderated() ? M_CLIENT : SM_CLIENT));
 			cl.eraseInvite(ch.getNameChannel());
 			joinClChannel(cl, body[0], db, cls);
 		}

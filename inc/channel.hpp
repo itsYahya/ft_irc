@@ -17,6 +17,9 @@ class channel
 		std::string									passwd;
 		bool										isPasswd;
 		std::string									topic;
+		bool										isModerate;
+		bool										isTopicProtected;
+		size_t										limit;
 
 	public:
 		clients_type								clients;
@@ -41,6 +44,17 @@ class channel
 		clients_type								&getClients();
 		std::string									geTopic() const;
 		void										seTopic(const std::string &topic);
+
+		void										moderate(const std::string &msg);
+		bool										moderated();
+
+		void										protecTopic(const std::string &msg);
+		bool										topicProtected();
+		bool										wantsMore();
+		void										setLimit(size_t l, const std::string &msg);
+		void										setKey(const std::string &key, const std::string &msg);
+
+		void										notifi(const std::string &msg);
 };
 
 #endif

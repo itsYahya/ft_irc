@@ -37,10 +37,15 @@ void	command::sendMsg(dbManager *db, int fd, client &c, bool err){
 				if (err) sendErrMsg(fd, c.getnickName(), *siter, " :No such nick/channel\r\n", " 401 ");
 			}
 			else {
-				channel::clients_type &clients = iter->second.getClients();
-				channel::clients_iter_type iter = clients.begin();
+				t_mode md = c.getmode(iter->first);
+				if (iter->second.moderated() && md != OP_CLIENT && md != V_CLIENT){
+					sendErrMsg(fd, c.getnickName(), *siter, " :Cannot send to channel\r\n", " 404 ");
+					continue;
+				}
+				std::map<std::string, int> &clients = iter->second.getClients();
+				std::map<std::string, int>::iterator iter = clients.begin();
 				for (; iter != clients.end(); iter++){
-					if (iter->second != fd) prvMsg(c, iter->second, *siter, res[1]);
+					if (iter->second != fd) prvMsg(c, iter->second, *siter, body_);
 				}
 			}
 		}

@@ -4,11 +4,16 @@
 channel::channel(std::string name) : nameChannel(name), topic("")
 {
 	isPasswd = false;
+	isModerate = false;
+	isTopicProtected = false;
 }
 channel::channel(std::string name, std::string passwd) : nameChannel(name), passwd(passwd), topic("")
 {
 	isPasswd = true;
+	isModerate = false;
+	isTopicProtected = false;
 }
+
 channel::~channel(){}
 
 std::string channel::getNameChannel() const
@@ -80,7 +85,15 @@ std::string		channel::getInfo(std::string nick){
 	return (info);
 }
 
+void	channel::notifi(const std::string &msg){
+	int					fd;
+	clients_iter_type	iter = clients.begin();
 
+	for (; iter != clients.end(); iter++){
+		fd = iter->second;
+		::send(fd, msg.c_str(), msg.length(), 0);
+	}
+}
 
 std::string		channel::getInfosHeader(std::string nick){
 	std::string header = ":" + server::getShost() + " " + helper::itos(321);
@@ -104,6 +117,39 @@ std::string channel::geTopic() const{
 
 void		channel::seTopic(const std::string &topic){
 	this->topic = topic;
+}
+
+void channel::moderate(const std::string &msg){
+	notifi(msg);
+	isModerate = true;
+}
+
+bool channel::moderated(){
+	return (isModerate);
+}
+
+void channel::protecTopic(const std::string &msg){
+	notifi(msg);
+	isTopicProtected = true;
+}
+
+bool channel::topicProtected(){
+	return isTopicProtected;
+}
+
+bool	channel::wantsMore(){
+	return (clients.size() < limit || limit < 0);
+}
+
+void	channel::setLimit(size_t l, const std::string &msg){
+	notifi(msg);
+	limit = l;
+}
+
+void	channel::setKey(const std::string &key, const std::string &msg){
+	notifi(msg);
+	isPasswd = true;
+	passwd = key;
 }
 
 void		channel::deleteBannedClient(std::string host)
