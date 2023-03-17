@@ -9,6 +9,7 @@ typedef enum e_type{
 }	t_type;
 
 typedef enum e_mode{
+	V_CLIENT  = 4,
 	M_CLIENT  = 3,
 	SM_CLIENT = 2,
 	OP_CLIENT = 1,
