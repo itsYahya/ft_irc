@@ -158,10 +158,10 @@ void	dbManager::getInfoListClInChannel(client &cl, std::string nameChannel, std:
 {
 	channel& ch = searchChannel(nameChannel)->second;
 	std::string info = processInfoCls(ch, cl, cls);
-	sendMsgCls(info,ch.getNameChannel());
+	send(cl.getfdClient(), info.c_str(), info.size(), 0);
 	info.clear();
 	info = ":" + cl.getHost() + " 366 " + cl.getnickName() + " " + ch.getNameChannel() + " :End of /NAMES list.\n";
-	sendMsgCls(info, ch.getNameChannel());
+	send(cl.getfdClient(), info.c_str(), info.size(), 0);
 }
 
 void	dbManager::sendMsgCls(std::string info, std::string nameChannel)
@@ -210,19 +210,20 @@ void	dbManager::getInfoPartError(client &cl, std::string namechannel, int num)
 		info +=  ":localhost 403 " + cl.getnickName() + " " + namechannel + " :No such channel\n";
 	else if (num == 442)
 		info +=  ":localhost 442 " + cl.getnickName() + " " + namechannel + " :You're not on that channel\n";
+	else if (num == 482)
+		info += ":localhost 482 " + cl.getnickName() + " " + namechannel + " :You're not channel operator\n";
 	send(cl.getfdClient(), info.c_str(), info.size(), 0);
 }
 
-bool	dbManager::getInfoKickError(client &cl, dbManager &db,std::vector<std::string> body)
+bool	dbManager::getInfoKickError(client &cl, channel &ch,std::vector<std::string> body)
 {
 	std::string info = "";
 	bool result = true;
-	// std::cout << "size => "<<body.size() << "\n";
-	if (body[0].c_str()[0] == '#' && body[0].length() <= 1 && srchChannel(body[0]))
+	if ((body[0].c_str()[0] == '#' && body[0].length() <= 1 ) || !srchChannel(body[0]))
 		info +=  ":localhost 403 " + cl.getnickName() + " " + body[0] + " :No such channel\n";
 	else if (body.size() < 2)
 		info +=  ":localhost 401 " + cl.getnickName() + " " + body[1] + " :no such nick/channel\n";	
-	else if (isEndChannelIter(searchChannel(body[0])) && db.searchChannel(body[0])->second.searchClient(body[1]))
+	else if (!ch.searchClient(body[1]))
 		info +=  ":localhost 441 " + cl.getnickName() + " " + body[0] + " " + body[1] + " :They aren't on that channel\n";
 	else if (cl.getmode(body[0]) != OP_CLIENT)
 		info += ":localhost 482 " + cl.getnickName() + " " + body[0] + " :You're not channel operator\n";

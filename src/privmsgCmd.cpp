@@ -21,7 +21,7 @@ void	command::sendMsg(dbManager *db, int fd, client &c, bool err){
 		if (err) sendErrMsg(fd, c.getnickName(), "", ":No recipient given (PRIVMSG)\r\n", " 411 ");
 		return ;
 	}else if (res.size() == 1){
-		if (!err) sendErrMsg(fd, c.getnickName(), "", ":No text to send\r\n", " 412 ");
+		if (err) sendErrMsg(fd, c.getnickName(), "", ":No text to send\r\n", " 412 ");
 		return ;
 	}
 	body_ = res[1];

@@ -70,6 +70,8 @@ class server{
 		
 		void						execut(client &c, std::string &cmd, int fd);
 		bool						welcome(client &c);
+
+		void						informNick(client &c, std::string nick);
 };
 
 #endif

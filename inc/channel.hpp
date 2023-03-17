@@ -7,6 +7,10 @@
 
 class channel
 {
+	public:
+		typedef std::map<std::string, int>			clients_type;
+		typedef clients_type::iterator				clients_iter_type;
+
 	private:
 		std::vector<std::string>					ban_clients;
 		std::string									nameChannel;
@@ -18,10 +22,8 @@ class channel
 		size_t										limit;
 
 	public:
-		typedef std::map<std::string, int>			clients_type;
-		typedef clients_type::iterator				clients_iter_type;
-		std::map<std::string, int>					clients;
-		std::map<std::string, int>::iterator		cls_iter;
+		clients_type								clients;
+		clients_iter_type							cls_iter;
 		channel(std::string name);
 		channel(std::string name, std::string passwd);
 		~channel();
@@ -30,16 +32,16 @@ class channel
 		bool										searchClient(std::string nick);
 		bool										deleteClient(std::string nick);
 		void										setBannedClient(std::string host);
-
+		void										deleteBannedClient(std::string host);
 		std::string									getPasswd() const;
 		bool										getIsPasswd() const;
-		bool										getBannedClient(std::string host);
+		int											getBannedClient(std::string host);
 
 		std::string									getInfo(std::string nick);
 		static std::string							getInfosHeader(std::string nick);
 		static std::string							getInfosFooter(std::string nick);
 
-		std::map<std::string, int>					&getClients();
+		clients_type								&getClients();
 		std::string									geTopic() const;
 		void										seTopic(const std::string &topic);
 

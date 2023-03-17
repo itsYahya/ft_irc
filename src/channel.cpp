@@ -45,15 +45,7 @@ bool		channel::deleteClient(std::string nick)
 	std::map<std::string, int>::iterator it = cl.find(nick);
 	if (it != clients.end())
 	{
-		
-		std::cout << "before check => " << it->first<< "\n";
 		clients.erase(it);
-		it = clients.begin();
-		while (it != clients.end())
-		{
-			std::cout << "check => " << it->first<< "\n";
-			it++;
-		}
 		return (true);
 	}
 	return (false);
@@ -71,18 +63,20 @@ bool				channel::getIsPasswd() const
 
 void				channel::setBannedClient(std::string host)
 {
-	if (!host.empty())
+	if (!host.empty() && getBannedClient(host) == -1)
 		ban_clients.push_back(host);
 }
 
-bool				channel::getBannedClient(std::string host)
+int					channel::getBannedClient(std::string host)
 {
+	int	index = 0;
 	for (size_t i = 0; i < ban_clients.size(); i++)
 	{
-		if (ban_clients[i].compare(host) == 0)
-			return (true);
+		if (ban_clients[i] == host)
+			return (index);
+		index++;
 	}
-	return (false);
+	return (-1);
 }
 
 std::string		channel::getInfo(std::string nick){
@@ -156,4 +150,11 @@ void	channel::setKey(const std::string &key, const std::string &msg){
 	notifi(msg);
 	isPasswd = true;
 	passwd = key;
+}
+
+void		channel::deleteBannedClient(std::string host)
+{
+	int index = getBannedClient(host);
+	if (!ban_clients.empty() && index >= 0)
+		ban_clients.erase(ban_clients.begin() + index);
 }
