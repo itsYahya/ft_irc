@@ -37,7 +37,8 @@ void	command::sendMsg(dbManager *db, int fd, client &c, bool err){
 				if (err) sendErrMsg(fd, c.getnickName(), *siter, " :No such nick/channel\r\n", " 401 ");
 			}
 			else {
-				if (iter->second.moderated() && c.getmode(iter->first) != OP_CLIENT){
+				t_mode md = c.getmode(iter->first);
+				if (iter->second.moderated() && md != OP_CLIENT && md != V_CLIENT){
 					sendErrMsg(fd, c.getnickName(), *siter, " :Cannot send to channel\r\n", " 404 ");
 					continue;
 				}
