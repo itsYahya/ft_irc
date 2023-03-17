@@ -42,7 +42,7 @@ std::vector<std::string>	helper::split_(const char *buffer, char sep){
 	return (res);
 }
 
-std::string	helper::itos(int i){
+std::string	helper::itos(size_t i){
 	std::stringstream	stream;
 	std::string			string;
 
@@ -84,6 +84,19 @@ std::vector<std::string>	helper::splitCmds(std::string buffer, char sep){
 		if (string.front() == '\n') string.erase(string.begin());
 		if (string.size() > 1 && string.back() == '\n') string.erase(string.end() - 1);
 		if (!string.empty()) res.push_back(string);
+	}
+	return (res);
+}
+
+long helper::strtol(std::string str){
+	std::string::iterator	iter = str.begin();
+	long					res = 0;
+
+	for (; iter != str.end() && *iter == ' '; iter++)
+		;
+	for (; iter != str.end(); iter++){
+		res = res * 10 + (*iter - '0');
+		if (res < 0) return (-1);
 	}
 	return (res);
 }
