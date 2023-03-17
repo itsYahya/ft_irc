@@ -80,6 +80,7 @@ class command{
 		void								modeCmd(client &c, int fd);
 		void								handlModes(client &c, channel &ch, std::string &body);
 		bool								channelMode(client &c, channel &ch, std::string::iterator iter, std::string &body);
+		bool								clientMode(client &c, channel &ch, std::string::iterator iter, std::string &body);
 
 		std::vector<std::string>			parceModes(client &c, std::string &body, std::string::iterator iter);
 };

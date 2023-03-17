@@ -47,6 +47,33 @@ bool	command::channelMode(client &c, channel &ch, std::string::iterator iter, st
 	return (true);
 }
 
+bool	command::clientMode(client &c, channel &ch, std::string::iterator iter, std::string &body){
+	helper::vector	res;
+	std::string		msg;
+	int				fd;
+	t_mode			mode = NONE;
+
+	res = parceModes(c, body, iter);
+	if (res.size() == 0) return (false);
+	fd = dbManager::searchClient(res[0]);
+	if (fd < 0)
+		sendErrMsg(c.getfdClient(), c.getnickName(), res[0], " :No such nick/channel\r\n", " 401 ");
+	else{
+		client &cl = server::getClientByFd(fd);
+		mode = cl.getmode(ch.getNameChannel());
+		msg = c.getClinetFullname() + "MODE " + ch.getNameChannel() + " +" + *iter + " " + res[0] + "\r\n";
+		if (mode != NONE && *iter == 'o')
+			cl.setmode(ch.getNameChannel(), OP_CLIENT);
+		else if (mode != NONE && mode != OP_CLIENT)
+			cl.setmode(ch.getNameChannel(), V_CLIENT);
+	}
+	if (mode == NONE)
+		sendErrMsg(c.getfdClient(), c.getnickName(), res[0], " :They aren't on that channel\r\n", " 441 ");
+	else
+		ch.notifi(msg);
+	return (false);
+}
+
 void	command::handlModes(client &c, channel &ch, std::string &body){
 	std::string::iterator iter = body.begin();
 	(void)ch;
@@ -58,8 +85,9 @@ void	command::handlModes(client &c, channel &ch, std::string &body){
 		if (*iter == 't' || *iter == 'm' || *iter == 'l' || *iter == 'k'){
 			if (!channelMode(c, ch, iter, body)) return ;
 		}
-		else if (*iter == 'v' || *iter == 'o')
-			clientMode(c, ch, iter, body);
+		else if (*iter == 'v' || *iter == 'o'){
+			if (!clientMode(c, ch, iter, body)) return ;
+		}
 		else
 			sendErrMsg(c.getfdClient(), c.getnickName(), std::string() + *iter, " :is unknown mode char to me\r\n", " 472 ");
 	}
