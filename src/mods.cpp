@@ -4,10 +4,23 @@
 #include "helper.hpp"
 #include "dbManager.hpp"
 
+helper::vector	command::parceModes(client &c, std::string &body, std::string::iterator iter){
+	std::string 	str;
+	helper::vector	res;
+
+	if (*(iter + 1) && *(iter + 1) != ' ')
+			return res;
+	str = std::string(iter + 1, body.end());
+	res = helper::split(str, ' ');
+	if (res.size() == 0)
+		return (sendErrMsg(c.getfdClient(), c.getnickName(), std::string("MODE +") + (*iter), " :Not enough parameters\r\n", " 461 "), res);
+	return (res);
+}
+
 bool	command::channelMode(client &c, channel &ch, std::string::iterator iter, std::string &body){
-	std::string		msg, rest;
+	std::string		msg;
 	long			len;
-	helper::vector	result;
+	helper::vector	res;
 
 	if (*iter == 'm'){
 		msg = c.getClinetFullname() + "MODE " + ch.getNameChannel() + " +m\r\n";
@@ -18,21 +31,16 @@ bool	command::channelMode(client &c, channel &ch, std::string::iterator iter, st
 		ch.protecTopic(msg);
 	}
 	else {
-		if (*(iter + 1) && *(iter + 1) != ' ')
-			return false;
-		rest = std::string(iter + 1, body.end());
-		result = helper::split(rest, ' ');
-		if (result.size() == 0)
-			return (sendErrMsg(c.getfdClient(), c.getnickName(), std::string("MODE +") + (*iter), " :Not enough parameters\r\n", " 461 "), false);
-		if (*iter == 'l'){
-			len = helper::strtol(result[0]);
+		res = parceModes(c, body, iter);
+		if (res.size() > 0 && *iter == 'l'){
+			len = helper::strtol(res[0]);
 			if (len <= 0)
 				return (false);
 			msg = c.getClinetFullname() + "MODE " + ch.getNameChannel() + " +l " + helper::itos(len) + "\r\n";
 			ch.setLimit(len, msg);
-		}else {
-			msg = c.getClinetFullname() + "MODE " + ch.getNameChannel() + " +k " + result[0] + "\r\n";
-			ch.setKey(result[0], msg);
+		}else if (res.size() > 0) {
+			msg = c.getClinetFullname() + "MODE " + ch.getNameChannel() + " +k " + res[0] + "\r\n";
+			ch.setKey(res[0], msg);
 		}
 		return (false);
 	}
@@ -47,10 +55,11 @@ void	command::handlModes(client &c, channel &ch, std::string &body){
 	for (; iter != body.end(); iter++){
 		if (*iter == ' ') break;
 		if (*iter == '+') continue;
-		if (*iter == 't' || *iter == 'm' || *iter == 'l' || *iter == 'k')
-			channelMode(c, ch, iter, body);
+		if (*iter == 't' || *iter == 'm' || *iter == 'l' || *iter == 'k'){
+			if (!channelMode(c, ch, iter, body)) return ;
+		}
 		else if (*iter == 'v' || *iter == 'o')
-			std::cout << "hello there2" << std::endl;// clientMode(c, ch, *iter);
+			clientMode(c, ch, iter, body);
 		else
 			sendErrMsg(c.getfdClient(), c.getnickName(), std::string() + *iter, " :is unknown mode char to me\r\n", " 472 ");
 	}
