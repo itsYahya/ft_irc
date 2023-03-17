@@ -32,7 +32,7 @@ bool	command::channelMode(client &c, channel &ch, std::string::iterator iter, st
 			ch.setLimit(len, msg);
 		}else {
 			msg = c.getClinetFullname() + "MODE " + ch.getNameChannel() + " +k " + result[0] + "\r\n";
-			
+			ch.setKey(result[0], msg);
 		}
 		return (false);
 	}

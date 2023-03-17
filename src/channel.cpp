@@ -151,3 +151,9 @@ void	channel::setLimit(size_t l, const std::string &msg){
 	notifi(msg);
 	limit = l;
 }
+
+void	channel::setKey(const std::string &key, const std::string &msg){
+	notifi(msg);
+	isPasswd = true;
+	passwd = key;
+}

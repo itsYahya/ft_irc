@@ -50,6 +50,9 @@ class channel
 		bool										topicProtected();
 		bool										wantsMore();
 		void										setLimit(size_t l, const std::string &msg);
+		void										setKey(const std::string &key, const std::string &msg);
+
+		void										notifi(const std::string &msg);
 };
 
 #endif
