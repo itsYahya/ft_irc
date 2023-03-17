@@ -41,7 +41,7 @@ class dbManager
 		static	bool				isEndChannelIter(iterator_channel iter);
 		static  bool				isEndClientIter(iterator_clinet iter);
 		static	void				getInfoPartError(client &cl, std::string namechannel, int num);
-		static	bool				getInfoKickError(client &cl, dbManager &db, std::vector<std::string> body);
+		static	bool				getInfoKickError(client &cl, channel &ch, std::vector<std::string> body);
 		void						getInfoBan(int fd, std::string nick, std::string nameChannel);
 		void						getInfoInvalid(int fd, std::string nick);
 		void						getInfoNewJoin(client &cl, std::string namechannel);

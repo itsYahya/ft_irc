@@ -40,10 +40,10 @@ void	server::create(){
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock < 0)
 		throw myexception("something went wrong !!");
-	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	addr.sin_addr.s_addr = INADDR_ANY;
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
-	getShost() = getClientHost(&addr.sin_addr, addr.sin_len);
+	getShost() = "localhost";
 	if (bind(sock, (struct sockaddr*)&addr, len) < 0)
 		throw myexception("port already in use !!");
 	if (::listen(sock, MAX_FDS) < 0)
