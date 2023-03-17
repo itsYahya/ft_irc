@@ -91,7 +91,15 @@ std::string		channel::getInfo(std::string nick){
 	return (info);
 }
 
+void	channel::notifi(const std::string &msg){
+	int					fd;
+	clients_iter_type	iter = clients.begin();
 
+	for (; iter != clients.end(); iter++){
+		fd = iter->second;
+		::send(fd, msg.c_str(), msg.length(), 0);
+	}
+}
 
 std::string		channel::getInfosHeader(std::string nick){
 	std::string header = ":" + server::getShost() + " " + helper::itos(321);
@@ -118,14 +126,7 @@ void		channel::seTopic(const std::string &topic){
 }
 
 void channel::moderate(const std::string &msg){
-	int					fd;
-	clients_iter_type	iter = clients.begin();
-
-	for (; iter != clients.end(); iter++){
-		fd = iter->second;
-		server::getClientByFd(fd).changeMode(iter->first, M_CLIENT);
-		::send(fd, msg.c_str(), msg.length(), 0);
-	}
+	notifi(msg);
 	isModerate = true;
 }
 
@@ -134,13 +135,7 @@ bool channel::moderated(){
 }
 
 void channel::protecTopic(const std::string &msg){
-	int					fd;
-	clients_iter_type	iter = clients.begin();
-
-	for (; iter != clients.end(); iter++){
-		fd = iter->second;
-		::send(fd, msg.c_str(), msg.length(), 0);
-	}
+	notifi(msg);
 	isTopicProtected = true;
 }
 
@@ -153,12 +148,6 @@ bool	channel::wantsMore(){
 }
 
 void	channel::setLimit(size_t l, const std::string &msg){
-	int					fd;
-	clients_iter_type	iter = clients.begin();
-
-	for (; iter != clients.end(); iter++){
-		fd = iter->second;
-		::send(fd, msg.c_str(), msg.length(), 0);
-	}
+	notifi(msg);
 	limit = l;
 }
