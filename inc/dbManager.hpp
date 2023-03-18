@@ -47,7 +47,9 @@ class dbManager
 		void						getInfoNewJoin(client &cl, std::string namechannel);
 		void						getInfoListClInChannel(client &cl, std::string nameChannel, std::vector<client> &cls);
 		void						getInfoPartChannel(client &cl, std::vector<std::string> info);
+		static void					getInfoStatPartChannel(std::string client, const std::string& info);
 		void						sendMsgCls(std::string info, std::string nameChannel);
+		static void					sendStatMsgCls(std::string info, std::string nameChannel);
 		std::string					processInfoCls(channel &ch, client &cl, std::vector<client> &cls);
 		bool						nextClientmode(client &cl, channel &ch, std::vector<client> &cls);
 		void						getInfoKickChannel(client &cl, std::vector<std::string> info);
