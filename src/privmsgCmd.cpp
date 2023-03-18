@@ -36,7 +36,7 @@ void	command::sendMsg(dbManager *db, int fd, client &c, bool err){
 			if (dbManager::isEndChannelIter(iter)){
 				if (err) sendErrMsg(fd, c.getnickName(), *siter, " :No such nick/channel\r\n", " 401 ");
 			}
-			else if (!iter->second.searchClient(c.getnickName())){
+			else if (!iter->second.searchClient(c.getnickName()) && iter->second.noExteranl()){
 				if (err) sendErrMsg(fd, c.getnickName(), *siter, " :You're not on that channel\r\n", " 442 ");
 			}
 			else {
