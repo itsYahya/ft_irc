@@ -6,12 +6,14 @@ channel::channel(std::string name) : nameChannel(name), topic("")
 	isPasswd = false;
 	isModerate = false;
 	isTopicProtected = false;
+	noexternal = false;
 }
 channel::channel(std::string name, std::string passwd) : nameChannel(name), passwd(passwd), topic("")
 {
 	isPasswd = true;
 	isModerate = false;
 	isTopicProtected = false;
+	noexternal = false;
 }
 
 channel::~channel(){}
@@ -157,4 +159,12 @@ void		channel::deleteBannedClient(std::string host)
 	int index = getBannedClient(host);
 	if (!ban_clients.empty() && index >= 0)
 		ban_clients.erase(ban_clients.begin() + index);
+}
+
+bool		channel::noExteranl(){
+	return (noexternal);
+}
+
+void		channel::setNoExternal(){
+	noexternal = true;
 }

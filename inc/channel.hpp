@@ -20,6 +20,7 @@ class channel
 		bool										isModerate;
 		bool										isTopicProtected;
 		size_t										limit;
+		bool										noexternal;
 
 	public:
 		clients_type								clients;
@@ -53,6 +54,8 @@ class channel
 		bool										wantsMore();
 		void										setLimit(size_t l, const std::string &msg);
 		void										setKey(const std::string &key, const std::string &msg);
+		void										setNoExternal();
+		bool										noExteranl();
 
 		void										notifi(const std::string &msg);
 };
