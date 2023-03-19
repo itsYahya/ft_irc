@@ -149,31 +149,6 @@ void	server::read(int s){
 	}
 }
 
-void	server::informNick(client &c, std::string nick){
-	std::string						msg;
-	// int								fd;
-	client::mode_iter_type			iter;
-	dbManager::iterator_channel		it;
-	channel::clients_iter_type		cit;
-	std::map<int, int>				fds;
-	
-	// fd = c.getfdClient();
-	msg = c.getClinetFullname() + "NICK :" + nick + "\n";
-	client::mode_type &modes = c.getmodelist();
-	iter = modes.begin();
-	for (; iter != modes.end(); iter++){
-		it = dbManager::searchChannel(iter->first);
-		channel::clients_type &clients = it->second.getClients();
-		cit = clients.begin();
-		for (; cit != clients.end(); cit++){
-			if (fds.find(cit->second) == fds.end()){
-				send(cit->second, msg.c_str(), msg.length(), 0);
-				fds[cit->second] = cit->second;
-			}
-		}
-	}
-}
-
 void	server::checkout_nick(client &c, std::string nick){
 	int fd = -1; 
 	
@@ -185,7 +160,7 @@ void	server::checkout_nick(client &c, std::string nick){
 	fd = db->searchClient(nick);
 	if (fd == -1){
 		if (c.authenticated())
-			informNick(c, nick);
+			c.informChannels(c.getClinetFullname() + "NICK :" + nick + "\r\n");
 		db->updateNickClient(c.getnickName(), nick);
 		c.setnickName(nick);
 	}
