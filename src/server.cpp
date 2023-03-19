@@ -70,7 +70,7 @@ bool	server::checkPing(client &c, int fd){
 		c.pinged(std::time(NULL));
 	}
 	else if (c.getPing() >= PINGTIME){
-		closingLink("(Ping timeout)\n", c);
+		closingLink("Ping timeout", c);
 		return (false);
 	}
 	return (true);
@@ -190,7 +190,7 @@ void	server::auth(client &c, command cmd){
 		if (password.compare(cmd.getbody()) == 0)
 			c.authenticate();
 		else
-			closingLink("(Wrong password)\n", c);
+			closingLink("Wrong password", c);
 	}
 	else if (type == CMD_NICK)
 		checkout_nick(c, cmd.getbody());
@@ -238,11 +238,9 @@ void	server::clear(){
 
 void	server::closingLink(std::string reson, client &c){
 	int fd = c.getfdClient();
-	std::string msg = "ERROR :Closing Link: " + c.getHost() + " (QUIT: " + reson + ")\r\n";
+	std::string msg = "ERROR :Closing Link: " + c.getHost() + " (QUIT :" + reson + ")\r\n";
 	::send(fd, msg.c_str(), msg.length(), 0);
-	reson.erase(reson.begin());
-	reson.erase(reson.end() - 3);
-	close(fd, c, c.getClinetFullname() + "QUIT: " + reson + "\r\n");
+	close(fd, c, c.getClinetFullname() + "QUIT :" + reson + "\r\n");
 }
 
 std::string	&server::getShost(){
