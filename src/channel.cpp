@@ -99,6 +99,20 @@ void	channel::notifi(const std::string &msg){
 	}
 }
 
+void channel::notifi(const std::string &msg, std::map<int, int> &fds)
+{
+	int					fd;
+	clients_iter_type	iter = clients.begin();
+
+	for (; iter != clients.end(); iter++){
+		fd = iter->second;
+		if (fds.find(fd) == fds.end()){
+			::send(fd, msg.c_str(), msg.length(), 0);
+			fds[fd] = fd;
+		}
+	}
+}
+
 size_t channel::empty(){
 	return (clients.empty());
 }

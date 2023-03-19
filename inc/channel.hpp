@@ -58,6 +58,7 @@ class channel
 		bool										noExteranl();
 
 		void										notifi(const std::string &msg);
+		void										notifi(const std::string &msg, std::map<int, int> &fds);
 		size_t										empty();
 		std::string									modesInfo(std::string nick);
 };
