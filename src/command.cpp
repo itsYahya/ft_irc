@@ -63,10 +63,11 @@ void	command::pongCmd(client &c){
 
 std::string	makeReason(client &c, std::string body){
 	std::string reson = body;
+	std::string msg = "";
 	
 	if (reson[0] == ':') reson.erase(reson.begin());
 	if (reson.empty()) reson = c.getnickName();
-	return ("(Quit: " + reson + ")\n");
+	return (reson);
 }
 
 void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &cls)

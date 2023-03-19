@@ -51,13 +51,11 @@ void	server::create(){
 		throw myexception("something went wrong !!");
 }
 
-void	server::close(int sock, client &c){
+void	server::close(int sock, client &c, const std::string &msg){
 	std::string info = c.getnickName();
-	dbManager::deleteClient(c.getnickName());
-	client::mode_type list_mode = c.getmodelist();
-	client::mode_type::iterator iter = list_mode.begin();
-	for (; iter != list_mode.end(); iter++)
-		dbManager::getInfoStatPartChannel(c.getClinetFullname(), iter->first);
+	if (!msg.empty())
+		c.informChannels(msg, false);
+	dbManager::deleteClient(info);
 	c.reset();
 	::close(sock);
 	std::cout << info <<" went away !!" << std::endl;
@@ -133,12 +131,13 @@ static bool	checkhNl(const char *buffer){
 void	server::read(int s){
 	bool		nl;
 	int			rd;
-	std::string	&textCmd = clients[s].getCmd();
+	client		&c = clients[s];
+	std::string	&textCmd = c.getCmd();
 	
 	rd = recv(s, buffer, BUFFER_SIZE, 0);
 	buffer[rd] = 0;
 	if (rd <= 0)
-		close(s, clients[s]);
+		close(s, c, c.getClinetFullname() + "QUIT :Client closed connection\r\n");
 	else{
 		nl = checkhNl(buffer);
 		textCmd += buffer;
@@ -160,7 +159,7 @@ void	server::checkout_nick(client &c, std::string nick){
 	fd = db->searchClient(nick);
 	if (fd == -1){
 		if (c.authenticated())
-			c.informChannels(c.getClinetFullname() + "NICK :" + nick + "\r\n");
+			c.informChannels(c.getClinetFullname() + "NICK :" + nick + "\r\n", true);
 		db->updateNickClient(c.getnickName(), nick);
 		c.setnickName(nick);
 	}
@@ -233,15 +232,17 @@ void	server::clear(){
 	sock = -1;
 	for (; iter != clients.end(); iter++){
 		cl = *iter;
-		if (!(cl).isfree()) close(cl.getfdClient(), cl);
+		if (!(cl).isfree()) close(cl.getfdClient(), cl, "");
 	}
 }
 
-void	server::closingLink(const std::string &reson, client &c){
+void	server::closingLink(std::string reson, client &c){
 	int fd = c.getfdClient();
-	std::string msg = "ERROR :Closing Link: " + c.getHost() + " " + reson;
+	std::string msg = "ERROR :Closing Link: " + c.getHost() + " (QUIT: " + reson + ")\r\n";
 	::send(fd, msg.c_str(), msg.length(), 0);
-	close(fd, c);
+	reson.erase(reson.begin());
+	reson.erase(reson.end() - 3);
+	close(fd, c, c.getClinetFullname() + "QUIT: " + reson + "\r\n");
 }
 
 std::string	&server::getShost(){

@@ -218,12 +218,13 @@ client::mode_type	&client::getmodelist(){
 	return (list_mode);
 }
 
-void client::informChannels(const std::string &msg){
+void client::informChannels(const std::string &msg, bool s){
 	mode_iter_type				iter;
 	dbManager::iterator_channel	ch;
 	std::map<int, int>			fds;
 
-	::send(fdClient, msg.c_str(), msg.length(), 0);
+	if (s)
+		::send(fdClient, msg.c_str(), msg.length(), 0);
 	fds[fdClient] = fdClient;
 	iter = list_mode.begin();
 	for (; iter != list_mode.end(); iter++){

@@ -104,7 +104,7 @@ class client{
 
 		mode_type										&getmodelist();
 		
-		void											informChannels(const std::string &msg);
+		void											informChannels(const std::string &msg, bool s);
 };
 
 #endif

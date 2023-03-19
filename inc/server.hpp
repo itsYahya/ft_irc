@@ -50,7 +50,7 @@ class server{
 		void						setpassword(std::string pass);
 		std::string					&getpassword();
 
-		static void					close(int sock, client &c);
+		static void					close(int sock, client &c, const std::string &msg);
 		void						auth(client &c, command cmd);
 		void						checkout_nick(client &c, std::string nick);
 		void						checkout_user(client &c, std::string str);
@@ -64,14 +64,13 @@ class server{
 		
 		void						clear();
 
-		static void					closingLink(const std::string &reson, client &c);
+		static void					closingLink(std::string reson, client &c);
 
 		static std::string			&getShost();
 		
 		void						execut(client &c, std::string &cmd, int fd);
 		bool						welcome(client &c);
 
-		void						informNick(client &c, std::string nick);
 };
 
 #endif
