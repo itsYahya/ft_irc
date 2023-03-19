@@ -119,7 +119,6 @@ void	server::accept(){
 	db->insertClient(clients[s].getnickName(), s);
 	clients[s].pinged(std::time(NULL));
 	clients[s].setSessionTime();
-	read(s);
 }
 
 static bool	checkhNl(const char *buffer){
