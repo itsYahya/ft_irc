@@ -190,6 +190,8 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 			db.getInfoBan(cl.getfdClient(), cl.getnickName(), body[0]);
 		else if(cl.checkChannel(body[0]))
 			db.getInfoPartError(cl, body[0], 500);
+		else if (!ch.wantsMore())
+			sendErrMsg(cl.getfdClient(), cl.getnickName(), body[0], " :Cannot join channel (+l)\r\n", " 471 ");
 		else if (!ch.getIsPasswd() || cl.getInvite(ch.getNameChannel()) >= 0 
 				|| (body.size() == 2 && !ch.getPasswd().compare(body[1])))
 		{
