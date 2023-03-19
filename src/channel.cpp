@@ -103,6 +103,17 @@ size_t channel::empty(){
 	return (clients.empty());
 }
 
+std::string channel::modesInfo(std::string nick){
+	std::string info = ":" + server::getShost() + " 324 " + nick + " " + nameChannel + " +";
+	if (noexternal) info += "n";
+	if (isModerate) info += "m";
+	if (isTopicProtected) info += "t";
+	if (limit > 0) info += "l";
+	if (isPasswd) info += "k";
+	info += "\r\n";
+	return (info);
+}
+
 std::string		channel::getInfosHeader(std::string nick){
 	std::string header = ":" + server::getShost() + " " + helper::itos(321);
 	header += " " + nick + " Channel :Users Name\n";
@@ -146,7 +157,7 @@ bool channel::topicProtected(){
 }
 
 bool	channel::wantsMore(){
-	return (clients.size() < limit || limit < 0);
+	return (clients.size() < static_cast<size_t>(limit) || limit < 0);
 }
 
 void	channel::setLimit(size_t l, const std::string &msg){

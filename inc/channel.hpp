@@ -19,7 +19,7 @@ class channel
 		std::string									topic;
 		bool										isModerate;
 		bool										isTopicProtected;
-		size_t										limit;
+		long										limit;
 		bool										noexternal;
 
 	public:
@@ -59,6 +59,7 @@ class channel
 
 		void										notifi(const std::string &msg);
 		size_t										empty();
+		std::string									modesInfo(std::string nick);
 };
 
 #endif
