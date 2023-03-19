@@ -224,7 +224,6 @@ void	command::partCommand(client &cl, std::string body, dbManager& db, std::vect
 				db.nextClientmode(cl, ch, cls);
 			cl.erasemode(info[0]);
 			cl.quitChannel(info[0]);
-			db.getInfoListClInChannel(cl, ch.getNameChannel(), cls);
 			if (ch.clients.size() == 0)
 				db.deleteChannel(info[0]);
 		}
