@@ -103,6 +103,8 @@ class client{
 		bool											&getFlauth();
 
 		mode_type										&getmodelist();
+		
+		void											informChannels(const std::string &msg, bool s);
 };
 
 #endif

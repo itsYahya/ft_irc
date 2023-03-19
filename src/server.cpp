@@ -51,13 +51,11 @@ void	server::create(){
 		throw myexception("something went wrong !!");
 }
 
-void	server::close(int sock, client &c){
+void	server::close(int sock, client &c, const std::string &msg){
 	std::string info = c.getnickName();
-	dbManager::deleteClient(c.getnickName());
-	client::mode_type list_mode = c.getmodelist();
-	client::mode_type::iterator iter = list_mode.begin();
-	for (; iter != list_mode.end(); iter++)
-		dbManager::getInfoStatPartChannel(c.getClinetFullname(), iter->first);
+	if (!msg.empty())
+		c.informChannels(msg, false);
+	dbManager::deleteClient(info);
 	c.reset();
 	::close(sock);
 	std::cout << info <<" went away !!" << std::endl;
@@ -119,7 +117,6 @@ void	server::accept(){
 	db->insertClient(clients[s].getnickName(), s);
 	clients[s].pinged(std::time(NULL));
 	clients[s].setSessionTime();
-	read(s);
 }
 
 static bool	checkhNl(const char *buffer){
@@ -134,43 +131,19 @@ static bool	checkhNl(const char *buffer){
 void	server::read(int s){
 	bool		nl;
 	int			rd;
-	std::string	&textCmd = clients[s].getCmd();
+	client		&c = clients[s];
+	std::string	&textCmd = c.getCmd();
 	
 	rd = recv(s, buffer, BUFFER_SIZE, 0);
 	buffer[rd] = 0;
 	if (rd <= 0)
-		close(s, clients[s]);
+		close(s, c, c.getClinetFullname() + "QUIT :Client closed connection\r\n");
 	else{
 		nl = checkhNl(buffer);
 		textCmd += buffer;
 		if (nl){
 			execut(clients[s], textCmd, s);
 			textCmd = "";
-		}
-	}
-}
-
-void	server::informNick(client &c, std::string nick){
-	std::string						msg;
-	// int								fd;
-	client::mode_iter_type			iter;
-	dbManager::iterator_channel		it;
-	channel::clients_iter_type		cit;
-	std::map<int, int>				fds;
-	
-	// fd = c.getfdClient();
-	msg = c.getClinetFullname() + "NICK :" + nick + "\n";
-	client::mode_type &modes = c.getmodelist();
-	iter = modes.begin();
-	for (; iter != modes.end(); iter++){
-		it = dbManager::searchChannel(iter->first);
-		channel::clients_type &clients = it->second.getClients();
-		cit = clients.begin();
-		for (; cit != clients.end(); cit++){
-			if (fds.find(cit->second) == fds.end()){
-				send(cit->second, msg.c_str(), msg.length(), 0);
-				fds[cit->second] = cit->second;
-			}
 		}
 	}
 }
@@ -186,7 +159,7 @@ void	server::checkout_nick(client &c, std::string nick){
 	fd = db->searchClient(nick);
 	if (fd == -1){
 		if (c.authenticated())
-			informNick(c, nick);
+			c.informChannels(c.getClinetFullname() + "NICK :" + nick + "\r\n", true);
 		db->updateNickClient(c.getnickName(), nick);
 		c.setnickName(nick);
 	}
@@ -259,15 +232,17 @@ void	server::clear(){
 	sock = -1;
 	for (; iter != clients.end(); iter++){
 		cl = *iter;
-		if (!(cl).isfree()) close(cl.getfdClient(), cl);
+		if (!(cl).isfree()) close(cl.getfdClient(), cl, "");
 	}
 }
 
-void	server::closingLink(const std::string &reson, client &c){
+void	server::closingLink(std::string reson, client &c){
 	int fd = c.getfdClient();
-	std::string msg = "ERROR :Closing Link: " + c.getHost() + " " + reson;
+	std::string msg = "ERROR :Closing Link: " + c.getHost() + " (QUIT: " + reson + ")\r\n";
 	::send(fd, msg.c_str(), msg.length(), 0);
-	close(fd, c);
+	reson.erase(reson.begin());
+	reson.erase(reson.end() - 3);
+	close(fd, c, c.getClinetFullname() + "QUIT: " + reson + "\r\n");
 }
 
 std::string	&server::getShost(){
@@ -287,7 +262,7 @@ void	server::execut(client &c, std::string &textCmd, int fd){
 		else if (c.authenticated())
 			cmd.switch_cmd(fd, db, c, clients);
 		else{
-			std::string msg = ":" + getShost() + " 451 * " + cmd.getname() + " :You must finish connecting first.\n";
+			std::string msg = ":" + getShost() + " 451 * " + cmd.getname() + " :You must finish connecting first.\r\n";
 			::send(fd, msg.c_str(), msg.length(), 0);
 		}
 	}
@@ -303,7 +278,7 @@ bool	server::welcome(client &c){
 	list += getShost() + " 003 " + c.getnickName() + " :This server was created 01/03/2023\r\n:";
 	list += getShost() + " 004 " + c.getnickName() + " localhost 1.0 - -\r\n:";
 	list += getShost() + " 372 " + c.getnickName() + " welcome to localhost\r\n:";
-	list += getShost() + " 376 " + c.getnickName() + " :To show msg of the day run /MOTD command\r\n";
+	list += getShost() + " 376 " + c.getnickName() + " :Feel free to use our bot, provided only for you. (BOT)\r\n";
 	c.setWriteState();
 	index = 0;
 	server::write(fd, c);

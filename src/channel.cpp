@@ -6,12 +6,16 @@ channel::channel(std::string name) : nameChannel(name), topic("")
 	isPasswd = false;
 	isModerate = false;
 	isTopicProtected = false;
+	noexternal = false;
+	limit = -1;
 }
 channel::channel(std::string name, std::string passwd) : nameChannel(name), passwd(passwd), topic("")
 {
+	limit = -1;
 	isPasswd = true;
 	isModerate = false;
 	isTopicProtected = false;
+	noexternal = false;
 }
 
 channel::~channel(){}
@@ -95,6 +99,35 @@ void	channel::notifi(const std::string &msg){
 	}
 }
 
+void channel::notifi(const std::string &msg, std::map<int, int> &fds)
+{
+	int					fd;
+	clients_iter_type	iter = clients.begin();
+
+	for (; iter != clients.end(); iter++){
+		fd = iter->second;
+		if (fds.find(fd) == fds.end()){
+			::send(fd, msg.c_str(), msg.length(), 0);
+			fds[fd] = fd;
+		}
+	}
+}
+
+size_t channel::empty(){
+	return (clients.empty());
+}
+
+std::string channel::modesInfo(std::string nick){
+	std::string info = ":" + server::getShost() + " 324 " + nick + " " + nameChannel + " +";
+	if (noexternal) info += "n";
+	if (isModerate) info += "m";
+	if (isTopicProtected) info += "t";
+	if (limit > 0) info += "l";
+	if (isPasswd) info += "k";
+	info += "\r\n";
+	return (info);
+}
+
 std::string		channel::getInfosHeader(std::string nick){
 	std::string header = ":" + server::getShost() + " " + helper::itos(321);
 	header += " " + nick + " Channel :Users Name\n";
@@ -138,7 +171,7 @@ bool channel::topicProtected(){
 }
 
 bool	channel::wantsMore(){
-	return (clients.size() < limit || limit < 0);
+	return (clients.size() < static_cast<size_t>(limit) || limit < 0);
 }
 
 void	channel::setLimit(size_t l, const std::string &msg){
@@ -157,4 +190,12 @@ void		channel::deleteBannedClient(std::string host)
 	int index = getBannedClient(host);
 	if (!ban_clients.empty() && index >= 0)
 		ban_clients.erase(ban_clients.begin() + index);
+}
+
+bool		channel::noExteranl(){
+	return (noexternal);
+}
+
+void		channel::setNoExternal(){
+	noexternal = true;
 }

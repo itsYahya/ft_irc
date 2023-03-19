@@ -63,16 +63,15 @@ void	command::pongCmd(client &c){
 
 std::string	makeReason(client &c, std::string body){
 	std::string reson = body;
+	std::string msg = "";
 	
 	if (reson[0] == ':') reson.erase(reson.begin());
 	if (reson.empty()) reson = c.getnickName();
-	return ("(Quit: " + reson + ")\n");
+	return (reson);
 }
 
 void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &cls)
 {
-	// std::cout << "name => " << name << "\n";
-	// std::cout << "body => " << body << "\n";
 	switch(type)
 	{
 		case CMD_PRIVMSG:
@@ -146,7 +145,9 @@ const char	*command::getbuffer() const{
 void	command::joinCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls)
 {
 	std::vector<std::string> str = helper::split(body, ' ');
-	if (str[0].c_str()[0] == '#' && str[0].length() > 1)
+	if (str.size() == 0)
+		sendErrMsg(cl.getfdClient(), cl.getnickName(), "JOIN", " :Not enough parameters\r\n", " 461 ");
+	else if (str[0].c_str()[0] == '#' && str[0].length() > 1)
 		processJoinPass(cl, str, db, cls);
 	else
 		db.getInfoInvalid(cl.getfdClient(), cl.getnickName());
@@ -175,6 +176,8 @@ void	command::joinClChannel(client& cl, std::string body, dbManager& db, std::ve
 
 void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManager& db, std::vector<client> &cls)
 {
+	t_mode	mode;
+
 	if (!db.srchChannel(body[0]))
 	{
 		insertchannel(body, db);
@@ -188,10 +191,14 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 			db.getInfoBan(cl.getfdClient(), cl.getnickName(), body[0]);
 		else if(cl.checkChannel(body[0]))
 			db.getInfoPartError(cl, body[0], 500);
+		else if (!ch.wantsMore())
+			sendErrMsg(cl.getfdClient(), cl.getnickName(), body[0], " :Cannot join channel (+l)\r\n", " 471 ");
 		else if (!ch.getIsPasswd() || cl.getInvite(ch.getNameChannel()) >= 0 
 				|| (body.size() == 2 && !ch.getPasswd().compare(body[1])))
 		{
-			cl.setmode(body[0], (ch.moderated() ? M_CLIENT : SM_CLIENT));
+			mode = (ch.moderated() ? M_CLIENT : SM_CLIENT);
+			if (ch.empty()) mode = OP_CLIENT;
+			cl.setmode(body[0], mode);
 			cl.eraseInvite(ch.getNameChannel());
 			joinClChannel(cl, body[0], db, cls);
 		}
@@ -203,6 +210,10 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 void	command::partCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls)
 {
 	std::vector<std::string> info = helper::split(body, ' ');
+	if (info.size() == 0){
+		sendErrMsg(cl.getfdClient(), cl.getnickName(), "PART", " :Not enough parameters\r\n", " 461 ");
+		return ;
+	}
 	channel &ch = db.searchChannel(info[0])->second;
 	if (info[0].c_str()[0] == '#' && info[0].length() > 1 && db.srchChannel(info[0]))
 	{
@@ -227,6 +238,10 @@ void	command::partCommand(client &cl, std::string body, dbManager& db, std::vect
 void	command::inviteCmd(client &c, std::string body, dbManager& db, std::vector<client> &cls)
 {
 	std::vector<std::string> str = helper::split(body, ' ');
+	if (str.size() == 0){
+		sendErrMsg(c.getfdClient(), c.getnickName(), "INVITE", " :Not enough parameters\r\n", " 461 ");
+		return ;
+	}
 	int fd = db.searchClient(str[0]);
 	if (fd > 0 && str.size() >= 2)
 	{
@@ -259,8 +274,9 @@ void	command::inviteCmd(client &c, std::string body, dbManager& db, std::vector<
 void	command::kickCommand(client &cl, std::string body, dbManager& db, std::vector<client> &cls)
 {
 	std::vector<std::string> info = helper::split(body, ' ');
-	if (info.size() >= 2)
-	{
+	if (info.size() == 0)
+		sendErrMsg(cl.getfdClient(), cl.getnickName(), "KICK", " :Not enough parameters\r\n", " 461 ");
+	else {
 		channel &ch = db.searchChannel(info[0])->second;
 		client 	&clK = cls[db.searchClient(info[1])];
 		if (db.getInfoKickError(cl, ch, info))
