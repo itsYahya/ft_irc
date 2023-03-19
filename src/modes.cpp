@@ -111,7 +111,8 @@ void	command::modeCmd(client &c, int fd){
 		if (dbManager::isEndChannelIter(cit))
 			sendErrMsg(fd, c.getnickName(), res[0], " :No such channel\r\n", " 403 ");
 		else if (res.size() == 1){
-
+			std::string msg = cit->second.modesInfo(c.getnickName());
+			::send(fd, msg.c_str(), msg.length(), 0);
 		}else{
 			if (c.getmode(res[0]) != OP_CLIENT)
 				sendErrMsg(fd, c.getnickName(), res[0], " :You're not channel operator\r\n", " 482 ");
