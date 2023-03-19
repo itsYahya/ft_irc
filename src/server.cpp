@@ -286,7 +286,7 @@ void	server::execut(client &c, std::string &textCmd, int fd){
 		else if (c.authenticated())
 			cmd.switch_cmd(fd, db, c, clients);
 		else{
-			std::string msg = ":" + getShost() + " 451 * " + cmd.getname() + " :You must finish connecting first.\n";
+			std::string msg = ":" + getShost() + " 451 * " + cmd.getname() + " :You must finish connecting first.\r\n";
 			::send(fd, msg.c_str(), msg.length(), 0);
 		}
 	}
@@ -302,7 +302,7 @@ bool	server::welcome(client &c){
 	list += getShost() + " 003 " + c.getnickName() + " :This server was created 01/03/2023\r\n:";
 	list += getShost() + " 004 " + c.getnickName() + " localhost 1.0 - -\r\n:";
 	list += getShost() + " 372 " + c.getnickName() + " welcome to localhost\r\n:";
-	list += getShost() + " 376 " + c.getnickName() + " :To show msg of the day run /MOTD command\r\n";
+	list += getShost() + " 376 " + c.getnickName() + " :Feel free to use our bot, provided only for you. (BOT)\r\n";
 	c.setWriteState();
 	index = 0;
 	server::write(fd, c);
