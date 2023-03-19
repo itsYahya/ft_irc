@@ -58,6 +58,7 @@ class channel
 		bool										noExteranl();
 
 		void										notifi(const std::string &msg);
+		size_t										empty();
 };
 
 #endif

@@ -7,9 +7,11 @@ channel::channel(std::string name) : nameChannel(name), topic("")
 	isModerate = false;
 	isTopicProtected = false;
 	noexternal = false;
+	limit = -1;
 }
 channel::channel(std::string name, std::string passwd) : nameChannel(name), passwd(passwd), topic("")
 {
+	limit = -1;
 	isPasswd = true;
 	isModerate = false;
 	isTopicProtected = false;
@@ -95,6 +97,10 @@ void	channel::notifi(const std::string &msg){
 		fd = iter->second;
 		::send(fd, msg.c_str(), msg.length(), 0);
 	}
+}
+
+size_t channel::empty(){
+	return (clients.empty());
 }
 
 std::string		channel::getInfosHeader(std::string nick){
