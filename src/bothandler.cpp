@@ -3,31 +3,34 @@
 
 std::string	command::botList(client &c){
 	std::string info = "300 * :";
-	info += c.getnickName() + " :BOT :Commands to use with it. (BOT CMD)\n";
-	info += "300 * :HELP :List of all the commands available in the server\n";
-	info += "300 * :SESS :The time you spend on the server\n";
-	info += "300 * :CHECKNICK :Check if a given nick name is free\n";
-	info += "300 * :TIME :This command tells the date and time of based on the server region\n";
-	info += "300 * :BOT :-------------------------------------\n";
+	info += c.getnickName() + " :BOT :Commands to use with it. (BOT CMD)\r\n";
+	info += "300 * :HELP :List of all the commands available in the server\r\n";
+	info += "300 * :SESS :The time you spend on the server\r\n";
+	info += "300 * :CHECKNICK :Check if a given nick name is free\r\n";
+	info += "300 * :TIME :This command tells the date and time of based on the server region\r\n";
+	info += "300 * :BOT :-------------------------------------\r\n";
 	return (info);
 }
 
 std::string	command::cmdList(client &c){
 	std::string	info = "300 * :";
-	info +=  c.getnickName() + " :BOT :HELP :Commands available on this IRC server\n";
-	info += "300 * :PRIVMSG\n";
-	info += "300 * :JOIN\n";
-	info += "300 * :PART\n";
-	info += "300 * :LIST\n";
-	info += "300 * :KICK\n";
-	info += "300 * :QUIT\n";
-	info += "300 * :HELP :-------------------------------------\n";
+	info +=  c.getnickName() + " :BOT :HELP :Commands available on this IRC server\r\n";
+	info += "300 * :PRIVMSG\r\n";
+	info += "300 * :NICK\r\n";
+	info += "300 * :JOIN\r\n";
+	info += "300 * :PART\r\n";
+	info += "300 * :LIST\r\n";
+	info += "300 * :KICK\r\n";
+	info += "300 * :MODE\r\n";
+	info += "300 * :INVITE\r\n";
+	info += "300 * :QUIT\r\n";
+	info += "300 * :HELP :-------------------------------------\r\n";
 	return (info);
 }
 
 std::string	command::sessionTime(client &c, int fd){
 	std::string msg = "300 * :" + c.getnickName() + " :SESS :Your log time on the server is : ";
-	msg += helper::timeToString(c.getSessionTime()) + "\n";
+	msg += helper::timeToString(c.getSessionTime()) + "\r\n";
 	::send(fd, msg.c_str(), msg.length(), 0);
 	return (msg);
 }
@@ -37,12 +40,12 @@ void	command::checkNick(int fd, std::string nick){
 	int			client;
 
 	if (nick.empty())
-		msg = "300 * :BOT :CHECKNICK (ERROR) No nick given\n";
+		msg = "300 * :BOT :CHECKNICK (ERROR) No nick given\r\n";
 	else{
 		client = dbManager::searchClient(nick);
 		msg = "300 * :BOT " + nick + " :this nickname is ";
-		if (client == -1) msg += "free to use\n";
-		else msg += "already in use\n";
+		if (client == -1) msg += "free to use\r\n";
+		else msg += "already in use\r\n";
 	}
 	::send(fd, msg.c_str(), msg.length(), 0);
 }
@@ -85,7 +88,7 @@ void	command::botHandler(client &c, int fd){
 				break;
 			default:
 				std::string msg = ":" + server::getShost() + " 421 ";
-				msg += c.getnickName() + " " + body + " :It's not a BOT command\n";
+				msg += c.getnickName() + " " + body + " :It's not a BOT command\r\n";
 				send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 		}
 	}

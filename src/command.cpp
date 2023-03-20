@@ -52,7 +52,7 @@ int		command::search_cmd(const std::string &name){
 
 void	command::pongCmd(client &c){
 	if (body.empty()){
-		std::string msg = ":" + server::getShost() + " 409 " + c.getnickName() + " :No origin specified\n";
+		std::string msg = ":" + server::getShost() + " 409 " + c.getnickName() + " :No origin specified\r\n";
 		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 	}else{
 		c.pinged(std::time(NULL));
@@ -115,7 +115,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 			break;
 		default :
 			std::string msg = ":" + server::getShost() + " 421 ";
-			msg += c.getnickName() + " " + name + " :Unknown command\n";
+			msg += c.getnickName() + " " + name + " :Unknown command\r\n";
 			send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 	}
 }
@@ -265,7 +265,7 @@ void	command::inviteCmd(client &c, std::string body, dbManager& db, std::vector<
 	}
 	else
 	{
-		std::string info =  ":localhost 401 " + str[0] + " " + str[1] + " :no such nick/channel\n";
+		std::string info =  ":localhost 401 " + str[0] + " " + str[1] + " :no such nick/channel\r\n";
 		send(c.getfdClient(), info.c_str(), info.size(), 0);
 	}
 		
