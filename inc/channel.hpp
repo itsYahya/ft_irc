@@ -22,6 +22,7 @@ class channel
 		long										limit;
 		bool										noexternal;
 		bool										inviteonly;
+		bool										secrectchannel;
 
 	public:
 		clients_type								clients;
@@ -59,6 +60,8 @@ class channel
 		bool										noExteranl();
 		bool										inviteOnly();
 		void										setInviteOnly();
+		bool										secretChannel();
+		void										setSectretChannel();
 
 		void										notifi(const std::string &msg);
 		void										notifi(const std::string &msg, std::map<int, int> &fds);

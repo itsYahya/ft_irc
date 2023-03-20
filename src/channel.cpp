@@ -9,11 +9,13 @@ channel::channel(std::string name) : nameChannel(name), topic("")
 	noexternal = false;
 	limit = -1;
 	inviteonly = false;
+	secrectchannel = false;
 }
 channel::channel(std::string name, std::string passwd) : nameChannel(name), passwd(passwd), topic("")
 {
 	limit = -1;
 	inviteonly = false;
+	secrectchannel = false;
 	isPasswd = true;
 	isModerate = false;
 	isTopicProtected = false;
@@ -121,6 +123,7 @@ size_t channel::empty(){
 
 std::string channel::modesInfo(std::string nick){
 	std::string info = ":" + server::getShost() + " 324 " + nick + " " + nameChannel + " +";
+	if (secrectchannel) info += "s";
 	if (noexternal) info += "n";
 	if (isModerate) info += "m";
 	if (isTopicProtected) info += "t";
@@ -205,6 +208,14 @@ bool channel::inviteOnly(){
 
 void	channel::setInviteOnly(){
 	inviteonly = true;
+}
+
+bool	channel::secretChannel(){
+	return (secrectchannel);
+}
+
+void	channel::setSectretChannel(){
+	secrectchannel = true;
 }
 
 void		channel::setNoExternal(){
