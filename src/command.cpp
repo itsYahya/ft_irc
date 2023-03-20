@@ -10,7 +10,6 @@ command::command(const char *buffer): body(""){
 	res = helper::split_(buffer, ' ');
 	name = res[0];
 	if (res.size() == 2) body = res[1];
-	body = res[1];
 	if (body.size() && body.front() == ':') body.erase(body.begin());
 	type = search_cmd(helper::capitalize(res[0]));
 	this->buffer = buffer;
