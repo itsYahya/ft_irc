@@ -205,7 +205,7 @@ int	client::getInvite(std::string channel)
 
 void	client::eraseInvite(std::string channel)
 {
-	size_t index = getInvite(channel);
+	int index = getInvite(channel);
 	if (!list_invite.empty() && index >= 0)
 		list_invite.erase(list_invite.begin() + index);
 }
