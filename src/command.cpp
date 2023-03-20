@@ -86,7 +86,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 			joinCommand(c, body, *db, cls);
 			break;
 		case CMD_LIST:
-			sendList(db, fd, c);
+			sendList(fd, c);
 			break;
 		case CMD_PONG:
 			pongCmd(c);
@@ -289,16 +289,13 @@ void	command::kickCommand(client &cl, std::string body, dbManager& db, std::vect
 	}
 }
 
-void	command::sendList(dbManager *db, int fd, client &c){
-	dbManager::iterator_channel		iter;
-	dbManager::channels_type		&map_ch = db->getChannels();
-	std::string						&list = c.getList();
+void	command::sendList(int fd, client &c){
+	std::string	&list = c.getList();
+	std::string nick = c.getnickName();
 
-	iter = map_ch.begin();
-	list = channel::getInfosHeader(c.getnickName());
-	for (; iter != map_ch.end(); iter++)
-		list += iter->second.getInfo(c.getnickName());
-	list += channel::getInfosFooter(c.getnickName());
+	list = channel::getInfosHeader(nick);
+	list += dbManager::channelsList(nick);
+	list += channel::getInfosFooter(nick);
 	c.setWriteState();
 	c.getWindex() = 0;
 	server::write(fd, c);

@@ -284,3 +284,16 @@ bool		dbManager::nextClientmode(client &cl,channel &ch,std::vector<client> & cls
 	}
 	return (false);
 }
+
+std::string	dbManager::channelsList(const std::string &nick){
+	iterator_channel	iter;
+	std::string			list;
+
+	iter = channels.begin();
+	for (; iter != channels.end(); iter++){
+		if (iter->second.secretChannel())
+			continue;
+		list += iter->second.getInfo(nick);
+	}
+	return (list);
+}
