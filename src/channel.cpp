@@ -221,3 +221,14 @@ void	channel::setSectretChannel(){
 void		channel::setNoExternal(){
 	noexternal = true;
 }
+
+void	channel::updateNick(const std::string &cur, const std::string &nick){
+	clients_iter_type	iter;
+
+	iter = clients.find(cur);
+	if (iter == clients.end())
+		return ;
+	int fd = iter->second;
+	clients.erase(iter);
+	clients[nick] = fd;
+}

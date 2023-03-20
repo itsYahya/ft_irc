@@ -158,8 +158,10 @@ void	server::checkout_nick(client &c, std::string nick){
 	}
 	fd = db->searchClient(nick);
 	if (fd == -1){
-		if (c.authenticated())
+		if (c.authenticated()){
 			c.informChannels(c.getClinetFullname() + "NICK :" + nick + "\r\n", true);
+			c.updateNick(nick);
+		}
 		db->updateNickClient(c.getnickName(), nick);
 		c.setnickName(nick);
 	}

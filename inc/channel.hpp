@@ -67,6 +67,7 @@ class channel
 		void										notifi(const std::string &msg, std::map<int, int> &fds);
 		size_t										empty();
 		std::string									modesInfo(std::string nick);
+		void										updateNick(const std::string &curr, const std::string &nick);
 };
 
 #endif
