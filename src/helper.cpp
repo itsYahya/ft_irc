@@ -81,9 +81,9 @@ std::vector<std::string>	helper::splitCmds(std::string buffer, char sep){
 	std::string					string;
 
 	while (std::getline(stream, string, sep)){
-		if (string.front() == '\n') string.erase(string.begin());
+		if (string.size() > 1 && string.front() == '\n') string.erase(string.begin());
 		if (string.size() > 1 && string.back() == '\n') string.erase(string.end() - 1);
-		if (!string.empty()) res.push_back(string);
+		if (!string.empty() && string[0] != '\n') res.push_back(string);
 	}
 	return (res);
 }

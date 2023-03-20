@@ -21,6 +21,8 @@ class channel
 		bool										isTopicProtected;
 		long										limit;
 		bool										noexternal;
+		bool										inviteonly;
+		bool										secrectchannel;
 
 	public:
 		clients_type								clients;
@@ -56,11 +58,16 @@ class channel
 		void										setKey(const std::string &key, const std::string &msg);
 		void										setNoExternal();
 		bool										noExteranl();
+		bool										inviteOnly();
+		void										setInviteOnly();
+		bool										secretChannel();
+		void										setSectretChannel();
 
 		void										notifi(const std::string &msg);
 		void										notifi(const std::string &msg, std::map<int, int> &fds);
 		size_t										empty();
 		std::string									modesInfo(std::string nick);
+		void										updateNick(const std::string &curr, const std::string &nick);
 };
 
 #endif

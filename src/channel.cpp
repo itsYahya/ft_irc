@@ -8,10 +8,14 @@ channel::channel(std::string name) : nameChannel(name), topic("")
 	isTopicProtected = false;
 	noexternal = false;
 	limit = -1;
+	inviteonly = false;
+	secrectchannel = false;
 }
 channel::channel(std::string name, std::string passwd) : nameChannel(name), passwd(passwd), topic("")
 {
 	limit = -1;
+	inviteonly = false;
+	secrectchannel = false;
 	isPasswd = true;
 	isModerate = false;
 	isTopicProtected = false;
@@ -119,9 +123,11 @@ size_t channel::empty(){
 
 std::string channel::modesInfo(std::string nick){
 	std::string info = ":" + server::getShost() + " 324 " + nick + " " + nameChannel + " +";
+	if (secrectchannel) info += "s";
 	if (noexternal) info += "n";
 	if (isModerate) info += "m";
 	if (isTopicProtected) info += "t";
+	if (inviteonly) info += "i";
 	if (limit > 0) info += "l";
 	if (isPasswd) info += "k";
 	info += "\r\n";
@@ -196,6 +202,33 @@ bool		channel::noExteranl(){
 	return (noexternal);
 }
 
+bool channel::inviteOnly(){
+	return (inviteonly);
+}
+
+void	channel::setInviteOnly(){
+	inviteonly = true;
+}
+
+bool	channel::secretChannel(){
+	return (secrectchannel);
+}
+
+void	channel::setSectretChannel(){
+	secrectchannel = true;
+}
+
 void		channel::setNoExternal(){
 	noexternal = true;
+}
+
+void	channel::updateNick(const std::string &cur, const std::string &nick){
+	clients_iter_type	iter;
+
+	iter = clients.find(cur);
+	if (iter == clients.end())
+		return ;
+	int fd = iter->second;
+	clients.erase(iter);
+	clients[nick] = fd;
 }

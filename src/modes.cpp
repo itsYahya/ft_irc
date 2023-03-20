@@ -35,6 +35,16 @@ bool	command::channelMode(client &c, channel &ch, std::string::iterator iter, st
 		ch.setNoExternal();
 		ch.notifi(msg);
 	}
+	else if (*iter == 'i'){
+		msg = c.getClinetFullname() + "MODE " + ch.getNameChannel() + " +i\r\n";
+		ch.setInviteOnly();
+		ch.notifi(msg);
+	}
+	else if (*iter == 's'){
+		msg = c.getClinetFullname() + "MODE " + ch.getNameChannel() + " +s\r\n";
+		ch.setSectretChannel();
+		ch.notifi(msg);
+	}
 	else {
 		res = parceModes(c, body, iter);
 		if (res.size() > 0 && *iter == 'l'){
@@ -87,14 +97,14 @@ void	command::handlModes(client &c, channel &ch, std::string &body){
 	for (; iter != body.end(); iter++){
 		if (*iter == ' ') break;
 		if (*iter == '+') continue;
-		if (*iter == 't' || *iter == 'm'
+		if (*iter == 't' || *iter == 'm' || *iter == 'i' || *iter == 's'
 			|| *iter == 'l' || *iter == 'k' || *iter == 'n'){
 			if (!channelMode(c, ch, iter, body)) return ;
 		}
 		else if (*iter == 'v' || *iter == 'o'){
 			if (!clientMode(c, ch, iter, body)) return ;
 		}
-		else if (*iter != 's')
+		else
 			sendErrMsg(c.getfdClient(), c.getnickName(), std::string() + *iter, " :is unknown mode char to me\r\n", " 472 ");
 	}
 }

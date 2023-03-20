@@ -10,7 +10,6 @@ command::command(const char *buffer): body(""){
 	res = helper::split_(buffer, ' ');
 	name = res[0];
 	if (res.size() == 2) body = res[1];
-	body = res[1];
 	if (body.size() && body.front() == ':') body.erase(body.begin());
 	type = search_cmd(helper::capitalize(res[0]));
 	this->buffer = buffer;
@@ -53,7 +52,7 @@ int		command::search_cmd(const std::string &name){
 
 void	command::pongCmd(client &c){
 	if (body.empty()){
-		std::string msg = ":" + server::getShost() + " 409 " + c.getnickName() + " :No origin specified\n";
+		std::string msg = ":" + server::getShost() + " 409 " + c.getnickName() + " :No origin specified\r\n";
 		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 	}else{
 		c.pinged(std::time(NULL));
@@ -87,7 +86,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 			joinCommand(c, body, *db, cls);
 			break;
 		case CMD_LIST:
-			sendList(db, fd, c);
+			sendList(fd, c);
 			break;
 		case CMD_PONG:
 			pongCmd(c);
@@ -116,7 +115,7 @@ void	command::switch_cmd(int fd, dbManager	*db, client &c, std::vector<client> &
 			break;
 		default :
 			std::string msg = ":" + server::getShost() + " 421 ";
-			msg += c.getnickName() + " " + name + " :Unknown command\n";
+			msg += c.getnickName() + " " + name + " :Unknown command\r\n";
 			send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 	}
 }
@@ -193,6 +192,8 @@ void	command::processJoinPass(client &cl, std::vector<std::string> body, dbManag
 			db.getInfoPartError(cl, body[0], 500);
 		else if (!ch.wantsMore())
 			sendErrMsg(cl.getfdClient(), cl.getnickName(), body[0], " :Cannot join channel (+l)\r\n", " 471 ");
+		else if (ch.inviteOnly() && cl.getInvite(ch.getNameChannel()) == -1)
+			sendErrMsg(cl.getfdClient(), cl.getnickName(), body[0], " :Cannot join channel (+i)\r\n", " 471 ");
 		else if (!ch.getIsPasswd() || cl.getInvite(ch.getNameChannel()) >= 0 
 				|| (body.size() == 2 && !ch.getPasswd().compare(body[1])))
 		{
@@ -264,7 +265,7 @@ void	command::inviteCmd(client &c, std::string body, dbManager& db, std::vector<
 	}
 	else
 	{
-		std::string info =  ":localhost 401 " + str[0] + " " + str[1] + " :no such nick/channel\n";
+		std::string info =  ":localhost 401 " + str[0] + " " + str[1] + " :no such nick/channel\r\n";
 		send(c.getfdClient(), info.c_str(), info.size(), 0);
 	}
 		
@@ -288,16 +289,13 @@ void	command::kickCommand(client &cl, std::string body, dbManager& db, std::vect
 	}
 }
 
-void	command::sendList(dbManager *db, int fd, client &c){
-	dbManager::iterator_channel		iter;
-	dbManager::channels_type		&map_ch = db->getChannels();
-	std::string						&list = c.getList();
+void	command::sendList(int fd, client &c){
+	std::string	&list = c.getList();
+	std::string nick = c.getnickName();
 
-	iter = map_ch.begin();
-	list = channel::getInfosHeader(c.getnickName());
-	for (; iter != map_ch.end(); iter++)
-		list += iter->second.getInfo(c.getnickName());
-	list += channel::getInfosFooter(c.getnickName());
+	list = channel::getInfosHeader(nick);
+	list += dbManager::channelsList(nick);
+	list += channel::getInfosFooter(nick);
 	c.setWriteState();
 	c.getWindex() = 0;
 	server::write(fd, c);

@@ -232,3 +232,14 @@ void client::informChannels(const std::string &msg, bool s){
 		ch->second.notifi(msg, fds);
 	}
 }
+
+void	client::updateNick(const std::string &nick){
+	mode_iter_type				iter;
+	dbManager::iterator_channel	it;
+
+	iter = list_mode.begin();
+	for (; iter != list_mode.end(); iter++){
+		it = dbManager::searchChannel(iter->first);
+		it->second.updateNick(nickName, nick);
+	}
+}

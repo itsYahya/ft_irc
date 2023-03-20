@@ -53,5 +53,6 @@ class dbManager
 		std::string					processInfoCls(channel &ch, client &cl, std::vector<client> &cls);
 		bool						nextClientmode(client &cl, channel &ch, std::vector<client> &cls);
 		void						getInfoKickChannel(client &cl, std::vector<std::string> info);
+		static std::string			channelsList(const std::string &nick);
 };
 #endif

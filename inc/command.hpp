@@ -62,7 +62,7 @@ class command{
 		void								sendMsg(dbManager *db, int fd, client &c, bool err);
 		void								prvMsg(client &c, int fd, std::string nick, std::string body_);
 		
-		void								sendList(dbManager *db, int fd, client &c);
+		void								sendList(int fd, client &c);
 
 		void								pongCmd(client &c);
 
