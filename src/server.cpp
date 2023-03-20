@@ -149,13 +149,15 @@ void	server::read(int s){
 }
 
 void	server::checkout_nick(client &c, std::string nick){
-	int fd = -1; 
+	int fd = -1;
+	helper::vector	res = helper::split(nick, ' ');
 	
-	if (nick.empty()){
+	if (res.size() == 0){
 		std::string msg = ":" + getShost() + " 431 :No nickname given\n";
 		::send(c.getfdClient(), msg.c_str(), msg.length(), 0);
 		return ;
 	}
+	nick = res[0];
 	fd = db->searchClient(nick);
 	if (fd == -1){
 		if (c.authenticated()){
