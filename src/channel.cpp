@@ -8,10 +8,12 @@ channel::channel(std::string name) : nameChannel(name), topic("")
 	isTopicProtected = false;
 	noexternal = false;
 	limit = -1;
+	inviteonly = false;
 }
 channel::channel(std::string name, std::string passwd) : nameChannel(name), passwd(passwd), topic("")
 {
 	limit = -1;
+	inviteonly = false;
 	isPasswd = true;
 	isModerate = false;
 	isTopicProtected = false;
@@ -122,6 +124,7 @@ std::string channel::modesInfo(std::string nick){
 	if (noexternal) info += "n";
 	if (isModerate) info += "m";
 	if (isTopicProtected) info += "t";
+	if (inviteonly) info += "i";
 	if (limit > 0) info += "l";
 	if (isPasswd) info += "k";
 	info += "\r\n";
@@ -194,6 +197,14 @@ void		channel::deleteBannedClient(std::string host)
 
 bool		channel::noExteranl(){
 	return (noexternal);
+}
+
+bool channel::inviteOnly(){
+	return (inviteonly);
+}
+
+void	channel::setInviteOnly(){
+	inviteonly = true;
 }
 
 void		channel::setNoExternal(){
